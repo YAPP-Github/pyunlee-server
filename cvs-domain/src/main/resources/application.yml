@@ -1,0 +1,47 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mariadb://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      maxLifetime: 580000
+      maximum-pool-size: 10
+    password: ${MYSQL_PASSWORD}
+    username: ${MYSQL_USERNAME}
+  jpa:
+    show-sql: ${SHOW_SQL:true}
+    properties:
+      hibernate:
+        format_sql: ${FORMAT_SQL:true}
+        default_batch_fetch_size: ${JPA_BATCH_FETCH_SIZE:100}
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MariaDBDialect
+logging:
+  level:
+#    com.zaxxer.hikari.HikariConfig: DEBUG
+#    com.zaxxer.hikari: TRACE
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG
+---
+#spring:
+#  config:
+#    activate:
+#      on-profile: prod
+#  datasource:
+#    hikari:
+#      maximum-pool-size: 20
+#  jpa:
+#    properties:
+#      hibernate:
+#        default_batch_fetch_size: ${JPA_BATCH_FETCH_SIZE:100}
+#    hibernate:
+#      ddl-auto: none
+#logging:
+#  level:
+#    org.springframework.orm.jpa: DEBUG
+#    org.springframework.transaction: DEBUG
