@@ -4,7 +4,7 @@ on:
     branch: 'dev'
 
 jobs:
-  spotlessJavaCheck:
+  checkCodeCoverage:
     runs-on: ubuntu-latest
 
     steps:

@@ -13,6 +13,20 @@ plugins {
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
+apply(plugin = "org.sonarqube")
+sonarqube {
+    properties {
+        property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE")
+        property("sonar.organization", "yapp-github")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sources", "src")
+        property("sonar.java.coveragePlugin", "jacoco")
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
 
 allprojects {
     group = "com.yapp"
@@ -30,11 +44,86 @@ subprojects {
     apply(plugin = "org.springframework.boot")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
     apply(plugin = "jacoco")
-    apply(plugin = "org.sonarqube")
 
     apply(plugin = "kotlin")
     apply(plugin = "kotlin-spring") //all-open
     apply(plugin = "kotlin-jpa")
+
+    configurations {
+        compileOnly {
+            extendsFrom(configurations.annotationProcessor.get())
+        }
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "17"
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        finalizedBy("jacocoTestReport")
+    }
+
+    tasks {
+        val snippetsDir = file("$buildDir/generated-snippets")
+
+        test {
+            useJUnitPlatform()
+            systemProperty("org.springframework.restdocs.outputDir", snippetsDir)
+            outputs.dir(snippetsDir)
+        }
+    }
+
+    // jacoco ci
+    tasks.jacocoTestReport {
+        dependsOn("test")
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            csv.required.set(false)
+        }
+        finalizedBy("jacocoTestCoverageVerification")
+    }
+
+    tasks.jacocoTestCoverageVerification {
+        val qDomains = mutableListOf<String>()
+        for (qPattern in listOf("**/QA".."**/QZ")) {
+            qDomains.add("$qPattern*")
+        }
+
+        violationRules {
+            rule {
+                element = "CLASS"
+
+                limit {
+                    counter = "BRANCH"
+                    value = "COVEREDRATIO"
+                    minimum = "0.10".toBigDecimal()
+                }
+                excludes = listOf(
+                    "**/*Application*",
+                    "**/*Config*",
+                    "**/*Dto*",
+                    "**/*Request*",
+                    "**/*Response*",
+                    "**/*Interceptor*",
+                    "**/*Exception*",
+                    *qDomains.toTypedArray()
+                )
+            }
+        }
+    }
+
+    apply(plugin = "org.sonarqube")
+    sonarqube {
+        properties {
+            property("sonar.java.binaries", "${buildDir}/classes")
+            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
+        }
+    }
 
     dependencies {
         // springboot
@@ -76,111 +165,8 @@ subprojects {
             dependency("net.logstash.logback:logstash-logback-encoder:6.6")
         }
     }
-
-    sonarqube {
-        properties {
-            // 각 프로젝트마다 적용해야하는부분.
-            property("sonar.java.binaries", "${buildDir}/classes")
-            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
-        }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
-        }
-    }
-
-    val testCoverage by tasks.registering {
-        group = "verification"
-        description = "Runs the unit tests with coverage"
-
-        dependsOn(":test",
-                ":jacocoTestReport",
-                ":jacocoTestCoverageVerification")
-
-        tasks["jacocoTestReport"].mustRunAfter(tasks["test"])
-        tasks["jacocoTestCoverageVerification"].mustRunAfter(tasks["jacocoTestReport"])
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        finalizedBy("jacocoTestReport")
-    }
-
-    // jacoco ci
-    tasks.jacocoTestReport {
-        dependsOn("test")
-        reports {
-            html.isEnabled = true
-            csv.isEnabled = true
-            xml.isEnabled = true
-            xml.destination = file("${buildDir}/reports/jacoco.xml")
-        }
-        // exclude q-object
-        val qDomains = mutableListOf<String>()
-        for (qPattern in listOf("**/QA".."**/QZ")) {
-            qDomains.add("$qPattern*")
-        }
-        finalizedBy("jacocoTestCoverageVerification")
-    }
-
-    tasks.jacocoTestCoverageVerification {
-        val qDomains = mutableListOf<String>()
-        for (qPattern in listOf("**/QA".."**/QZ")) {
-            qDomains.add("$qPattern*")
-        }
-
-        violationRules {
-            rule {
-                element = "CLASS"
-
-                limit {
-                    counter = "BRANCH"
-                    value = "COVEREDRATIO"
-                    minimum = "0.10".toBigDecimal()
-                }
-                excludes = listOf(
-                    "**/*Application*",
-                    "**/*Config*",
-                    "**/*Dto*",
-                    "**/*Request*",
-                    "**/*Response*",
-                    "**/*Interceptor*",
-                    "**/*Exception*",
-                    *qDomains.toTypedArray()
-                )
-            }
-        }
-    }
-
-    configure<JacocoPluginExtension> {
-        toolVersion = "0.8.8"
-    }
-
-    configurations {
-        compileOnly {
-            extendsFrom(configurations.annotationProcessor.get())
-        }
-    }
 }
 
-sonarqube {
-    properties {
-        property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE") // 본인 꺼 집어넣으세용
-        property("sonar.organization", "yapp-github") // 이것두
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src")
-        property("sonar.language", "java")
-        property("sonar.sourceEncoding", "UTF-8")
-        property("sonar.test.inclusions", "**/*Test.java")
-        // 테스트 커버리지에서 빼고싶은거 넣어야함
-        property("sonar.exclusions", "**/test/**, **/Q*.java, **/*Doc*.java, **/resources/** ,**/*Application*.java , **/*Config*.java," +
-        "**/*Dto*.java, **/*Request*.java, **/*Response*.java ,**/*Exception*.java ,**/*ErrorCode*.java")
-        property("sonar.java.coveragePlugin", "jacoco")
-    }
-}
 
 // module core 에 module api, consumer이 의존
 project(":cvs-api") {
@@ -203,4 +189,16 @@ project(":cvs-domain") {
     bootJar.enabled = false
     jar.enabled = true
 
+}
+
+val testCoverage by tasks.registering {
+    group = "verification"
+    description = "Runs the unit tests with coverage"
+
+    dependsOn(":test",
+            ":jacocoTestReport",
+            ":jacocoTestCoverageVerification")
+
+    tasks["jacocoTestReport"].mustRunAfter(tasks["test"])
+    tasks["jacocoTestCoverageVerification"].mustRunAfter(tasks["jacocoTestReport"])
 }
