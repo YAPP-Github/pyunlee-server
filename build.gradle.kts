@@ -2,18 +2,18 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "2.7.11"
-    id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("org.sonarqube") version "3.5.0.2730"
-    id("jacoco")
+    id("org.springframework.boot") version "2.7.11" apply false
+    id("io.spring.dependency-management") version "1.0.15.RELEASE" apply false
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
+    id("com.diffplug.spotless") version  "6.18.0"
+    id("org.sonarqube") version "3.5.0.2730"
+    id("jacoco")
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
-apply(plugin = "org.sonarqube")
 sonarqube {
     properties {
         property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE")
@@ -24,35 +24,12 @@ sonarqube {
     }
 }
 
-jacoco {
-    toolVersion = "0.8.8"
-}
-
 allprojects {
     group = "com.yapp"
     version = "0.0.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
-    }
-}
-
-subprojects {
-    apply(plugin = "java")
-
-    apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "org.springframework.boot")
-    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
-    apply(plugin = "jacoco")
-
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-spring") //all-open
-    apply(plugin = "kotlin-jpa")
-
-    configurations {
-        compileOnly {
-            extendsFrom(configurations.annotationProcessor.get())
-        }
     }
 
     tasks.withType<KotlinCompile> {
@@ -67,14 +44,49 @@ subprojects {
         finalizedBy("jacocoTestReport")
     }
 
-    tasks {
-        val snippetsDir = file("$buildDir/generated-snippets")
+    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+    apply(plugin = "org.jetbrains.kotlin.plugin.jpa" )
+}
 
-        test {
-            useJUnitPlatform()
-            systemProperty("org.springframework.restdocs.outputDir", snippetsDir)
-            outputs.dir(snippetsDir)
-        }
+configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+    kotlin {
+        target ("**/*.kt")
+        ktlint("0.48.0")
+    }
+}
+
+subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+    apply(plugin = "org.springframework.boot")
+    apply(plugin = "io.spring.dependency-management")
+    apply(plugin = "jacoco" )
+
+
+    dependencies {
+        implementation("org.springframework.boot:spring-boot-starter-web")
+        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+        implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+        runtimeOnly("io.github.microutils:kotlin-logging-jvm:3.0.5")//logger
+
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
+
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    }
+
+    tasks.getByName<Jar>("jar") {
+        enabled = false
+    }
+
+    tasks.test {
+        finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+    }
+
+    val qDomains = mutableListOf<String>()
+    for (qPattern in listOf("**/QA".."**/QZ")) {
+        qDomains.add("$qPattern*")
     }
 
     // jacoco ci
@@ -82,18 +94,29 @@ subprojects {
         dependsOn("test")
         reports {
             html.required.set(true)
+            csv.required.set(true)
             xml.required.set(true)
-            csv.required.set(false)
+            xml.outputLocation.set(File("${buildDir}/reports/jacoco.xml"))
         }
         finalizedBy("jacocoTestCoverageVerification")
+
+        classDirectories.setFrom(
+                files(classDirectories.files.map {
+                    fileTree(it) {
+                        exclude("**/*Application*",
+                                "**/*Config*",
+                                "**/*Dto*",
+                                "**/*Request*",
+                                "**/*Response*",
+                                "**/*Interceptor*",
+                                "**/*Exception*" ,
+                                *qDomains.toTypedArray())
+                    }
+                })
+        )
     }
 
     tasks.jacocoTestCoverageVerification {
-        val qDomains = mutableListOf<String>()
-        for (qPattern in listOf("**/QA".."**/QZ")) {
-            qDomains.add("$qPattern*")
-        }
-
         violationRules {
             rule {
                 element = "CLASS"
@@ -117,52 +140,10 @@ subprojects {
         }
     }
 
-    apply(plugin = "org.sonarqube")
     sonarqube {
         properties {
             property("sonar.java.binaries", "${buildDir}/classes")
             property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
-        }
-    }
-
-    dependencies {
-        // springboot
-        implementation("org.springframework.boot:spring-boot-starter-batch")
-        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("org.springframework.boot:spring-boot-starter-data-redis")
-//        implementation("org.springframework.boot:spring-boot-starter-security")
-        implementation("org.springframework.boot:spring-boot-starter-validation")
-        implementation("org.springframework.boot:spring-boot-starter-web")
-        implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-        developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-        // open feign
-//        implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-
-        // kotlin
-        implementation("org.jetbrains.kotlin:kotlin-reflect")
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-
-        //lombok
-        compileOnly("org.projectlombok:lombok")
-        annotationProcessor("org.projectlombok:lombok")
-
-        // DB
-        runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-
-        // test
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testImplementation("org.springframework.batch:spring-batch-test")
-        testImplementation("org.springframework.security:spring-security-test")
-    }
-
-    dependencyManagement {
-        imports {
-            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-        }
-
-        dependencies {
-            dependency("net.logstash.logback:logstash-logback-encoder:6.6")
         }
     }
 }
