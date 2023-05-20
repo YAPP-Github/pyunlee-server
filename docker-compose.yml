@@ -1,12 +1,6 @@
 version: '3.9'
 
 services:
-  mariadb:
-    image: mariadb
-    env_file: .env
-    ports:
-      - "3306:3306"
-
   redis:
     image: redis
     ports:
