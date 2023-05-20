@@ -3,9 +3,13 @@ version: '3.9'
 services:
   mariadb:
     image: mariadb
-    env_file: .env
     ports:
       - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_USER=${MYSQL_USER:-root}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-root}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-cvs}
 
   redis:
     image: redis
