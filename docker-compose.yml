@@ -6,10 +6,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
-      - MYSQL_USER=${MYSQL_USER:-root}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-root}
-      - MYSQL_DATABASE=${MYSQL_DATABASE:-cvs}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
 
   redis:
     image: redis

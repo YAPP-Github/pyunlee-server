@@ -9,7 +9,7 @@ spring:
       maxLifetime: 580000
       maximum-pool-size: 10
     password: ${MYSQL_PASSWORD}
-    username: ${MYSQL_USERNAME}
+    username: ${MYSQL_USER}
   jpa:
     show-sql: ${SHOW_SQL:true}
     properties:

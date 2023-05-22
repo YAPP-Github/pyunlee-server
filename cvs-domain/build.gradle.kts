@@ -1,8 +1,8 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 dependencies {
-    api("org.springframework.boot:spring-boot-starter-data-jpa")
-    api("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 }
 

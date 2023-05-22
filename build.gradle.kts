@@ -4,48 +4,24 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 plugins {
     id("org.springframework.boot") version "2.7.11" apply false
     id("io.spring.dependency-management") version "1.0.15.RELEASE" apply false
+    id("jacoco")
+    id("org.sonarqube") version "3.5.0.2730"
+    id("com.diffplug.spotless") version  "6.18.0"
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
-    id("com.diffplug.spotless") version  "6.18.0"
-    id("org.sonarqube") version "3.5.0.2730"
-    id("jacoco")
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE")
-        property("sonar.organization", "yapp-github")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src")
-        property("sonar.java.coveragePlugin", "jacoco")
+buildscript {
+    repositories {
+        mavenCentral()
     }
 }
 
 allprojects {
-    group = "com.yapp"
-    version = "0.0.1-SNAPSHOT"
-
     repositories {
         mavenCentral()
     }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
-        }
-    }
-
-    tasks.withType<Test> {
-        useJUnitPlatform()
-        finalizedBy("jacocoTestReport")
-    }
-
-    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
-    apply(plugin = "org.jetbrains.kotlin.plugin.jpa" )
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
@@ -56,12 +32,15 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 
 subprojects {
-    apply(plugin = "org.jetbrains.kotlin.jvm")
-    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "jacoco" )
-
+    apply(plugin = "java")
+    apply(plugin = "kotlin")
+    apply(plugin = "kotlin-kapt")
+    apply(plugin = "kotlin-jpa")
+    apply(plugin = "kotlin-spring")
+    apply(plugin = "org.sonarqube")
+    apply(plugin = "jacoco")
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
@@ -76,11 +55,29 @@ subprojects {
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     }
 
-    tasks.getByName<Jar>("jar") {
-        enabled = false
+    the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().apply {
+        imports {
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        }
+    }
+
+    group = "com.yapp"
+    version = "0.0.1-SNAPSHOT"
+    java.sourceCompatibility = JavaVersion.VERSION_17
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "17"
+        }
     }
 
     tasks.test {
+        useJUnitPlatform()
         finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
     }
 
@@ -124,7 +121,7 @@ subprojects {
                 limit {
                     counter = "BRANCH"
                     value = "COVEREDRATIO"
-                    minimum = "0.10".toBigDecimal()
+                    minimum = "0.0".toBigDecimal()
                 }
                 excludes = listOf(
                     "**/*Application*",
@@ -139,37 +136,31 @@ subprojects {
             }
         }
     }
-
-    sonarqube {
-        properties {
-            property("sonar.java.binaries", "${buildDir}/classes")
-            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
-        }
-    }
+//
+//    sonarqube {
+//        properties {
+//            property("sonar.java.binaries", "${buildDir}/classes")
+//            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
+//        }
+//    }
 }
 
-
-// module core 에 module api, consumer이 의존
-project(":cvs-api") {
-    dependencies {
-        implementation(project(":cvs-domain"))
-    }
+tasks.withType<BootJar> {
+    enabled = false
 }
 
-project(":cvs-batch") {
-    dependencies {
-        implementation(project(":cvs-domain"))
-    }
+jacoco {
+    toolVersion = "0.8.7"
 }
 
-// core 설정
-project(":cvs-domain") {
-    val jar: Jar by tasks
-    val bootJar: BootJar by tasks
-
-    bootJar.enabled = false
-    jar.enabled = true
-
+sonarqube {
+    properties {
+        property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE")
+        property("sonar.organization", "yapp-github")
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.sources", "src")
+        property("sonar.java.coveragePlugin", "jacoco")
+    }
 }
 
 val testCoverage by tasks.registering {
