@@ -29,6 +29,9 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         target ("**/*.kt")
         ktlint("0.48.0")
     }
+
+    // ktlint -> no wild card import 구문 관련 설정
+    // https://blog.leocat.kr/notes/2020/12/14/intellij-avoid-wildcard-imports-in-kotlin-with-intellij
 }
 
 subprojects {
@@ -76,6 +79,10 @@ subprojects {
         }
     }
 
+    tasks.getByName<Jar>("jar") {
+        enabled = false
+    }
+
     tasks.test {
         useJUnitPlatform()
         finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
@@ -88,7 +95,7 @@ subprojects {
 
     // jacoco ci
     tasks.jacocoTestReport {
-        dependsOn("test")
+        dependsOn("tasks.test")
         reports {
             html.required.set(true)
             csv.required.set(true)
@@ -136,13 +143,13 @@ subprojects {
             }
         }
     }
-//
-//    sonarqube {
-//        properties {
-//            property("sonar.java.binaries", "${buildDir}/classes")
-//            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
-//        }
-//    }
+
+    sonarqube {
+        properties {
+            property("sonar.java.binaries", "${buildDir}/classes")
+            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
+        }
+    }
 }
 
 tasks.withType<BootJar> {
@@ -159,6 +166,10 @@ sonarqube {
         property("sonar.organization", "yapp-github")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.sources", "src")
+        property("sonar.language", "Kotlin")
+        property("sonar.sourceEncoding", "UTF-8")
+        property("sonar.test.inclusions", "**/*Test.java")
+        property("sonar.exclusions", "**/test/**, **/Q*.kt, **/*Doc*.kt, **/resources/** ,**/*Application*.kt , **/*Config*.kt, **/*Dto*.kt, **/*Request*.kt, **/*Response*.kt ,**/*Exception*.kt ,**/*ErrorCode*.kt")
         property("sonar.java.coveragePlugin", "jacoco")
     }
 }
