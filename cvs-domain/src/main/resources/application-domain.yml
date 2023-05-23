@@ -3,13 +3,13 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mariadb://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false
-    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maxLifetime: 580000
-      maximum-pool-size: 10
+      maximum-pool-size: 20
     password: ${MYSQL_PASSWORD}
-    username: ${MYSQL_USER}
+    username: ${MYSQL_USERNAME}
   jpa:
     show-sql: ${SHOW_SQL:true}
     properties:
@@ -20,7 +20,7 @@ spring:
       ddl-auto: update
     defer-datasource-initialization: true
     open-in-view: false
-    database-platform: org.hibernate.dialect.MariaDBDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
 logging:
   level:
 #    com.zaxxer.hikari.HikariConfig: DEBUG

@@ -3,7 +3,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    implementation("mysql:mysql-connector-java:8.0.27")
     api("com.h2database:h2")
 }
 
