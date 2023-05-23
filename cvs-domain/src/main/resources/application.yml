@@ -3,11 +3,11 @@ spring:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mariadb://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false
+    driver-class-name: org.mariadb.jdbc.Driver
     hikari:
       maxLifetime: 580000
-      maximum-pool-size: 20
+      maximum-pool-size: 10
     password: ${MYSQL_PASSWORD}
     username: ${MYSQL_USERNAME}
   jpa:
@@ -20,7 +20,7 @@ spring:
       ddl-auto: update
     defer-datasource-initialization: true
     open-in-view: false
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MariaDBDialect
 logging:
   level:
 #    com.zaxxer.hikari.HikariConfig: DEBUG
@@ -28,15 +28,6 @@ logging:
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
 ---
-spring:
-  config:
-    activate:
-      on-profile: test
-  datasource:
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=false;MODE=MYSQL
-  sql:
-    init:
-      mode: never
 #spring:
 #  config:
 #    activate:
