@@ -17,6 +17,7 @@ buildscript {
     }
 }
 
+
 allprojects {
     repositories {
         mavenCentral()
@@ -28,7 +29,6 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         target ("**/*.kt")
         ktlint("0.48.0")
     }
-
     // ktlint -> no wild card import 구문 관련 설정
     // https://blog.leocat.kr/notes/2020/12/14/intellij-avoid-wildcard-imports-in-kotlin-with-intellij
 }
@@ -69,6 +69,14 @@ subprojects {
 
     repositories {
         mavenCentral()
+    }
+
+    sonarqube {
+        properties {
+            // 각 프로젝트마다 적용해야하는부분.
+            property("sonar.java.binaries", "${buildDir}/classes")
+            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
+        }
     }
 
     tasks.withType<KotlinCompile> {
