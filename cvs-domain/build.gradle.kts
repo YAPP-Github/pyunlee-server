@@ -4,6 +4,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    api("com.h2database:h2")
 }
 
 tasks.getByName<BootJar>("bootJar") {

@@ -168,15 +168,3 @@ sonarqube {
         property("sonar.java.coveragePlugin", "jacoco")
     }
 }
-
-val testCoverage by tasks.registering {
-    group = "verification"
-    description = "Runs the unit tests with coverage"
-
-    dependsOn(":test",
-            ":jacocoTestReport",
-            ":jacocoTestCoverageVerification")
-
-    tasks["jacocoTestReport"].mustRunAfter(tasks["test"])
-    tasks["jacocoTestCoverageVerification"].mustRunAfter(tasks["jacocoTestReport"])
-}
