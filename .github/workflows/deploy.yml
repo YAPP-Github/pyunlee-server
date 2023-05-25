@@ -66,11 +66,10 @@ jobs:
           key: ${{ secrets.REMOTE_SSH_KEY }}
           port: ${{ secrets.REMOTE_SSH_PORT }}
           script: |
-            touch .env
-            echo "${{ secrets.ENV_VARS }}" >> .env
+            sudo touch .env
+            echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker stop $(docker ps -a -q)
             docker run --restart=unless-stopped -d -p 8080:8080 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker rm $(docker ps --filter 'status=exited' -a -q)
             docker image prune -a -f
-
