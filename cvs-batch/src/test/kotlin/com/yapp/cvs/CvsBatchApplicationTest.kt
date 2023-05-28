@@ -1,4 +1,4 @@
-package com.yapp.cvs.batch
+package com.yapp.cvs
 
 import org.junit.Test
 import org.springframework.boot.test.context.SpringBootTest

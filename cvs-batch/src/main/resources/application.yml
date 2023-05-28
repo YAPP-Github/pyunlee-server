@@ -4,4 +4,6 @@ spring:
       - domain
   batch:
     jdbc:
-      initialize-schema: never  # never : 배치 메타 정보 테이블 생성하지 않는다
+      # never : 배치 메타 정보 테이블 생성하지 않는다
+      # always : 생성
+      initialize-schema: always
