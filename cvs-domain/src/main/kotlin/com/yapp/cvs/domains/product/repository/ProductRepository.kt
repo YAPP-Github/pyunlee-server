@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ProductRepository : JpaRepository<Product, Long> {
     fun findByCodeOrName(
-            code: String,
-            name: String
-    ): Boolean
+        code: String,
+        name: String,
+    ): Product?
 }

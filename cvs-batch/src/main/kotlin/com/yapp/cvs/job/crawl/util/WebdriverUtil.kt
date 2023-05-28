@@ -9,7 +9,7 @@ object WebdriverUtil {
     fun initializeWebdriver(): ChromeDriver {
         WebDriverManager.chromedriver().setup()
         val chromeOptions = ChromeOptions()
-        chromeOptions.setHeadless(true)
+//        chromeOptions.setHeadless(true)
         chromeOptions.addArguments("--remote-allow-origins=*")
         chromeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage")
         val driver = ChromeDriver(chromeOptions)

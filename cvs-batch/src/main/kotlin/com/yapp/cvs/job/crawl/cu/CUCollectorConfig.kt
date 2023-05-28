@@ -1,5 +1,6 @@
 package com.yapp.cvs.job.crawl.cu
 
+import com.yapp.cvs.domains.product.ProductService
 import com.yapp.cvs.job.config.BatchConfig
 import com.yapp.cvs.job.crawl.ProductCollectorService
 import org.springframework.batch.core.Job
@@ -25,7 +26,7 @@ class CUCollectorConfig(
     private val jobBuilderFactory: JobBuilderFactory,
     private val jobRepository: JobRepository,
     private val stepBuilderFactory: StepBuilderFactory,
-//        private val scrappingResultService: ScrappingResultService // 저장할 도메인 서비스 지정
+    private val productService: ProductService,
 ) {
     companion object {
         const val JOB_NAME = "cu-collect-job"
@@ -58,6 +59,6 @@ class CUCollectorConfig(
 
     @Bean
     fun cuCollectorService(): ProductCollectorService = CUCollectorService(
-//            scrappingResultService = scrappingResultService,
+        productService = productService,
     )
 }

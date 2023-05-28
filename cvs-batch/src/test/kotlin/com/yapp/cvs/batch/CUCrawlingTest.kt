@@ -35,30 +35,30 @@ class CUCrawlingTest {
             driver.get("https://cu.bgfretail.com/product/product.do?category=product&depth2=4&depth3=1")
 
 //            ProductCategory.values().forEach {category ->
-                setCategoryTo(category = ProductCategory.DIARY)
-                expandAllProductPage()
+            setCategoryTo(category = ProductCategory.DIARY)
+            expandAllProductPage()
 
-                val items = collectProductItems(category = ProductCategory.DIARY)
-                items.forEach {
-                    println("상품명 : ${it.name}")
-                    println("가격 : ${it.price}")
-                    println("이미지 : ${it.imageUrl}")
-                    println("이벤트 : ${it.productEventType}")
-                    println("신상품유무 : ${it.isNew}")
-                    println("카테고리 : ${it.category.kr}")
-                    println("유통코드 : ${it.code}")
-                    println("=================================")
-                }
+            val items = collectProductItems(category = ProductCategory.DIARY)
+            items.forEach {
+                println("상품명 : ${it.name}")
+                println("가격 : ${it.price}")
+                println("이미지 : ${it.imageUrl}")
+                println("이벤트 : ${it.productEventType}")
+                println("신상품유무 : ${it.isNew}")
+                println("카테고리 : ${it.category.kr}")
+                println("유통코드 : ${it.code}")
+                println("=================================")
+            }
 
-                val invalidItems = items.filter {
-                    try {
-                        it.validate()
-                        false
-                    } catch (e: Exception) {
-                        true
-                    }
+            val invalidItems = items.filter {
+                try {
+                    it.validate()
+                    false
+                } catch (e: Exception) {
+                    true
                 }
-                println("invalid items: $invalidItems")
+            }
+            println("invalid items: $invalidItems")
 //            }
         } finally {
             driver.quit()
@@ -152,19 +152,19 @@ class CUCrawlingTest {
 
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
         return driver.findElements(By.cssSelector("#dataTable > div.prodListWrap"))
-                .flatMap { wrapper ->
-                    wrapper.findElements(By.cssSelector("ul > li"))
-                            .map {
-                                ProductCollectorDto(
-                                        it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.name > p")).text,
-                                        it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text.replace(Regex("[,원\\s]"), "").toBigDecimal(),
-                                        it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img")).getAttribute("src"),
-                                        ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
-                                        it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
-                                        category,
-                                        pattern.find(it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img")).getAttribute("src"))?.value,
-                                )
-                            }
-                }
+            .flatMap { wrapper ->
+                wrapper.findElements(By.cssSelector("ul > li"))
+                    .map {
+                        ProductCollectorDto(
+                            it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.name > p")).text,
+                            it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text.replace(Regex("[,원\\s]"), "").toBigDecimal(),
+                            it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img")).getAttribute("src"),
+                            ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
+                            it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
+                            category,
+                            pattern.find(it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img")).getAttribute("src"))?.value,
+                        )
+                    }
+            }
     }
 }

@@ -17,15 +17,14 @@ import javax.persistence.Table
 class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long = 0L,
+    val id: Long = 0L,
     var name: String,
-    var price: Int,
-    val imageUrl: String,
+    var price: Int?,
+    var imageUrl: String?,
     @Enumerated(EnumType.STRING)
-    val productEventType: ProductEventType,
-    val isNew: Boolean,
+    var productEventType: ProductEventType?,
+    var isNew: Boolean?,
     @Enumerated(EnumType.STRING)
-    val category: ProductCategory,
+    var category: ProductCategory?,
     val code: String,
-    val referenceUrl: String? = null,
 ) : BaseTimeEntity()

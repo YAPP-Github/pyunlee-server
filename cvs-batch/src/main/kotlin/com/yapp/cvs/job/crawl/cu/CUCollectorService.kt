@@ -1,11 +1,13 @@
 package com.yapp.cvs.job.crawl.cu
 
+import com.yapp.cvs.domains.product.ProductService
 import com.yapp.cvs.domains.product.entity.ProductCategory
 import com.yapp.cvs.domains.product.entity.ProductEventType
-import com.yapp.cvs.job.crawl.ProductCollectorService
+import com.yapp.cvs.domains.product.model.vo.ProductCollectionVo
 import com.yapp.cvs.job.crawl.ProductCollectorDto
-import com.yapp.cvs.job.crawl.util.WebdriverUtil
+import com.yapp.cvs.job.crawl.ProductCollectorService
 import com.yapp.cvs.job.crawl.cu.CUCategoryInstruction.Companion.setCategoryTo
+import com.yapp.cvs.job.crawl.util.WebdriverUtil
 import org.openqa.selenium.By
 import org.openqa.selenium.InvalidElementStateException
 import org.openqa.selenium.NoSuchElementException
@@ -13,10 +15,9 @@ import org.openqa.selenium.StaleElementReferenceException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.time.Duration
-import java.time.LocalDate
 
 class CUCollectorService(
-//        private val scrappingResultService: ScrappingResultService, // todo : 내 도메인으로 변경
+    private val productService: ProductService,
 ) : ProductCollectorService {
     private val driver = WebdriverUtil.initializeWebdriver()
 
@@ -25,39 +26,58 @@ class CUCollectorService(
             driver.get("https://cu.bgfretail.com/product/product.do?category=product&depth2=4&depth3=1")
             // 카테고리 설정
             val productItems = mutableListOf<ProductCollectorDto>()
-            ProductCategory.values().forEach {
-                setCategoryTo(category = it, driver = driver)
-                expandAllProductPage()
-                productItems.addAll(collect(category = it))
-            }
+//            ProductCategory.values().forEach {
+            setCategoryTo(category = ProductCategory.DIARY, driver = driver)
+            expandAllProductPage()
+            productItems.addAll(collect(category = ProductCategory.DIARY))
+//            }
             return productItems
         } finally {
             driver.quit()
         }
     }
 
+    override fun saveAll(productCollections: List<ProductCollectorDto>) {
+        productCollections.forEach {
+            productService.save(
+                ProductCollectionVo(
+                    name = it.name ?: "",
+                    price = it.price?.toInt() ?: 0,
+                    imageUrl = it.imageUrl,
+                    productEventType = it.productEventType,
+                    isNew = it.isNew ?: false,
+                    code = it.code ?: "",
+                    category = it.category,
+                ),
+            )
+            println(it.toString())
+        }
+    }
+
     private fun collect(category: ProductCategory): List<ProductCollectorDto> {
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
         return driver.findElements(By.cssSelector("#dataTable > div.prodListWrap"))
-                .flatMap { wrapper ->
-                    wrapper.findElements(By.cssSelector("ul > li"))
-                            .mapNotNull {
-                                ProductCollectorDto(
-                                        name = it.findElement(By.cssSelector("a > div.prod_wrap > div.prod_text > div.name")).text,
-                                        price = it.findElement(By.cssSelector("a > div.prod_wrap > div.prod_text > div.price")).text.replace(
-                                                Regex("[,원\\s]"),
-                                                "",
-                                        ).toBigDecimal(),
-                                        imageUrl = it.findElement(By.cssSelector("a > div.prod_wrap > div.prod_img > img"))
-                                                .getAttribute("src"),
-                                        productEventType = ProductEventType.parse(it.findElement(By.cssSelector("a > div.badge > span")).text.trim()),
-                                        isNew = false,
-                                        category = category,
-                                        code = parseProductCode(it.findElement(By.cssSelector("a > div.prod_wrap > div.prod_img > img"))
-                                                .getAttribute("src"))
-                                )
-                            }
-                }
+            .flatMap { wrapper ->
+                wrapper.findElements(By.cssSelector("ul > li"))
+                    .mapNotNull {
+                        ProductCollectorDto(
+                            name = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.name > p")).text,
+                            price = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text.replace(
+                                Regex("[,원\\s]"),
+                                "",
+                            ).toBigDecimal(),
+                            imageUrl = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
+                                .getAttribute("src"),
+                            productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
+                            isNew = it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
+                            category = category,
+                            code = parseProductCode(
+                                it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
+                                    .getAttribute("src"),
+                            ),
+                        )
+                    }
+            }
     }
 
     private fun expandAllProductPage() {
@@ -88,31 +108,8 @@ class CUCollectorService(
         return PRODUCT_CODE_PATTERN.find(imageSrc)?.value
     }
 
-    override fun saveAll(discountedItems: List<ProductCollectorDto>) {
-        val now = LocalDate.now()
-        discountedItems.forEach {
-//            try {
-//                scrappingResultService.create(
-//                        scrappingResultCreateVo = ScrappingResultCreateVo(
-//                                name = it.name ?: "",
-//                                price = it.price ?: BigDecimal.ZERO,
-//                                imageUrl = it.imageUrl,
-//                                discountType = it.discountType,
-//                                storeType = StoreType.CU,
-//                                referenceDate = now,
-//                                referenceUrl = it.referenceUrl,
-//                        )
-//                )
-//            } catch (e: ScrappingResultDuplicatedException) {
-//                log.warn("scrappingResult is duplicated", e)
-//            }
-            println(it.toString()) // debug
-        }
-    }
-
     companion object {
         private val log: Logger = LoggerFactory.getLogger(CUCollectorService::class.java)
-        private val LINK_PATTERN = Regex("javascript:view\\((\\d+)\\);")
         private val PRODUCT_CODE_PATTERN = Regex("\\b\\d+\\b")
     }
 }

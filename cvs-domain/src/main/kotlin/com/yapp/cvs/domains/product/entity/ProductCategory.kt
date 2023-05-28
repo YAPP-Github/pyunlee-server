@@ -8,8 +8,9 @@ import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.
 
 @Suppress("SpellCheckingInspection")
 enum class ProductCategory(
-        val kr: String,
-        val superCategory: ProductSuperCategory) {
+    val kr: String,
+    val superCategory: ProductSuperCategory,
+) {
     DOSIRAK("도시락", SIMPLE_MEAL),
     SANDWICH("샌드위치/햄버거", SIMPLE_MEAL),
     GIMBAP("주먹밥/김밥", SIMPLE_MEAL),

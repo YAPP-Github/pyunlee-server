@@ -22,29 +22,30 @@ import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.
 import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.SIMPLE_MEAL
 import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.SNACK
 import com.yapp.cvs.domains.product.entity.ProductCategory.SANDWICH
-import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.chrome.ChromeDriver
 
 class CUCategoryInstruction {
     companion object {
         fun setCategoryTo(category: ProductCategory, driver: ChromeDriver) {
-            setMainCategoryOf(category, driver)
             val jsExecutor = driver as JavascriptExecutor
+            val mainCategoryInstruction = getMainCategoryInstruction(category)
             val subCategoryInstruction = getSubCategoryInstruction(category)
+
+            jsExecutor.executeScript(mainCategoryInstruction)
+            Thread.sleep(2000)
             jsExecutor.executeScript(subCategoryInstruction)
         }
 
-        private fun setMainCategoryOf(category: ProductCategory, driver: ChromeDriver) {
-            val depth = when (category.superCategory) {
-                SIMPLE_MEAL -> 1
-                COOK -> 2
-                SNACK -> 3
-                ProductCategory.ProductSuperCategory.ICE_CREAM -> 4
-                FOOD -> 5
-                BEVERAGE -> 6
+        private fun getMainCategoryInstruction(category: ProductCategory): String {
+            return when (category.superCategory) {
+                ProductCategory.ProductSuperCategory.SIMPLE_MEAL -> "gomaincategory('10', 1)"
+                ProductCategory.ProductSuperCategory.COOK -> "gomaincategory('20', 2)"
+                ProductCategory.ProductSuperCategory.SNACK -> "gomaincategory('30', 3)"
+                ProductCategory.ProductSuperCategory.ICE_CREAM -> "gomaincategory('40', 4)"
+                ProductCategory.ProductSuperCategory.FOOD -> "gomaincategory('50', 5)"
+                ProductCategory.ProductSuperCategory.BEVERAGE -> "gomaincategory('60', 6)"
             }
-            driver.findElement(By.cssSelector("#contents > div.depth3Lnb > ul > li.prodInfo_0$depth > a")).click()
         }
 
         private fun getSubCategoryInstruction(category: ProductCategory): String {
