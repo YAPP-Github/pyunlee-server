@@ -3,6 +3,7 @@ package com.yapp.cvs.job.crawl.cu
 import com.yapp.cvs.domains.product.ProductService
 import com.yapp.cvs.job.config.BatchConfig
 import com.yapp.cvs.job.crawl.ProductCollectorService
+import com.yapp.cvs.job.crawl.instruction.CUWebdriverInstruction
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -27,6 +28,7 @@ class CUCollectorConfig(
     private val jobRepository: JobRepository,
     private val stepBuilderFactory: StepBuilderFactory,
     private val productService: ProductService,
+    private val webdriverInstruction: CUWebdriverInstruction,
 ) {
     companion object {
         const val JOB_NAME = "cu-collect-job"
@@ -60,5 +62,6 @@ class CUCollectorConfig(
     @Bean
     fun cuCollectorService(): ProductCollectorService = CUCollectorService(
         productService = productService,
+        webdriverInstruction = webdriverInstruction,
     )
 }

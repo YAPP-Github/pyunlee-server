@@ -32,6 +32,8 @@ enum class ProductCategory(
     DRINK("음료", BEVERAGE),
     ICED_DRINK("아이스드링크", BEVERAGE),
     DIARY("유제품", BEVERAGE),
+
+    UNKNOWN("알수없음", ProductSuperCategory.UNKNOWN),
     ;
 
     enum class ProductSuperCategory(val kr: String) {
@@ -41,5 +43,6 @@ enum class ProductCategory(
         ICE_CREAM("아이스크림"),
         FOOD("식품"),
         BEVERAGE("음료"),
+        UNKNOWN("알수없음"),
     }
 }
