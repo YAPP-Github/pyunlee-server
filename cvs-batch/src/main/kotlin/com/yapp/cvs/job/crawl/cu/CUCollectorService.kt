@@ -2,31 +2,26 @@ package com.yapp.cvs.job.crawl.cu
 
 import com.yapp.cvs.domains.product.ProductService
 import com.yapp.cvs.domains.product.entity.ProductCategory
+import com.yapp.cvs.domains.product.entity.ProductCategory.UNKNOWN
 import com.yapp.cvs.domains.product.model.vo.ProductCollectionVo
 import com.yapp.cvs.job.crawl.ProductCollectorDto
 import com.yapp.cvs.job.crawl.ProductCollectorService
 import com.yapp.cvs.job.crawl.ProductCollectorService.Companion.log
-import com.yapp.cvs.job.crawl.instruction.WebdriverInstruction
+import com.yapp.cvs.job.crawl.WebdriverHandler
 
 class CUCollectorService(
     private val productService: ProductService,
-    private val webdriverInstruction: WebdriverInstruction,
+    private val webdriverInstruction: WebdriverHandler,
 ) : ProductCollectorService {
 
-    override fun getCollection(): List<ProductCollectorDto> {
+    override fun getCollection(category: ProductCategory?): List<ProductCollectorDto> {
         val driver = webdriverInstruction.initializeWebdriver()
         try {
             driver.get("https://cu.bgfretail.com/product/product.do?category=product&depth2=4&depth3=1")
-
-            val productItems = mutableListOf<ProductCollectorDto>()
-            ProductCategory.values().forEach {
-                log.info("Target Category: ${it.kr}")
-                webdriverInstruction.setCategoryTo(category = it, driver = driver)
-                webdriverInstruction.expandAllProductPage(driver = driver)
-                val collection = webdriverInstruction.collect(category = it, driver = driver)
-                productItems.addAll(collection)
-            }
-            return productItems
+            log.info("Target Category: ${(category ?: UNKNOWN).kr}")
+            webdriverInstruction.setCategoryTo(category = category, driver = driver)
+            webdriverInstruction.expandAllProductPage(driver = driver)
+            return webdriverInstruction.collect(category = category, driver = driver)
         } finally {
             driver.quit()
         }

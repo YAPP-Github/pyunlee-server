@@ -1,5 +1,6 @@
 package com.yapp.cvs.job.crawl.cu
 
+import com.yapp.cvs.domains.product.entity.ProductCategory
 import com.yapp.cvs.job.crawl.ProductCollectorService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -12,9 +13,11 @@ class CUCollectorTasklet(
     private val cuCollectorService: ProductCollectorService,
 ) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
-        val products = cuCollectorService.getCollection()
-        cuCollectorService.validateAll(products)
-        cuCollectorService.saveAll(products)
+        ProductCategory.values().forEach {
+            val products = cuCollectorService.getCollection(it)
+            cuCollectorService.validateAll(products)
+            cuCollectorService.saveAll(products)
+        }
         return RepeatStatus.FINISHED
     }
 

@@ -1,13 +1,12 @@
-package com.yapp.cvs.job.crawl.instruction
+package com.yapp.cvs.job.crawl
 
 import com.yapp.cvs.domains.product.entity.ProductCategory
-import com.yapp.cvs.job.crawl.ProductCollectorDto
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import java.time.Duration
 
-interface WebdriverInstruction {
+interface WebdriverHandler {
     fun initializeWebdriver(): ChromeDriver {
         WebDriverManager.chromedriver().setup()
         val chromeOptions = ChromeOptions()
@@ -19,7 +18,7 @@ interface WebdriverInstruction {
         return driver
     }
 
-    fun setCategoryTo(category: ProductCategory?, driver: ChromeDriver)
+    fun setCategoryTo(category: ProductCategory?, driver: ChromeDriver) {}
     fun expandAllProductPage(driver: ChromeDriver)
-    fun collect(category: ProductCategory, driver: ChromeDriver): List<ProductCollectorDto>
+    fun collect(category: ProductCategory?, driver: ChromeDriver): List<ProductCollectorDto>
 }

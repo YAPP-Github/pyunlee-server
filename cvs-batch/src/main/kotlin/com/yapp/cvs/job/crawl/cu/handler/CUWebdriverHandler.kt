@@ -1,9 +1,13 @@
-package com.yapp.cvs.job.crawl.instruction
+package com.yapp.cvs.job.crawl.cu.handler
 
 import com.yapp.cvs.domains.product.entity.ProductCategory
+import com.yapp.cvs.domains.product.entity.ProductCategory.UNKNOWN
 import com.yapp.cvs.domains.product.entity.ProductEventType
 import com.yapp.cvs.job.crawl.ProductCollectorDto
+import com.yapp.cvs.job.crawl.WebdriverHandler
 import com.yapp.cvs.job.crawl.cu.CUCollectorService
+import com.yapp.cvs.job.crawl.cu.handler.CUCategoryScriptConverter.getMainCategoryScript
+import com.yapp.cvs.job.crawl.cu.handler.CUCategoryScriptConverter.getSubCategoryScript
 import org.openqa.selenium.By
 import org.openqa.selenium.InvalidElementStateException
 import org.openqa.selenium.JavascriptExecutor
@@ -16,12 +20,12 @@ import org.springframework.stereotype.Component
 import java.time.Duration
 
 @Component
-class CUWebdriverInstruction : WebdriverInstruction {
+class CUWebdriverHandler : WebdriverHandler {
     override fun setCategoryTo(category: ProductCategory?, driver: ChromeDriver) {
         category ?: return
         val jsExecutor = driver as JavascriptExecutor
-        val mainCategoryInstruction = getMainCategoryInstruction(category)
-        val subCategoryInstruction = getSubCategoryInstruction(category)
+        val mainCategoryInstruction = getMainCategoryScript(category)
+        val subCategoryInstruction = getSubCategoryScript(category)
 
         jsExecutor.executeScript(mainCategoryInstruction)
         Thread.sleep(2000)
@@ -37,13 +41,11 @@ class CUWebdriverInstruction : WebdriverInstruction {
             } catch (_: StaleElementReferenceException) {
             } catch (e: NoSuchElementException) {
                 exceptionCount++
-                println("retry... $exceptionCount")
                 if (exceptionCount >= 5) {
                     log.info("더 보기 버튼이 없음")
                 }
             } catch (e: Exception) {
                 exceptionCount++
-                println("retry... $exceptionCount")
                 if (exceptionCount >= 5) {
                     log.error("알 수 없는 에러. ${e.message}")
                 }
@@ -52,7 +54,7 @@ class CUWebdriverInstruction : WebdriverInstruction {
         }
     }
 
-    override fun collect(category: ProductCategory, driver: ChromeDriver): List<ProductCollectorDto> {
+    override fun collect(category: ProductCategory?, driver: ChromeDriver): List<ProductCollectorDto> {
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
         return driver.findElements(By.cssSelector("#dataTable > div.prodListWrap"))
             .flatMap { wrapper ->
@@ -68,7 +70,7 @@ class CUWebdriverInstruction : WebdriverInstruction {
                                 .getAttribute("src"),
                             productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
                             isNew = it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
-                            category = category,
+                            category = category ?: UNKNOWN,
                             code = parseProductCode(
                                 it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
                                     .getAttribute("src"),
@@ -76,46 +78,6 @@ class CUWebdriverInstruction : WebdriverInstruction {
                         )
                     }
             }
-    }
-
-    private fun getMainCategoryInstruction(category: ProductCategory): String {
-        return when (category.superCategory) {
-            ProductCategory.ProductSuperCategory.SIMPLE_MEAL -> "gomaincategory('10', 1)"
-            ProductCategory.ProductSuperCategory.COOK -> "gomaincategory('20', 2)"
-            ProductCategory.ProductSuperCategory.SNACK -> "gomaincategory('30', 3)"
-            ProductCategory.ProductSuperCategory.ICE_CREAM -> "gomaincategory('40', 4)"
-            ProductCategory.ProductSuperCategory.FOOD -> "gomaincategory('50', 5)"
-            ProductCategory.ProductSuperCategory.BEVERAGE -> "gomaincategory('60', 6)"
-            ProductCategory.ProductSuperCategory.UNKNOWN -> ""
-        }
-    }
-
-    private fun getSubCategoryInstruction(category: ProductCategory): String {
-        return when (category) {
-            ProductCategory.DOSIRAK -> "gosub('1', 2)"
-            ProductCategory.SANDWICH -> "gosub('3', 3)"
-            ProductCategory.GIMBAP -> "gosub('2', 4)"
-
-            ProductCategory.FRIES -> "gosub('4', 2)"
-            ProductCategory.BAKERY -> "gosub('5', 3)"
-            ProductCategory.INSTANT_COFFEE -> "gosub('6', 4)"
-
-            ProductCategory.BISCUIT -> "gosub('71', 2)"
-            ProductCategory.DESSERT -> "gosub('7', 3)"
-            ProductCategory.CANDY -> "gosub('8', 4)"
-
-            ProductCategory.ICE_CREAM -> "gosub('9', 2)"
-
-            ProductCategory.INSTANT_MEAL -> "gosub('12', 2)"
-            ProductCategory.MUNCHIES -> "gosub('10', 3)"
-            ProductCategory.INGREDIENT -> "gosub('11', 4)"
-
-            ProductCategory.DRINK -> "gosub('13', 2)"
-            ProductCategory.ICED_DRINK -> "gosub('14', 3)"
-            ProductCategory.DIARY -> "gosub('15', 4)"
-
-            ProductCategory.UNKNOWN -> ""
-        }
     }
 
     private fun parseProductCode(imageSrc: String): String? {
