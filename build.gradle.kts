@@ -13,6 +13,20 @@ plugins {
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
+sonarqube {
+    properties {
+        property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE")
+        property("sonar.organization", "yapp-github")
+        property("sonar.host.url", "https://sonarcloud.io")
+//        property("sonar.sources", "src")
+//        property("sonar.language", "Kotlin")
+//        property("sonar.sourceEncoding", "UTF-8")
+//        property("sonar.test.inclusions", "**/*Test.java")
+//        property("sonar.exclusions", "**/test/**, **/Q*.kt, **/*Doc*.kt, **/resources/** ,**/*Application*.kt , **/*Config*.kt, **/*Dto*.kt, **/*Request*.kt, **/*Response*.kt ,**/*Exception*.kt ,**/*ErrorCode*.kt")
+//        property("sonar.java.coveragePlugin", "jacoco")
+    }
+}
+
 allprojects {
     group = "com.yapp"
     version = "0.0.1-SNAPSHOT"
@@ -110,18 +124,5 @@ subprojects {
             property("sonar.java.binaries", "${buildDir}/classes")
             property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
         }
-    }
-}
-
-sonarqube {
-    properties {
-        property("sonar.projectKey", "YAPP-Github_22nd-Android-Team-1-BE")
-        property("sonar.organization", "yapp-github")
-        property("sonar.host.url", "https://sonarcloud.io")
-        property("sonar.sources", "src")
-        property("sonar.language", "Kotlin")
-        property("sonar.sourceEncoding", "UTF-8")
-        property("sonar.test.inclusions", "**/*Test.java")
-        property("sonar.exclusions", "**/test/**, **/Q*.kt, **/*Doc*.kt, **/resources/** ,**/*Application*.kt , **/*Config*.kt, **/*Dto*.kt, **/*Request*.kt, **/*Response*.kt ,**/*Exception*.kt ,**/*ErrorCode*.kt")
     }
 }
