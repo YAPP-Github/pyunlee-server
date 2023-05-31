@@ -11,17 +11,29 @@ plugins {
     kotlin("plugin.jpa") version "1.6.21"
 }
 
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 allprojects {
+    group = "com.yapp"
+    version = "0.0.1-SNAPSHOT"
+
     repositories {
         mavenCentral()
     }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-Xjsr305=strict")
+            jvmTarget = "17"
+        }
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
+
+    apply(plugin = "org.jetbrains.kotlin.plugin.spring" )
+    apply(plugin = "org.jetbrains.kotlin.plugin.jpa" )
 }
 
 configure<com.diffplug.gradle.spotless.SpotlessExtension> {
@@ -34,22 +46,18 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
 }
 
 subprojects {
+    apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jetbrains.kotlin.plugin.spring")
     apply(plugin = "org.springframework.boot")
     apply(plugin = "io.spring.dependency-management")
-    apply(plugin = "java")
-    apply(plugin = "kotlin")
-    apply(plugin = "kotlin-kapt")
-    apply(plugin = "kotlin-jpa")
-    apply(plugin = "kotlin-spring")
-    apply(plugin = "org.sonarqube")
-    apply(plugin = "jacoco")
+    apply(plugin = "jacoco" )
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        runtimeOnly("io.github.microutils:kotlin-logging-jvm:3.0.5")//logger
+        runtimeOnly("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
@@ -57,41 +65,11 @@ subprojects {
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     }
 
-    the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().apply {
-        imports {
-            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-        }
-    }
-
-    group = "com.yapp"
-    version = "0.0.1-SNAPSHOT"
-    java.sourceCompatibility = JavaVersion.VERSION_17
-
-    repositories {
-        mavenCentral()
-    }
-
-    sonarqube {
-        properties {
-            // 각 프로젝트마다 적용해야하는부분.
-            property("sonar.java.binaries", "${buildDir}/classes")
-            property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
-        }
-    }
-
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs = listOf("-Xjsr305=strict")
-            jvmTarget = "17"
-        }
-    }
-
     tasks.getByName<Jar>("jar") {
         enabled = false
     }
 
     tasks.test {
-        useJUnitPlatform()
         finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
     }
 
@@ -127,40 +105,12 @@ subprojects {
         )
     }
 
-    tasks.jacocoTestCoverageVerification {
-        violationRules {
-            rule {
-                element = "CLASS"
-
-                limit {
-                    counter = "BRANCH"
-                    value = "COVEREDRATIO"
-                    minimum = "0.0".toBigDecimal()
-                }
-                excludes = listOf(
-                    "**/*Application*",
-                    "**/*Config*",
-                    "**/*Dto*",
-                    "**/*Request*",
-                    "**/*Response*",
-                    "**/*Interceptor*",
-                    "**/*Exception*",
-                    *qDomains.toTypedArray()
-                )
-            }
-        }
-    }
-
     sonarqube {
         properties {
             property("sonar.java.binaries", "${buildDir}/classes")
             property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco.xml")
         }
     }
-}
-
-jacoco {
-    toolVersion = "0.8.7"
 }
 
 sonarqube {
@@ -173,6 +123,5 @@ sonarqube {
         property("sonar.sourceEncoding", "UTF-8")
         property("sonar.test.inclusions", "**/*Test.java")
         property("sonar.exclusions", "**/test/**, **/Q*.kt, **/*Doc*.kt, **/resources/** ,**/*Application*.kt , **/*Config*.kt, **/*Dto*.kt, **/*Request*.kt, **/*Response*.kt ,**/*Exception*.kt ,**/*ErrorCode*.kt")
-        property("sonar.java.coveragePlugin", "jacoco")
     }
 }
