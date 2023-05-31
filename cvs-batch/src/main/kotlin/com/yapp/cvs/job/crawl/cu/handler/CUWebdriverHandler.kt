@@ -89,6 +89,6 @@ class CUWebdriverHandler : WebdriverHandler {
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(CUCollectorService::class.java)
-        private val PRODUCT_CODE_PATTERN = Regex("\\b\\d+\\b")
+        private val PRODUCT_CODE_PATTERN = Regex("\\b\\d{13}\\b")
     }
 }
