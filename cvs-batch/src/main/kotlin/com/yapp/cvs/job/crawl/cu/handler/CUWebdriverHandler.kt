@@ -66,7 +66,7 @@ class CUWebdriverHandler : WebdriverHandler {
                                 .getAttribute("src"),
                             productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
                             isNew = it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
-                            category = category ?: UNKNOWN,
+                            category = category,
                             code = parseProductCode(
                                 it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
                                     .getAttribute("src"),
@@ -83,12 +83,13 @@ class CUWebdriverHandler : WebdriverHandler {
         ).toIntOrNull() ?: 0
     }
 
+    /** 주어진 URL 에서 13자리 숫자(유통코드)를 정규식으로 찾습니다 */
     private fun parseProductCode(imageSrc: String): String? {
         return PRODUCT_CODE_PATTERN.find(imageSrc)?.value
     }
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(CUCollectorService::class.java)
-        private val PRODUCT_CODE_PATTERN = Regex("\\b\\d{13}\\b")
+        private val PRODUCT_CODE_PATTERN = Regex("\\d{13}")
     }
 }
