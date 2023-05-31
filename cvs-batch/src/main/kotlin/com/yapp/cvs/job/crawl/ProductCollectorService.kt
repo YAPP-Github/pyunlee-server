@@ -5,7 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 interface ProductCollectorService {
-    fun getCollection(category: ProductCategory?): List<ProductCollectorDto>
+    fun getCollection(category: ProductCategory): List<ProductCollectorDto>
     fun saveAll(productCollections: List<ProductCollectorDto>)
     fun validateAll(productCollections: List<ProductCollectorDto>) {
         val invalidItems = productCollections.filter {

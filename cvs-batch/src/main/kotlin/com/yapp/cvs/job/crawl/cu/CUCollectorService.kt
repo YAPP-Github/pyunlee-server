@@ -2,7 +2,6 @@ package com.yapp.cvs.job.crawl.cu
 
 import com.yapp.cvs.domains.product.ProductService
 import com.yapp.cvs.domains.product.entity.ProductCategory
-import com.yapp.cvs.domains.product.entity.ProductCategory.UNKNOWN
 import com.yapp.cvs.domains.product.model.vo.ProductCollectionVo
 import com.yapp.cvs.job.crawl.ProductCollectorDto
 import com.yapp.cvs.job.crawl.ProductCollectorService
@@ -14,11 +13,11 @@ class CUCollectorService(
     private val webdriverInstruction: WebdriverHandler,
 ) : ProductCollectorService {
 
-    override fun getCollection(category: ProductCategory?): List<ProductCollectorDto> {
+    override fun getCollection(category: ProductCategory): List<ProductCollectorDto> {
+        log.info("Target Category: ${(category).kr}")
         val driver = webdriverInstruction.initializeWebdriver()
         try {
             driver.get("https://cu.bgfretail.com/product/product.do?category=product&depth2=4&depth3=1")
-            log.info("Target Category: ${(category ?: UNKNOWN).kr}")
             webdriverInstruction.setCategoryTo(category = category, driver = driver)
             webdriverInstruction.expandAllProductPage(driver = driver)
             return webdriverInstruction.collect(category = category, driver = driver)
@@ -32,7 +31,7 @@ class CUCollectorService(
             productService.save(
                 ProductCollectionVo(
                     name = it.name ?: "",
-                    price = it.price?.toInt() ?: 0,
+                    price = it.price ?: 0,
                     imageUrl = it.imageUrl,
                     productEventType = it.productEventType,
                     isNew = it.isNew ?: false,
@@ -40,7 +39,6 @@ class CUCollectorService(
                     category = it.category,
                 ),
             )
-            println(it.toString())
         }
     }
 }

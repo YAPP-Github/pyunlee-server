@@ -12,7 +12,7 @@ object CUCategoryScriptConverter {
             ProductCategory.ProductSuperCategory.ICE_CREAM -> "gomaincategory('40', 4)"
             ProductCategory.ProductSuperCategory.FOOD -> "gomaincategory('50', 5)"
             ProductCategory.ProductSuperCategory.BEVERAGE -> "gomaincategory('60', 6)"
-            ProductCategory.ProductSuperCategory.UNKNOWN -> ""
+            else -> ""
         }
     }
 
@@ -40,7 +40,7 @@ object CUCategoryScriptConverter {
             ProductCategory.ICED_DRINK -> "gosub('14', 3)"
             ProductCategory.DIARY -> "gosub('15', 4)"
 
-            ProductCategory.UNKNOWN -> ""
+            else -> ""
         }
     }
 }

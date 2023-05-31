@@ -25,8 +25,8 @@ logging:
   level:
 #    com.zaxxer.hikari.HikariConfig: DEBUG
 #    com.zaxxer.hikari: TRACE
-    org.springframework.orm.jpa: DEBUG
-    org.springframework.transaction: DEBUG
+    org.springframework.orm.jpa: ${LOGGING_LEVEL:DEBUG}
+    org.springframework.transaction: ${LOGGING_LEVEL:DEBUG}
 ---
 spring:
   config:

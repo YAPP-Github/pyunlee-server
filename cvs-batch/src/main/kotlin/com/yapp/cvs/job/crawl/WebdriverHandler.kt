@@ -18,7 +18,7 @@ interface WebdriverHandler {
         return driver
     }
 
-    fun setCategoryTo(category: ProductCategory?, driver: ChromeDriver) {}
+    fun setCategoryTo(category: ProductCategory, driver: ChromeDriver) {}
     fun expandAllProductPage(driver: ChromeDriver)
-    fun collect(category: ProductCategory?, driver: ChromeDriver): List<ProductCollectorDto>
+    fun collect(category: ProductCategory, driver: ChromeDriver): List<ProductCollectorDto>
 }

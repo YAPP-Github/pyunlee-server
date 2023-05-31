@@ -21,8 +21,7 @@ import java.time.Duration
 
 @Component
 class CUWebdriverHandler : WebdriverHandler {
-    override fun setCategoryTo(category: ProductCategory?, driver: ChromeDriver) {
-        category ?: return
+    override fun setCategoryTo(category: ProductCategory, driver: ChromeDriver) {
         val jsExecutor = driver as JavascriptExecutor
         val mainCategoryInstruction = getMainCategoryScript(category)
         val subCategoryInstruction = getSubCategoryScript(category)
@@ -54,7 +53,7 @@ class CUWebdriverHandler : WebdriverHandler {
         }
     }
 
-    override fun collect(category: ProductCategory?, driver: ChromeDriver): List<ProductCollectorDto> {
+    override fun collect(category: ProductCategory, driver: ChromeDriver): List<ProductCollectorDto> {
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
         return driver.findElements(By.cssSelector("#dataTable > div.prodListWrap"))
             .flatMap { wrapper ->
@@ -62,10 +61,7 @@ class CUWebdriverHandler : WebdriverHandler {
                     .mapNotNull {
                         ProductCollectorDto(
                             name = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.name > p")).text,
-                            price = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text.replace(
-                                Regex("[,원\\s]"),
-                                "",
-                            ).toBigDecimal(),
+                            price = parseProductPrice(it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text),
                             imageUrl = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
                                 .getAttribute("src"),
                             productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
@@ -78,6 +74,13 @@ class CUWebdriverHandler : WebdriverHandler {
                         )
                     }
             }
+    }
+
+    private fun parseProductPrice(price: String): Int {
+        return price.replace(
+            Regex("\\D+"),
+            "",
+        ).toIntOrNull() ?: 0
     }
 
     private fun parseProductCode(imageSrc: String): String? {

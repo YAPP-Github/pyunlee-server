@@ -94,6 +94,7 @@ class CUCrawlingTest {
             ProductCategory.ProductSuperCategory.ICE_CREAM -> "gomaincategory('40', 4)"
             ProductCategory.ProductSuperCategory.FOOD -> "gomaincategory('50', 5)"
             ProductCategory.ProductSuperCategory.BEVERAGE -> "gomaincategory('60', 6)"
+            ProductCategory.ProductSuperCategory.UNKNOWN -> ""
         }
     }
 
@@ -120,6 +121,8 @@ class CUCrawlingTest {
             ProductCategory.DRINK -> "gosub('13', 2)"
             ProductCategory.ICED_DRINK -> "gosub('14', 3)"
             ProductCategory.DIARY -> "gosub('15', 4)"
+
+            ProductCategory.UNKNOWN -> ""
         }
     }
 
@@ -157,7 +160,7 @@ class CUCrawlingTest {
                     .map {
                         ProductCollectorDto(
                             it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.name > p")).text,
-                            it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text.replace(Regex("[,원\\s]"), "").toBigDecimal(),
+                            it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text.replace(Regex("\\D+"), "").toIntOrNull() ?: 0,
                             it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img")).getAttribute("src"),
                             ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
                             it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
