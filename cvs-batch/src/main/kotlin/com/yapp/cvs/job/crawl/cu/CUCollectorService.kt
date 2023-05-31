@@ -13,14 +13,15 @@ class CUCollectorService(
     private val webdriverInstruction: WebdriverHandler,
 ) : ProductCollectorService {
 
-    override fun getCollection(category: ProductCategory): List<ProductCollectorDto> {
-        log.info("Target Category: ${(category).kr}")
+    override fun <T : Enum<T>> getCollection(category: T): List<ProductCollectorDto> {
+        val cuCategory = category as ProductCategory
+        log.info("Target Category: ${(cuCategory).kr}")
         val driver = webdriverInstruction.initializeWebdriver()
         try {
             driver.get("https://cu.bgfretail.com/product/product.do?category=product&depth2=4&depth3=1")
-            webdriverInstruction.setCategoryTo(category = category, driver = driver)
+            webdriverInstruction.setCategoryTo(category = cuCategory, driver = driver)
             webdriverInstruction.expandAllProductPage(driver = driver)
-            return webdriverInstruction.collect(category = category, driver = driver)
+            return webdriverInstruction.collect(category = cuCategory, driver = driver)
         } finally {
             driver.quit()
         }

@@ -1,6 +1,5 @@
 package com.yapp.cvs.job.crawl
 
-import com.yapp.cvs.domains.product.entity.ProductCategory
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -18,7 +17,8 @@ interface WebdriverHandler {
         return driver
     }
 
-    fun setCategoryTo(category: ProductCategory, driver: ChromeDriver) {}
-    fun expandAllProductPage(driver: ChromeDriver)
-    fun collect(category: ProductCategory, driver: ChromeDriver): List<ProductCollectorDto>
+    fun <T : Enum<T>>setCategoryTo(category: T, driver: ChromeDriver)
+    fun expandAllProductPage(driver: ChromeDriver) {}
+    fun setNextPage(driver: ChromeDriver) {}
+    fun <T : Enum<T>> collect(category: T, driver: ChromeDriver): List<ProductCollectorDto>
 }

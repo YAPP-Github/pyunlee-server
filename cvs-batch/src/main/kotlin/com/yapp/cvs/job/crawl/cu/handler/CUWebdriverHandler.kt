@@ -1,7 +1,6 @@
 package com.yapp.cvs.job.crawl.cu.handler
 
 import com.yapp.cvs.domains.product.entity.ProductCategory
-import com.yapp.cvs.domains.product.entity.ProductCategory.UNKNOWN
 import com.yapp.cvs.domains.product.entity.ProductEventType
 import com.yapp.cvs.job.crawl.ProductCollectorDto
 import com.yapp.cvs.job.crawl.WebdriverHandler
@@ -21,10 +20,11 @@ import java.time.Duration
 
 @Component
 class CUWebdriverHandler : WebdriverHandler {
-    override fun setCategoryTo(category: ProductCategory, driver: ChromeDriver) {
+    override fun <T : Enum<T>> setCategoryTo(category: T, driver: ChromeDriver) {
+        val cuCategory = category as ProductCategory
         val jsExecutor = driver as JavascriptExecutor
-        val mainCategoryInstruction = getMainCategoryScript(category)
-        val subCategoryInstruction = getSubCategoryScript(category)
+        val mainCategoryInstruction = getMainCategoryScript(cuCategory)
+        val subCategoryInstruction = getSubCategoryScript(cuCategory)
 
         jsExecutor.executeScript(mainCategoryInstruction)
         Thread.sleep(2000)
@@ -53,7 +53,8 @@ class CUWebdriverHandler : WebdriverHandler {
         }
     }
 
-    override fun collect(category: ProductCategory, driver: ChromeDriver): List<ProductCollectorDto> {
+    override fun <T : Enum<T>>collect(category: T, driver: ChromeDriver): List<ProductCollectorDto> {
+        val cuCategory = category as ProductCategory
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
         return driver.findElements(By.cssSelector("#dataTable > div.prodListWrap"))
             .flatMap { wrapper ->
@@ -66,7 +67,7 @@ class CUWebdriverHandler : WebdriverHandler {
                                 .getAttribute("src"),
                             productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
                             isNew = it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
-                            category = category,
+                            category = cuCategory,
                             code = parseProductCode(
                                 it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
                                     .getAttribute("src"),
