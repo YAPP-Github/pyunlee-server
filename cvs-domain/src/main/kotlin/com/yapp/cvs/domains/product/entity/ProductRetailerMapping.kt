@@ -1,19 +1,19 @@
 package com.yapp.cvs.domains.product.entity
 
 import com.yapp.cvs.common.entity.BaseTimeEntity
-import com.yapp.cvs.domains.enums.SellerType
+import com.yapp.cvs.domains.enums.RetailerType
 import javax.persistence.*
 
 @Entity
-@Table(name = "product_seller_mappings")
-class ProductSellerMapping(
+@Table(name = "product_retailer_mappings")
+class ProductRetailerMapping(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val productSellerMappingId: Long? = null,
+    val productRetailerMappingId: Long? = null,
 
     val productId: Long,
 
     @Enumerated(EnumType.STRING)
-    val sellerType: SellerType
+    val retailerType: RetailerType
 ): BaseTimeEntity() {
 }

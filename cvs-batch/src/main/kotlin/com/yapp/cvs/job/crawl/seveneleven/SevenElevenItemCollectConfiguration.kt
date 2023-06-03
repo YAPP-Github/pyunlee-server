@@ -42,5 +42,5 @@ class SevenElevenItemCollectConfiguration(
 
     @Bean
     @StepScope
-    fun sevenElevenItemCollectTasklet(): Tasklet = SevenElevenItemCollectTasklet()
+    fun sevenElevenItemCollectTasklet(): Tasklet = SevenElevenDataCollectTasklet()
 }
