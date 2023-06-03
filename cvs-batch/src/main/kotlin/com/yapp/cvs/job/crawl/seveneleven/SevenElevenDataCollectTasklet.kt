@@ -1,6 +1,7 @@
 package com.yapp.cvs.job.crawl.seveneleven
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
+import com.yapp.cvs.domain.collect.application.ProductDataProcessor
 import com.yapp.cvs.domains.enums.RetailerType
 import com.yapp.cvs.domains.extension.commaStringToLong
 import com.yapp.cvs.support.JsoupHandler
@@ -10,16 +11,15 @@ import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 
-class SevenElevenDataCollectTasklet: Tasklet {
+class SevenElevenDataCollectTasklet(
+    private val productDataProcessor: ProductDataProcessor
+): Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val sevenElevenProductCollectInfoList = SevenElevenProductCollectInfo.values()
 
-        val productRawDataVOList = mutableListOf<ProductRawDataVO>()
         sevenElevenProductCollectInfoList.forEach {
-            productRawDataVOList.addAll(collectRawData(it))
+            saveProductData(collectRawData(it))
         }
-
-        saveProductData(productRawDataVOList)
 
         return RepeatStatus.FINISHED
     }
@@ -53,7 +53,7 @@ class SevenElevenDataCollectTasklet: Tasklet {
 
                 val nameSplit = infoElement.getElementsByClass("name").first()!!.text().split(")")
                 val name = nameSplit[1]
-                val brandName = nameSplit[0]
+                val brandName = if(sevenElevenProductCollectInfo.isPbProduct) RetailerType.SEVEN_ELEVEN.retailerName else nameSplit[0]
 
                 val priceStr = infoElement.getElementsByClass("price").first()!!.text()
 
@@ -61,7 +61,7 @@ class SevenElevenDataCollectTasklet: Tasklet {
                 if(!productRawDataVOList.any { it.name == name && it.brandName == brandName }){
                     val productRawDataVO = ProductRawDataVO(
                         name = name,
-                        brandName = if(sevenElevenProductCollectInfo.isPbProduct) brandName else RetailerType.SEVEN_ELEVEN.retailerName,
+                        brandName = brandName,
                         price = priceStr.commaStringToLong(),
                         categoryType = sevenElevenProductCollectInfo.parseProductCategoryType(name),
                         barcode = barcode,
@@ -79,9 +79,8 @@ class SevenElevenDataCollectTasklet: Tasklet {
     }
 
     private fun saveProductData(productRawDataVOList: List<ProductRawDataVO>) {
-        //TODO: dup check name with db
         productRawDataVOList.forEach {
-            println(it.toString())
+            productDataProcessor.saveProduct(it)
         }
     }
 }

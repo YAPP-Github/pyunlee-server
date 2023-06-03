@@ -12,7 +12,7 @@ data class ProductEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val productId: Long? = null,
 
-    val name: String,
+    val productName: String,
 
     val brandName: String,
 
@@ -22,6 +22,8 @@ data class ProductEntity(
 
     val barcode: String,
 
-    val imageUrl: String
+    val imageUrl: String,
+
+    val valid: Boolean = true
 ): BaseTimeEntity() {
 }

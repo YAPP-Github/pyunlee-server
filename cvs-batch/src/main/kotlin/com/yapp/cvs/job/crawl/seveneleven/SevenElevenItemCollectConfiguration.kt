@@ -1,7 +1,9 @@
 package com.yapp.cvs.job.crawl.seveneleven
 
+import com.yapp.cvs.domain.collect.application.ProductDataProcessor
 import com.yapp.cvs.job.config.BatchConfig
 import com.yapp.cvs.job.crawl.seveneleven.SevenElevenItemCollectConfiguration.Companion.J0B_NAME
+import com.yapp.cvs.support.RunUniqueIdIncrementer
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
@@ -18,7 +20,8 @@ import org.springframework.context.annotation.Configuration
 @ConditionalOnProperty(value = [BatchConfig.SPRING_BATCH_JOB_NAMES], havingValue = J0B_NAME)
 class SevenElevenItemCollectConfiguration(
     private val jobBuilderFactory: JobBuilderFactory,
-    private val stepBuilderFactory: StepBuilderFactory
+    private val stepBuilderFactory: StepBuilderFactory,
+    private val productDataProcessor: ProductDataProcessor
 ) {
     companion object {
         const val J0B_NAME = "seven-eleven.item"
@@ -28,6 +31,7 @@ class SevenElevenItemCollectConfiguration(
     fun sevenElevenItemCollectJob(): Job {
         return jobBuilderFactory[J0B_NAME]
             .start(sevenElevenItemCollectStep())
+            .incrementer(RunUniqueIdIncrementer())
             .build()
     }
 
@@ -36,11 +40,12 @@ class SevenElevenItemCollectConfiguration(
     fun sevenElevenItemCollectStep(): Step {
         return stepBuilderFactory["collect"]
             .tasklet(sevenElevenItemCollectTasklet())
+            .allowStartIfComplete(true)
             .transactionManager(ResourcelessTransactionManager())
             .build()
     }
 
     @Bean
     @StepScope
-    fun sevenElevenItemCollectTasklet(): Tasklet = SevenElevenDataCollectTasklet()
+    fun sevenElevenItemCollectTasklet(): Tasklet = SevenElevenDataCollectTasklet(productDataProcessor)
 }
