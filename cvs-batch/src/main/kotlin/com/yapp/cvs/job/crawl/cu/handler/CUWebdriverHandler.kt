@@ -22,6 +22,7 @@ import java.time.Duration
 class CUWebdriverHandler : WebdriverHandler {
     override fun <T : Enum<T>> setCategoryTo(category: T, driver: ChromeDriver) {
         val cuCategory = category as ProductCategory
+        driver.get("https://cu.bgfretail.com/product/product.do?category=product&depth2=4&depth3=1")
         val jsExecutor = driver as JavascriptExecutor
         val mainCategoryInstruction = getMainCategoryScript(cuCategory)
         val subCategoryInstruction = getSubCategoryScript(cuCategory)
