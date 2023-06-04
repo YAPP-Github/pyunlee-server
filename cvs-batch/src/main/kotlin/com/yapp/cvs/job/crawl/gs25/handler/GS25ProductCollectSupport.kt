@@ -12,6 +12,13 @@ enum class GS25ProductCollectSupport(
     val tabId: String? = null,
     val isPbProduct: Boolean = false,
 ) {
+
+    DISCOUNT_URL(
+        DISCOUNT.URL,
+        tabId = "TOTAL",
+        isPbProduct = false,
+    ),
+
     DOSIRAK_URL(
         FRESH_FOOD.URL,
         ProductCategoryType.DOSIRAK,
@@ -63,11 +70,6 @@ enum class GS25ProductCollectSupport(
         true,
     ),
 
-    DISCOUNT_URL(
-        DISCOUNT.URL,
-        isPbProduct = false,
-    ),
-
     ;
 
     fun parseProductCategoryType(name: String): ProductCategoryType {
@@ -80,7 +82,6 @@ enum class GS25ProductCollectSupport(
             }
             return ProductCategoryType.UNKNOWN
         }
-
         return this.productCategoryType
     }
 

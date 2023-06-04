@@ -1,8 +1,9 @@
 package com.yapp.cvs.job.crawl.cu.handler
 
+import com.yapp.cvs.domain.collect.ProductRawDataVO
+import com.yapp.cvs.domains.enums.ProductCategoryType
+import com.yapp.cvs.domains.enums.RetailerType.CU
 import com.yapp.cvs.domains.product.entity.ProductCategory
-import com.yapp.cvs.domains.product.entity.ProductEventType
-import com.yapp.cvs.job.crawl.ProductCollectorDto
 import com.yapp.cvs.job.crawl.WebdriverHandler
 import com.yapp.cvs.job.crawl.cu.CUCollectorService
 import com.yapp.cvs.job.crawl.cu.handler.CUCategoryScriptConverter.getMainCategoryScript
@@ -54,40 +55,44 @@ class CUWebdriverHandler : WebdriverHandler {
         }
     }
 
-    override fun <T : Enum<T>>collect(category: T, driver: ChromeDriver): List<ProductCollectorDto> {
+    override fun <T : Enum<T>>collect(category: T, driver: ChromeDriver): List<ProductRawDataVO> {
         val cuCategory = category as ProductCategory
         driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
         return driver.findElements(By.cssSelector("#dataTable > div.prodListWrap"))
             .flatMap { wrapper ->
                 wrapper.findElements(By.cssSelector("ul > li"))
                     .mapNotNull {
-                        ProductCollectorDto(
+                        ProductRawDataVO(
                             name = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.name > p")).text,
                             price = parseProductPrice(it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_text > div.price")).text),
                             imageUrl = it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
                                 .getAttribute("src"),
-                            productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
-                            isNew = it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
-                            category = cuCategory,
-                            code = parseProductCode(
+//                            productEventType = ProductEventType.parse(it.findElement(By.cssSelector("div.prod_item > div.badge")).text.trim()),
+//                            isNew = it.findElement(By.cssSelector("div.prod_item > div.tag")).findElements(By.cssSelector("span.new")).isNotEmpty(),
+//                            category = cuCategory,
+                            barcode = parseProductCode(
                                 it.findElement(By.cssSelector("div.prod_item > div.prod_wrap > div.prod_img > img"))
                                     .getAttribute("src"),
                             ),
+                            retailerType = CU,
+                            brandName = "",
+                            categoryType = ProductCategoryType.SANDWICH, // todo : 변경
+
                         )
                     }
             }
     }
 
-    private fun parseProductPrice(price: String): Int {
+    private fun parseProductPrice(price: String): Long {
         return price.replace(
             Regex("\\D+"),
             "",
-        ).toIntOrNull() ?: 0
+        ).toLongOrNull() ?: 0
     }
 
     /** 주어진 URL 에서 13자리 숫자(유통코드)를 정규식으로 찾습니다 */
-    private fun parseProductCode(imageSrc: String): String? {
-        return PRODUCT_CODE_PATTERN.find(imageSrc)?.value
+    private fun parseProductCode(imageSrc: String): String {
+        return PRODUCT_CODE_PATTERN.find(imageSrc)?.value ?: ""
     }
 
     companion object {
