@@ -3,6 +3,7 @@ package com.yapp.cvs.job.crawl.gs25.handler
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domains.enums.RetailerType.GS
 import com.yapp.cvs.job.crawl.WebdriverHandler
+import com.yapp.cvs.support.GS25ProductCollectSupport
 import org.openqa.selenium.By
 import org.openqa.selenium.InvalidElementStateException
 import org.openqa.selenium.NoSuchElementException
@@ -34,9 +35,7 @@ class GS25WebdriverHandler : WebdriverHandler {
                 val title = it.findElement(By.cssSelector("div > p.tit")).text
                 val price = it.findElement(By.cssSelector("div > p.price")).text
                 val imgURL = it.findElement(By.cssSelector("div > p.img > img")).getAttribute("src")
-//                    val flag = it.findElement(By.cssSelector("div > div > p")).text // 신상품, 행사정보
-
-                println(title) //
+                val eventInfo = it.findElement(By.cssSelector("div > div > p")).text
 
                 productCollections.add(
                     ProductRawDataVO(
@@ -86,8 +85,8 @@ class GS25WebdriverHandler : WebdriverHandler {
                     log.info("버튼을 찾을 수 없음")
                 }
             }
-            Thread.sleep(1000)
         }
+        Thread.sleep(1500)
     }
 
     private fun parseProductName(name: String): String {

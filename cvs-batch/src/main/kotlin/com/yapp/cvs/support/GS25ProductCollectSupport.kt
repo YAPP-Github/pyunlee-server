@@ -1,10 +1,10 @@
-package com.yapp.cvs.job.crawl.gs25.handler
+package com.yapp.cvs.support
 
 import com.yapp.cvs.domains.enums.ProductCategoryType
 import com.yapp.cvs.domains.extension.containsKeywords
-import com.yapp.cvs.job.crawl.gs25.handler.GS25ProductCollectSupport.CategoryURL.DISCOUNT
-import com.yapp.cvs.job.crawl.gs25.handler.GS25ProductCollectSupport.CategoryURL.FRESH_FOOD
-import com.yapp.cvs.job.crawl.gs25.handler.GS25ProductCollectSupport.CategoryURL.PB
+import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.DISCOUNT
+import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.FRESH_FOOD
+import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.PB
 
 enum class GS25ProductCollectSupport(
     val url: String,
