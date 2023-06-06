@@ -17,7 +17,7 @@ class ProductDataProcessor(
 ) {
     @Transactional
     fun saveProduct(productRawDataVO: ProductRawDataVO) {
-        if (productEntityRepository.findByProductNameAndBrandName(productRawDataVO.name, productRawDataVO.brandName) == null) {
+        if (productEntityRepository.findByBarcode(productRawDataVO.barcode) == null) {
             val productEntity = productEntityRepository.save(productRawDataVO.to())
             productRetailerMappingRepository.save(ProductRetailerMapping.of(productEntity, productRawDataVO.retailerType))
 

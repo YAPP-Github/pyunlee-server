@@ -14,6 +14,7 @@ CREATE TABLE products
 
 create index products_idx01 on products (createdAt);
 create index products_idx02 on products (updatedAt);
+create index products_idx03 on products (barcode);
 create index producproduct_retailer_mappingsts_idx03 on products (productName,brandName);
 
 CREATE TABLE product_retailer_mappings
