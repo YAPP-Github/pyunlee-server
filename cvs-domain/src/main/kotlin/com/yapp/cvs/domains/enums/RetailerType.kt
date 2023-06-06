@@ -5,5 +5,6 @@ enum class RetailerType(
 ) {
     GS("GS"),
     CU("CU"),
-    SEVEN_ELEVEN("세븐일레븐"),
+    SEVEN_ELEVEN("세븐일레븐")
+    ;
 }

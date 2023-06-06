@@ -26,18 +26,5 @@ class CUCollectorService(
     }
 
     override fun saveAll(productCollections: List<ProductRawDataVO>) {
-        productCollections.forEach {
-//            productService.save(
-//                ProductCollectionVo(
-//                    name = it.name ?: "",
-//                    price = it.price ?: 0,
-//                    imageUrl = it.imageUrl,
-//                    productEventType = it.productEventType,
-//                    isNew = it.isNew ?: false,
-//                    code = it.code ?: "",
-//                    category = it.category,
-//                ),
-//            )
-        }
     }
 }

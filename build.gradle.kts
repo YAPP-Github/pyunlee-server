@@ -27,7 +27,10 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
     kotlin {
         target ("**/*.kt")
         ktlint("0.48.0").editorConfigOverride(mapOf(
-                "ktlint_standard_no-wildcard-imports" to "disabled"
+                "ktlint_standard_no-wildcard-imports" to "disabled",
+                "ktlint_standard_trailing-comma-on-call-site" to "disabled",
+                "ktlint_standard_trailing-comma-on-declaration-site" to "disabled",
+                "ktlint_standard_no-semi" to "disabled"
         ))
     }
 }

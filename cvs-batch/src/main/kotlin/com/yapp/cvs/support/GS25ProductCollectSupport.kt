@@ -1,7 +1,6 @@
 package com.yapp.cvs.support
 
 import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.domains.extension.containsKeywords
 import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.DISCOUNT
 import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.FRESH_FOOD
 import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.PB
@@ -15,6 +14,7 @@ enum class GS25ProductCollectSupport(
 
     DISCOUNT_URL(
         DISCOUNT.URL,
+        null,
         tabId = "TOTAL",
         isPbProduct = false,
     ),
@@ -68,35 +68,31 @@ enum class GS25ProductCollectSupport(
         ProductCategoryType.INSTANT_MEAL,
         "productRamen",
         true,
-    ),
-
+    )
     ;
 
-    fun parseProductCategoryType(name: String): ProductCategoryType {
-        if (this.productCategoryType == null) {
-            val ruleList = ProductCategoryRule.values()
-            ruleList.forEach { rule ->
-                if (name.containsKeywords(rule.keywords)) {
-                    return rule.productCategoryType
-                }
-            }
-            return ProductCategoryType.UNKNOWN
+    fun getItemsXPath(): String {
+        return when {
+            this.isPbProduct -> "${BaseXPath.PB.value} > div.tab_cont > ul > li"
+            else -> "${BaseXPath.EVENT.value} > ul > li"
         }
-        return this.productCategoryType
     }
 
-    enum class ProductCategoryRule(
-        val keywords: List<String>,
-        val productCategoryType: ProductCategoryType,
-    ) {
-        DRINK(listOf("아메리카노", "라떼", "주스", "라떼", "카페", "녹차", "콜드브루"), ProductCategoryType.DRINK),
-        INSTANT_MEAL(listOf("라면", "큰컵"), ProductCategoryType.INSTANT_MEAL),
-        DIARY_KEYWORD(listOf("우유"), ProductCategoryType.DIARY),
+    fun getNextPageButtonXPath(): String {
+        return when {
+            this.isPbProduct -> "${BaseXPath.PB.value} > div.paging > a.next"
+            else -> "${BaseXPath.EVENT.value} > div.paging > a.next"
+        }
     }
 
     enum class CategoryURL(val URL: String) {
         FRESH_FOOD("https://gs25.gsretail.com/gscvs/ko/products/youus-freshfood"),
         PB("https://gs25.gsretail.com/gscvs/ko/products/youus-different-service"),
-        DISCOUNT("https://gs25.gsretail.com/gscvs/ko/products/event-goods"),
+        DISCOUNT("https://gs25.gsretail.com/gscvs/ko/products/event-goods")
+    }
+
+    enum class BaseXPath(val value: String) {
+        PB("#contents > div.yCmsComponent > div > div > div > div > div > div.tblwrap"),
+        EVENT("#contents > div.cnt > div.mt50 > div > div > div:nth-of-type(4)")
     }
 }
