@@ -5,6 +5,7 @@ import com.yapp.cvs.domains.enums.ProductCategoryType
 import com.yapp.cvs.domains.enums.RetailerType.GS
 import com.yapp.cvs.job.crawl.WebdriverHandler
 import com.yapp.cvs.support.GS25ProductCollectSupport
+import com.yapp.cvs.support.ProductDataParser.PBBrandNameRule.GS25
 import com.yapp.cvs.support.ProductDataParser.parseBrandName
 import com.yapp.cvs.support.ProductDataParser.parsePrice
 import com.yapp.cvs.support.ProductDataParser.parseProductCode
@@ -44,8 +45,8 @@ class GS25WebdriverHandler : WebdriverHandler {
 
                 productCollections.add(
                     ProductRawDataVO(
-                        name = parseProductName(title),
-                        brandName = parseBrandName(title),
+                        name = parseProductName(title, GS25),
+                        brandName = parseBrandName(title, GS25),
                         price = parsePrice(price),
                         categoryType = gs25Category.productCategoryType ?: ProductCategoryType.parse(title),
                         barcode = parseProductCode(imgURL) ?: "",
@@ -87,5 +88,6 @@ class GS25WebdriverHandler : WebdriverHandler {
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(GS25WebdriverHandler::class.java)
+        private val PB_BRAND_NAME: String = "유어스"
     }
 }

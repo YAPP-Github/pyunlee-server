@@ -11,14 +11,6 @@ enum class GS25ProductCollectSupport(
     val tabId: String? = null,
     val isPbProduct: Boolean = false,
 ) {
-
-    DISCOUNT_URL(
-        DISCOUNT.URL,
-        null,
-        tabId = "TOTAL",
-        isPbProduct = false,
-    ),
-
     DOSIRAK_URL(
         FRESH_FOOD.URL,
         ProductCategoryType.DOSIRAK,
@@ -68,7 +60,14 @@ enum class GS25ProductCollectSupport(
         ProductCategoryType.INSTANT_MEAL,
         "productRamen",
         true,
-    )
+    ),
+
+    DISCOUNT_URL(
+        DISCOUNT.URL,
+        null,
+        tabId = "TOTAL",
+        isPbProduct = false,
+    ),
     ;
 
     fun getItemsXPath(): String {
