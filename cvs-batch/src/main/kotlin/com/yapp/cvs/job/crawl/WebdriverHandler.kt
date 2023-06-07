@@ -14,7 +14,7 @@ interface WebdriverHandler {
         chromeOptions.addArguments("--remote-allow-origins=*")
         chromeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage")
         val driver = ChromeDriver(chromeOptions)
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1))
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2))
         return driver
     }
 

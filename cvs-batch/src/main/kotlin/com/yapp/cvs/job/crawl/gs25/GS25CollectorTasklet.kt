@@ -15,15 +15,9 @@ class GS25CollectorTasklet(
 ) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
         val gs25ProductCollection = GS25ProductCollectSupport.values()
-        val driver = webdriverHandler.initializeWebdriver()
-        try {
-            gs25ProductCollection.forEach {
-                webdriverHandler.setCategoryTo(it, driver)
-                Thread.sleep(4000)
-                saveProductData(webdriverHandler.collect(it, driver))
-            }
-        } finally {
-            driver.quit()
+        gs25ProductCollection.forEach {
+            webdriverHandler.setCategoryTo(it)
+            saveProductData(webdriverHandler.collect(it))
         }
         return RepeatStatus.FINISHED
     }

@@ -3,91 +3,107 @@ package com.yapp.cvs.job.crawl.gs25.handler
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domains.enums.ProductCategoryType
 import com.yapp.cvs.domains.enums.RetailerType.GS
-import com.yapp.cvs.job.crawl.WebdriverHandler
 import com.yapp.cvs.support.GS25ProductCollectSupport
 import com.yapp.cvs.support.ProductDataParser.PBBrandNameRule.GS25
 import com.yapp.cvs.support.ProductDataParser.parseBrandName
 import com.yapp.cvs.support.ProductDataParser.parsePrice
 import com.yapp.cvs.support.ProductDataParser.parseProductCode
 import com.yapp.cvs.support.ProductDataParser.parseProductName
+import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.By
-import org.openqa.selenium.InvalidElementStateException
-import org.openqa.selenium.NoSuchElementException
-import org.openqa.selenium.StaleElementReferenceException
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
+import org.openqa.selenium.support.ui.ExpectedCondition
+import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.time.Duration
+import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 @Component
-class GS25WebdriverHandler : WebdriverHandler {
-    override fun <T : Enum<T>>setCategoryTo(category: T, driver: ChromeDriver) {
-        val gs25Category = category as GS25ProductCollectSupport
-        log.info("Target Category : ${gs25Category.productCategoryType?.displayName}")
-        driver.get(gs25Category.url)
-        driver.findElement(By.id(gs25Category.tabId)).click()
+class GS25WebdriverHandler {
+    private lateinit var driver: ChromeDriver
+    private lateinit var wait: WebDriverWait
+
+    fun setCategoryTo(category: GS25ProductCollectSupport) {
+        log.info("Target Category : ${category.productCategoryType?.displayName}")
+        driver.get(category.url)
+        driver.findElement(By.id(category.tabId)).click()
+        this.waitReadyState()
     }
 
-    override fun <T : Enum<T>> collect(category: T, driver: ChromeDriver): List<ProductRawDataVO> {
-        val gs25Category = category as GS25ProductCollectSupport
-        driver.manage().timeouts().implicitlyWait(Duration.ofMillis(0))
-
+    fun collect(category: GS25ProductCollectSupport): List<ProductRawDataVO> {
         val productCollections = mutableListOf<ProductRawDataVO>()
         do {
             // 행사 상품과 PB 상품의 className 이 다름
-            val items = driver.findElements(By.cssSelector(gs25Category.getItemsXPath()))
+            val items = driver.findElements(By.cssSelector(category.getItemsXPath()))
             items.forEach {
                 val title = it.findElement(By.cssSelector("div > p.tit")).text
                 val price = it.findElement(By.cssSelector("div > p.price")).text
                 val imgURL = it.findElement(By.cssSelector("div > p.img > img")).getAttribute("src")
-                val eventInfo = it.findElement(By.cssSelector("div > div > p")).text
 
                 productCollections.add(
                     ProductRawDataVO(
                         name = parseProductName(title, GS25),
                         brandName = parseBrandName(title, GS25),
                         price = parsePrice(price),
-                        categoryType = gs25Category.productCategoryType ?: ProductCategoryType.parse(title),
+                        categoryType = category.productCategoryType ?: ProductCategoryType.parse(title),
                         barcode = parseProductCode(imgURL) ?: "",
                         imageUrl = imgURL,
                         retailerType = GS,
-                        isPbProduct = gs25Category.isPbProduct,
+                        isPbProduct = category.isPbProduct,
                     ),
                 )
             }
-            this.setNextPage(gs25Category, driver)
-        } while (hasNextPage(gs25Category, driver))
-
+            this.setNextPage(category)
+        } while (hasNextPage(category))
         return productCollections
     }
 
-    private fun hasNextPage(category: GS25ProductCollectSupport, driver: ChromeDriver): Boolean {
-        val buttonXPath = category.getNextPageButtonXPath()
-        return driver.findElement(By.cssSelector(buttonXPath)).getAttribute("onclick") != null
+    private fun hasNextPage(category: GS25ProductCollectSupport): Boolean {
+        return driver.findElement(By.cssSelector(category.getNextPageButtonXPath()))
+            .getAttribute("onclick") != null
     }
 
-    private fun setNextPage(category: GS25ProductCollectSupport, driver: ChromeDriver) {
-        val buttonXPath = category.getNextPageButtonXPath()
-        var exceptionCount = 0
-        while (exceptionCount < 3) {
-            try {
-                driver.findElement(By.cssSelector(buttonXPath)).click()
-                break
-            } catch (_: InvalidElementStateException) {
-            } catch (_: StaleElementReferenceException) {
-            } catch (e: NoSuchElementException) {
-                exceptionCount++
-                if (exceptionCount >= 3) {
-                    log.info("버튼을 찾을 수 없음")
-                }
-            }
+    private fun setNextPage(category: GS25ProductCollectSupport) {
+        driver.findElement(By.cssSelector(category.getNextPageButtonXPath())).click()
+        this.waitReadyState()
+    }
+
+    private fun waitReadyState() {
+        val jQueryLoad: ExpectedCondition<Boolean> = ExpectedCondition {
+            (driver as JavascriptExecutor).executeScript("return jQuery.active")
+                .toString().toLong() == 0L
         }
-        Thread.sleep(1500)
+        val jsLoad: ExpectedCondition<Boolean> = ExpectedCondition {
+            (driver as JavascriptExecutor).executeScript("return document.readyState")
+                .toString() == "complete"
+        }
+        wait.until(jQueryLoad)
+        wait.until(jsLoad)
+    }
+
+    @PostConstruct
+    private fun initializeWebdriver() {
+        WebDriverManager.chromedriver().setup()
+        val chromeOptions = ChromeOptions()
+        chromeOptions.setHeadless(true)
+        chromeOptions.addArguments("--remote-allow-origins=*")
+        chromeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage")
+        driver = ChromeDriver(chromeOptions)
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2))
+        wait = WebDriverWait(driver, Duration.ofSeconds(2))
+    }
+
+    @PreDestroy
+    fun quitWebDriver() {
+        driver.quit()
     }
 
     companion object {
         private val log: Logger = LoggerFactory.getLogger(GS25WebdriverHandler::class.java)
-        private val PB_BRAND_NAME: String = "유어스"
     }
 }
