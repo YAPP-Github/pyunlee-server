@@ -10,20 +10,13 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 
 class GS25CollectorTasklet(
-    private val webdriverHandler: GS25WebdriverHandler,
     private val productDataProcessor: ProductDataProcessor,
 ) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
+        val gs25WebdriverHandler = GS25WebdriverHandler()
         val gs25ProductCollection = GS25ProductCollectSupport.values()
-        val driver = webdriverHandler.initializeWebdriver()
-        try {
-            gs25ProductCollection.forEach {
-                webdriverHandler.setCategoryTo(it, driver)
-                Thread.sleep(4000)
-                saveProductData(webdriverHandler.collect(it, driver))
-            }
-        } finally {
-            driver.quit()
+        gs25ProductCollection.forEach {
+            saveProductData(gs25WebdriverHandler.collect(it))
         }
         return RepeatStatus.FINISHED
     }
