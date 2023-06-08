@@ -17,11 +17,11 @@ class ProductDataProcessor(
 ) {
     @Transactional
     fun saveProduct(productRawDataVO: ProductRawDataVO) {
-        if(productEntityRepository.findByProductNameAndBrandName(productRawDataVO.name, productRawDataVO.brandName) == null){
+        if (productEntityRepository.findByProductNameAndBrandName(productRawDataVO.name, productRawDataVO.brandName) == null) {
             val productEntity = productEntityRepository.save(productRawDataVO.to())
             productRetailerMappingRepository.save(ProductRetailerMapping.of(productEntity, productRawDataVO.retailerType))
 
-            if(productRawDataVO.isPbProduct) {
+            if (productRawDataVO.isPbProduct) {
                 pbProductMappingRepository.save(PbProductMapping.of(productEntity))
             }
         }

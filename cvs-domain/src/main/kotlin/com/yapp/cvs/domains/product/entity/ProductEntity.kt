@@ -25,5 +25,4 @@ data class ProductEntity(
     val imageUrl: String,
 
     val valid: Boolean = true
-): BaseTimeEntity() {
-}
+) : BaseTimeEntity()

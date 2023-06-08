@@ -30,10 +30,16 @@ enum class SevenElevenProductCollectInfo(
         46
     ),
     PB_INIT_URL(
-        "https://www.7-eleven.co.kr/product/presentList.asp", pTab = "5", pageSize = 0, isPbProduct = true
+        "https://www.7-eleven.co.kr/product/presentList.asp",
+        pTab = "5",
+        pageSize = 0,
+        isPbProduct = true
     ),
     PB_URL(
-        "https://www.7-eleven.co.kr/product/listMoreAjax.asp?pTab=5", pTab = "5", pageSize = 10, isPbProduct = true
+        "https://www.7-eleven.co.kr/product/listMoreAjax.asp?pTab=5",
+        pTab = "5",
+        pageSize = 10,
+        isPbProduct = true
     ),
     ;
 
