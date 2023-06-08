@@ -15,6 +15,7 @@ import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedCondition
+import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -26,6 +27,7 @@ import javax.annotation.PreDestroy
 class GS25WebdriverHandler {
     private val driver: ChromeDriver
     private val wait: WebDriverWait
+    private val jsExecutor: JavascriptExecutor
 
     init {
         WebDriverManager.chromedriver().setup()
@@ -36,6 +38,7 @@ class GS25WebdriverHandler {
         driver = ChromeDriver(chromeOptions)
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2))
         wait = WebDriverWait(driver, Duration.ofSeconds(2))
+        jsExecutor = driver
     }
 
     fun collect(category: GS25ProductCollectSupport): List<ProductRawDataVO> {
@@ -79,20 +82,15 @@ class GS25WebdriverHandler {
         this.waitReadyState()
     }
 
+
     private fun hasNextPage(category: GS25ProductCollectSupport): Boolean {
         return driver.findElement(By.cssSelector(category.getNextPageButtonXPath()))
                 .getAttribute("onclick") != null
     }
 
     private fun waitReadyState() {
-        val jQueryLoad: ExpectedCondition<Boolean> = ExpectedCondition {
-            (driver as JavascriptExecutor).executeScript("return jQuery.active")
-                .toString().toLong() == 0L
-        }
-        val jsLoad: ExpectedCondition<Boolean> = ExpectedCondition {
-            (driver as JavascriptExecutor).executeScript("return document.readyState")
-                .toString() == "complete"
-        }
+        val jQueryLoad = ExpectedConditions.jsReturnsValue("return jQuery.active == 0")
+        val jsLoad = ExpectedConditions.jsReturnsValue("return document.readyState == 'complete'")
         wait.until(jQueryLoad)
         wait.until(jsLoad)
     }
