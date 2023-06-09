@@ -14,13 +14,13 @@ class ProductRetailerMapping(
     val productId: Long,
 
     @Enumerated(EnumType.STRING)
-    val retailerType: RetailerType
-): BaseTimeEntity() {
+    val retailerType: RetailerType,
+) : BaseTimeEntity() {
     companion object {
         fun of(productEntity: ProductEntity, retailerType: RetailerType): ProductRetailerMapping {
             return ProductRetailerMapping(
                 productId = productEntity.productId!!,
-                retailerType = retailerType
+                retailerType = retailerType,
             )
         }
     }

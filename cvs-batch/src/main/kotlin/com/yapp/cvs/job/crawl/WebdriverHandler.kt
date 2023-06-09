@@ -1,5 +1,6 @@
 package com.yapp.cvs.job.crawl
 
+import com.yapp.cvs.domain.collect.ProductRawDataVO
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
@@ -13,12 +14,12 @@ interface WebdriverHandler {
         chromeOptions.addArguments("--remote-allow-origins=*")
         chromeOptions.addArguments("--no-sandbox", "--disable-dev-shm-usage")
         val driver = ChromeDriver(chromeOptions)
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(1))
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2))
         return driver
     }
 
     fun <T : Enum<T>>setCategoryTo(category: T, driver: ChromeDriver)
     fun expandAllProductPage(driver: ChromeDriver) {}
     fun setNextPage(driver: ChromeDriver) {}
-    fun <T : Enum<T>> collect(category: T, driver: ChromeDriver): List<ProductCollectorDto>
+    fun <T : Enum<T>> collect(category: T, driver: ChromeDriver): List<ProductRawDataVO>
 }

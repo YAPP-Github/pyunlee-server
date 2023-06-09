@@ -13,9 +13,9 @@ class PbProductMapping(
     val productId: Long,
 ) : BaseTimeEntity() {
     companion object {
-        fun of(productEntity: ProductEntity): PbProductMapping{
+        fun of(productEntity: ProductEntity): PbProductMapping {
             return PbProductMapping(
-                productId = productEntity.productId!!
+                productId = productEntity.productId!!,
             )
         }
     }
