@@ -35,8 +35,8 @@ class SevenElevenDataCollectTasklet(
                 sevenElevenProductCollectInfo.url,
                 mapOf(
                     ("pTab" to sevenElevenProductCollectInfo.pTab),
-                    ("intPageSize" to pageSize.toString())
-                )
+                    ("intPageSize" to pageSize.toString()),
+                ),
             )
             val body = document.body()
 
@@ -68,7 +68,7 @@ class SevenElevenDataCollectTasklet(
                         barcode = barcode,
                         imageUrl = imgUrl,
                         retailerType = RetailerType.SEVEN_ELEVEN,
-                        isPbProduct = sevenElevenProductCollectInfo.isPbProduct
+                        isPbProduct = sevenElevenProductCollectInfo.isPbProduct,
                     )
                     productRawDataVOList.add(productRawDataVO)
                 }

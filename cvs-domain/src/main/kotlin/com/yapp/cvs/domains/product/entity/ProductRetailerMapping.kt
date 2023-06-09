@@ -20,7 +20,7 @@ class ProductRetailerMapping(
         fun of(productEntity: ProductEntity, retailerType: RetailerType): ProductRetailerMapping {
             return ProductRetailerMapping(
                 productId = productEntity.productId!!,
-                retailerType = retailerType
+                retailerType = retailerType,
             )
         }
     }

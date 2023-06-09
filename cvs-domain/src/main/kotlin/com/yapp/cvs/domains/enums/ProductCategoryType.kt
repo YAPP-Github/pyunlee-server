@@ -3,7 +3,7 @@ package com.yapp.cvs.domains.enums
 import com.yapp.cvs.domains.extension.containsKeywords
 
 enum class ProductCategoryType(
-    val displayName: String
+    val displayName: String,
 ) {
     DOSIRAK("도시락"),
     SANDWICH("샌드위치/햄버거"),

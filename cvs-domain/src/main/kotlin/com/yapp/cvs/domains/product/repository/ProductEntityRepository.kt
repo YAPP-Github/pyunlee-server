@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ProductEntityRepository : JpaRepository<ProductEntity, Long> {
     fun findByProductNameAndBrandName(productName: String, brandName: String): ProductEntity?
+    fun findByBarcode(barcode: String): ProductEntity?
 }

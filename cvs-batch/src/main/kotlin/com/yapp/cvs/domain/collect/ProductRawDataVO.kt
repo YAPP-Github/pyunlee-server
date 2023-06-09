@@ -12,7 +12,7 @@ data class ProductRawDataVO(
     val barcode: String,
     val imageUrl: String,
     val retailerType: RetailerType,
-    val isPbProduct: Boolean = false
+    val isPbProduct: Boolean = false,
 ) {
     fun to(): ProductEntity {
         return ProductEntity(
@@ -21,7 +21,7 @@ data class ProductRawDataVO(
             price = price,
             productCategoryType = categoryType,
             barcode = barcode,
-            imageUrl = imageUrl
+            imageUrl = imageUrl,
         )
     }
 }

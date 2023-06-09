@@ -1,8 +1,7 @@
-package com.yapp.cvs.job.crawl.seveneleven
+package com.yapp.cvs.job.crawl.gs25
 
 import com.yapp.cvs.domain.collect.application.ProductDataProcessor
 import com.yapp.cvs.job.config.BatchConfig
-import com.yapp.cvs.job.crawl.seveneleven.SevenElevenItemCollectConfiguration.Companion.J0B_NAME
 import com.yapp.cvs.support.RunUniqueIdIncrementer
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -16,30 +15,34 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+@ConditionalOnProperty(
+    value = [BatchConfig.SPRING_BATCH_JOB_NAMES],
+    havingValue = GS25CollectorConfig.JOB_NAME,
+)
 @Configuration
-@ConditionalOnProperty(value = [BatchConfig.SPRING_BATCH_JOB_NAMES], havingValue = J0B_NAME)
-class SevenElevenItemCollectConfiguration(
+class GS25CollectorConfig(
     private val jobBuilderFactory: JobBuilderFactory,
     private val stepBuilderFactory: StepBuilderFactory,
     private val productDataProcessor: ProductDataProcessor,
 ) {
     companion object {
-        const val J0B_NAME = "seven-eleven.item"
+        const val JOB_NAME = "gs25-collect-job"
+        const val STEP_NAME = "gs25-collect-job-step"
     }
 
     @Bean
-    fun sevenElevenItemCollectJob(): Job {
-        return jobBuilderFactory[J0B_NAME]
-            .start(sevenElevenItemCollectStep())
+    fun gs25CollectorJob(): Job {
+        return jobBuilderFactory[JOB_NAME]
+            .start(gs25CollectorStep())
             .incrementer(RunUniqueIdIncrementer())
             .build()
     }
 
     @Bean
     @JobScope
-    fun sevenElevenItemCollectStep(): Step {
-        return stepBuilderFactory["collect"]
-            .tasklet(sevenElevenItemCollectTasklet())
+    fun gs25CollectorStep(): Step {
+        return stepBuilderFactory[STEP_NAME]
+            .tasklet(gs25CollectorTasklet())
             .allowStartIfComplete(true)
             .transactionManager(ResourcelessTransactionManager())
             .build()
@@ -47,5 +50,7 @@ class SevenElevenItemCollectConfiguration(
 
     @Bean
     @StepScope
-    fun sevenElevenItemCollectTasklet(): Tasklet = SevenElevenDataCollectTasklet(productDataProcessor)
+    fun gs25CollectorTasklet(): Tasklet = GS25CollectorTasklet(
+        productDataProcessor = productDataProcessor,
+    )
 }

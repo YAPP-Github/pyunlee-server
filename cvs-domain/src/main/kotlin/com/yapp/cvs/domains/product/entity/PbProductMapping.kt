@@ -15,7 +15,7 @@ class PbProductMapping(
     companion object {
         fun of(productEntity: ProductEntity): PbProductMapping {
             return PbProductMapping(
-                productId = productEntity.productId!!
+                productId = productEntity.productId!!,
             )
         }
     }

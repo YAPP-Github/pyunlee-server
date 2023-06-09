@@ -13,11 +13,11 @@ import javax.transaction.Transactional
 class ProductDataProcessor(
     private val productEntityRepository: ProductEntityRepository,
     private val productRetailerMappingRepository: ProductRetailerMappingRepository,
-    private val pbProductMappingRepository: PbProductMappingRepository
+    private val pbProductMappingRepository: PbProductMappingRepository,
 ) {
     @Transactional
     fun saveProduct(productRawDataVO: ProductRawDataVO) {
-        if (productEntityRepository.findByProductNameAndBrandName(productRawDataVO.name, productRawDataVO.brandName) == null) {
+        if (productEntityRepository.findByBarcode(productRawDataVO.barcode) == null) {
             val productEntity = productEntityRepository.save(productRawDataVO.to())
             productRetailerMappingRepository.save(ProductRetailerMapping.of(productEntity, productRawDataVO.retailerType))
 

@@ -33,8 +33,6 @@ configure<com.diffplug.gradle.spotless.SpotlessExtension> {
                 "ktlint_standard_no-semi" to "disabled"
         ))
     }
-    // ktlint -> no wild card import 구문 관련 설정
-    // https://blog.leocat.kr/notes/2020/12/14/intellij-avoid-wildcard-imports-in-kotlin-with-intellij
 }
 
 subprojects {

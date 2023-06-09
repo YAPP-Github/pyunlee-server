@@ -1,7 +1,7 @@
 package com.yapp.cvs.domains.enums
 
 enum class RetailerType(
-    val retailerName: String
+    val retailerName: String,
 ) {
     GS("GS"),
     CU("CU"),
