@@ -33,13 +33,13 @@ enum class SevenElevenProductCollectInfo(
         "https://www.7-eleven.co.kr/product/presentList.asp",
         pTab = "5",
         pageSize = 0,
-        isPbProduct = true,
+        isPbProduct = true
     ),
     PB_URL(
         "https://www.7-eleven.co.kr/product/listMoreAjax.asp?pTab=5",
         pTab = "5",
         pageSize = 10,
-        isPbProduct = true,
+        isPbProduct = true
     ),
     ;
 

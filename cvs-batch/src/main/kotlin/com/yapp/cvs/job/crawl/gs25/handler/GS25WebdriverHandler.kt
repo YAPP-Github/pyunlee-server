@@ -14,15 +14,11 @@ import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.support.ui.ExpectedCondition
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.stereotype.Component
 import java.time.Duration
-import javax.annotation.PostConstruct
-import javax.annotation.PreDestroy
 
 class GS25WebdriverHandler {
     private val driver: ChromeDriver
@@ -82,10 +78,9 @@ class GS25WebdriverHandler {
         this.waitReadyState()
     }
 
-
     private fun hasNextPage(category: GS25ProductCollectSupport): Boolean {
         return driver.findElement(By.cssSelector(category.getNextPageButtonXPath()))
-                .getAttribute("onclick") != null
+            .getAttribute("onclick") != null
     }
 
     private fun waitReadyState() {

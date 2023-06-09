@@ -5,7 +5,7 @@ import org.jsoup.nodes.Document
 
 class JsoupHandler {
     companion object {
-        private const val TIMEOUT = 10000
+        private const val TIMEOUT = 60000
 
         fun doFormPost(url: String, data: Map<String, String>): Document {
             var connection = Jsoup.connect(url)

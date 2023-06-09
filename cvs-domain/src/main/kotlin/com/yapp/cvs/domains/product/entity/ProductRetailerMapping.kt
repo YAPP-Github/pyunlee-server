@@ -14,7 +14,7 @@ class ProductRetailerMapping(
     val productId: Long,
 
     @Enumerated(EnumType.STRING)
-    val retailerType: RetailerType,
+    val retailerType: RetailerType
 ) : BaseTimeEntity() {
     companion object {
         fun of(productEntity: ProductEntity, retailerType: RetailerType): ProductRetailerMapping {

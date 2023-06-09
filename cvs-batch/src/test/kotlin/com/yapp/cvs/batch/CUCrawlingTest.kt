@@ -2,7 +2,6 @@ package com.yapp.cvs.batch
 
 import com.yapp.cvs.domains.product.entity.ProductCategory
 import com.yapp.cvs.domains.product.entity.ProductEventType
-import com.yapp.cvs.job.crawl.ProductCollectorDto
 import io.github.bonigarcia.wdm.WebDriverManager
 import org.junit.After
 import org.junit.Before
