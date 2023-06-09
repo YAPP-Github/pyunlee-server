@@ -8,7 +8,6 @@ enum class CUProductCollectSupport(
     val productCategoryType: ProductCategoryType? = null,
     val isPbProduct: Boolean = false
 ) {
-    // 세븐일레븐 pageSize는 23.06.03 기준 최대 목록 개수
     DOSIRAK_URL(
         "https://cu.bgfretail.com/product/productAjax.do?searchMainCategory=10&searchSubCategory=1",
         ProductCategoryType.DOSIRAK,
