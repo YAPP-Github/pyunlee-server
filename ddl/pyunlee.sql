@@ -4,7 +4,7 @@ CREATE TABLE products
     productName VARCHAR(50) NOT NULL COMMENT '상품이름',
     brandName VARCHAR(50) NOT NULL COMMENT '브랜드이름',
     price BIGINT(20) UNSIGNED NOT NULL COMMENT '가격',
-    productCategoryType VARCHAR(10) NOT NULL COMMENT '상품카테고리타입',
+    productCategoryType VARCHAR(20) NOT NULL COMMENT '상품카테고리타입',
     barcode VARCHAR(13) NOT NULL COMMENT '바코드',
     imageUrl TEXT NOT NULL COMMENT '이미지링크',
     valid TINYINT(1) NOT NULL COMMENT 'valid',
@@ -41,3 +41,16 @@ CREATE TABLE pb_product_mappings
 create index pb_product_mappings_idx01 on pb_product_mappings (createdAt);
 create index pb_product_mappings_idx02 on pb_product_mappings (updatedAt);
 create index pb_product_mappings_idx03 on pb_product_mappings (productId);
+
+CREATE TABLE promotion_products
+(
+    promotionProductId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'promotionItemId',
+    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
+    promotionType VARCHAR(20) NOT NULL COMMENT '행사타입',
+    retailerType VARCHAR(20) NOT NULL COMMENT '편의점종류',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+)  CHARSET = utf8 COMMENT='행사 상품';
+
+create index promotion_products_idx01 on pb_product_mappings (createdAt);
+create index promotion_products_idx02 on pb_product_mappings (updatedAt);
