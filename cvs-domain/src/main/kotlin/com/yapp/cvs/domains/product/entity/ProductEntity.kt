@@ -12,7 +12,6 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "products")
-// TODO: class name change to Product after merge all progress
 data class ProductEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

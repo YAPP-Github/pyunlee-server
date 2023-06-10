@@ -1,9 +1,9 @@
 package com.yapp.cvs.job.crawl.gs25.handler
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
-import com.yapp.cvs.domains.enums.ProductCategoryType
 import com.yapp.cvs.domains.enums.RetailerType.GS
 import com.yapp.cvs.support.GS25ProductCollectSupport
+import com.yapp.cvs.support.ProductCategoryRule
 import com.yapp.cvs.support.ProductDataParser.PBBrandNameRule.GS25
 import com.yapp.cvs.support.ProductDataParser.parseBrandName
 import com.yapp.cvs.support.ProductDataParser.parsePrice
@@ -54,7 +54,7 @@ class GS25WebdriverHandler {
                         name = parseProductName(title, GS25),
                         brandName = parseBrandName(title, GS25),
                         price = parsePrice(price),
-                        categoryType = category.productCategoryType ?: ProductCategoryType.parse(title),
+                        categoryType = category.productCategoryType ?: ProductCategoryRule.parse(title),
                         barcode = parseProductCode(imgURL) ?: "",
                         imageUrl = imgURL,
                         retailerType = GS,

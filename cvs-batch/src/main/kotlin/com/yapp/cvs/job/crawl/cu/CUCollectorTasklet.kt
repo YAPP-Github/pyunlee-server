@@ -2,10 +2,10 @@ package com.yapp.cvs.job.crawl.cu
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domain.collect.application.ProductDataProcessor
-import com.yapp.cvs.domains.enums.ProductCategoryType
 import com.yapp.cvs.domains.enums.RetailerType
 import com.yapp.cvs.support.CUProductCollectSupport
 import com.yapp.cvs.support.JsoupHandler
+import com.yapp.cvs.support.ProductCategoryRule
 import com.yapp.cvs.support.ProductDataParser
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -47,7 +47,7 @@ class CUCollectorTasklet(
                         name = ProductDataParser.parseProductName(title),
                         brandName = ProductDataParser.parseBrandName(title),
                         price = ProductDataParser.parsePrice(price),
-                        categoryType = category.productCategoryType ?: ProductCategoryType.parse(title),
+                        categoryType = category.productCategoryType ?: ProductCategoryRule.parse(title),
                         barcode = ProductDataParser.parseProductCode(imgURL) ?: "",
                         imageUrl = imgURL,
                         retailerType = RetailerType.CU,

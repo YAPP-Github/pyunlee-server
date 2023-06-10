@@ -90,28 +90,5 @@ enum class CUProductCollectSupport(
     DISCOUNT_URL(
         "https://cu.bgfretail.com/event/plusAjax.do"
     )
-
     ;
-    fun parseProductCategoryType(name: String): ProductCategoryType {
-        if (this.productCategoryType == null) {
-            val ruleList = ProductCategoryRule.values()
-            ruleList.forEach { rule ->
-                if (name.containsKeywords(rule.keywords)) {
-                    return rule.productCategoryType
-                }
-            }
-            return ProductCategoryType.UNKNOWN
-        }
-        return this.productCategoryType
-    }
-
-    enum class ProductCategoryRule(
-        val keywords: List<String>,
-        val productCategoryType: ProductCategoryType
-    ) {
-        DRINK(listOf("아메리카노", "라떼", "주스", "라떼", "카페", "녹차", "콜드브루"), ProductCategoryType.DRINK),
-        INSTANT_MEAL(listOf("라면", "큰컵"), ProductCategoryType.INSTANT_MEAL),
-        DIARY_KEYWORD(listOf("우유"), ProductCategoryType.DIARY),
-        ;
-    }
 }
