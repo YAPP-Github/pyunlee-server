@@ -1,7 +1,6 @@
 package com.yapp.cvs.support
 
 import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.domains.extension.containsKeywords
 
 enum class CUProductCollectSupport(
     val url: String,
