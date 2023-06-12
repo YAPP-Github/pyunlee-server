@@ -14,19 +14,19 @@ import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 
-class CUCollectorTasklet(
+open class CUProductCollectorTasklet(
     private val productDataProcessor: ProductDataProcessor,
 ) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
-        val cuProductCollectSupport = CUProductCollectSupport.values()
+        val cuProductCollectSupport = CUProductCollectSupport.values().filter { it.promotionType == null }
         cuProductCollectSupport.forEach {
             saveProductData(collectRawData(it))
         }
         return RepeatStatus.FINISHED
     }
 
-    private fun collectRawData(category: CUProductCollectSupport): List<ProductRawDataVO> {
-        log.info("Target Category : ${category.productCategoryType?.displayName}")
+    protected fun collectRawData(category: CUProductCollectSupport): List<ProductRawDataVO> {
+        log.info("Target Category : ${category.productCategoryType?.displayName ?: category.name}")
         val productCollections = mutableListOf<ProductRawDataVO>()
         var pageIndex = 1
 
@@ -61,12 +61,13 @@ class CUCollectorTasklet(
     }
 
     private fun saveProductData(productRawDataVOList: List<ProductRawDataVO>) {
+        log.info("${productRawDataVOList.size}건 저장")
         productRawDataVOList.forEach {
             productDataProcessor.saveProduct(it)
         }
     }
 
     companion object {
-        private val log: Logger = LoggerFactory.getLogger(CUCollectorTasklet::class.java)
+        private val log: Logger = LoggerFactory.getLogger(this::class.java)
     }
 }

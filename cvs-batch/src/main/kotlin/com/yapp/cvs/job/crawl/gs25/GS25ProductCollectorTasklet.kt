@@ -17,19 +17,19 @@ import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 
-class GS25CollectorTasklet(
+open class GS25ProductCollectorTasklet(
     private val productDataProcessor: ProductDataProcessor,
 ) : Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus {
-        val gs25ProductCollection = GS25ProductCollectSupport.values()
+        val gs25ProductCollection = GS25ProductCollectSupport.values().filter { it.promotionType == null }
         gs25ProductCollection.forEach {
             saveProductData(collectRawData(it))
         }
         return RepeatStatus.FINISHED
     }
 
-    private fun collectRawData(category: GS25ProductCollectSupport): List<ProductRawDataVO> {
-        log.info("Target Category : ${category.productCategoryType?.displayName}")
+    protected fun collectRawData(category: GS25ProductCollectSupport): List<ProductRawDataVO> {
+        log.info("Target Category : ${category.productCategoryType?.displayName ?: category.name}")
         val productCollections = mutableListOf<ProductRawDataVO>()
         val productElements = this.collectProductElements(category)
         productElements.forEach {
@@ -63,6 +63,7 @@ class GS25CollectorTasklet(
     }
 
     private fun saveProductData(productRawDataVOList: List<ProductRawDataVO>) {
+        log.info("${productRawDataVOList.size}건 저장")
         productRawDataVOList.forEach {
             productDataProcessor.saveProduct(it)
         }

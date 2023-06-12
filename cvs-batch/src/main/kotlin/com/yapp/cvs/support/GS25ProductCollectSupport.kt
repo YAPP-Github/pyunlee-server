@@ -1,13 +1,15 @@
 package com.yapp.cvs.support
 
 import com.yapp.cvs.domains.enums.ProductCategoryType
+import com.yapp.cvs.domains.product.entity.ProductPromotionType
 
 enum class GS25ProductCollectSupport(
     val url: String,
     val jsonDataKey: String?,
-    val productCategoryType: ProductCategoryType?,
-    val searchProduct: String?,
-    val isPbProduct: Boolean = false
+    val productCategoryType: ProductCategoryType? = null,
+    val searchProduct: String? = null,
+    val isPbProduct: Boolean = false,
+    val promotionType: ProductPromotionType? = null,
 ) {
     DOSIRAK_URL(
         "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=FreshFoodKey",
@@ -67,12 +69,16 @@ enum class GS25ProductCollectSupport(
         true
     ),
 
-    DISCOUNT_URL(
-        "http://gs25.gsretail.com/gscvs/ko/products/event-goods-search?parameterList=TOTAL",
+    ONE_PLUS_ONE_URL(
+        "http://gs25.gsretail.com/gscvs/ko/products/event-goods-search?parameterList=TOTAL&parameterList=ONE_TO_ONE",
         "results",
-        null,
-        null,
-        isPbProduct = false
+        promotionType = ProductPromotionType.ONE_PLUS_ONE,
+    ),
+
+    TWO_PLUS_ONE_URL(
+        "http://gs25.gsretail.com/gscvs/ko/products/event-goods-search?parameterList=TOTAL&parameterList=TWO_TO_ONE",
+        "results",
+        promotionType = ProductPromotionType.TWO_PLUS_ONE,
     )
     ;
 

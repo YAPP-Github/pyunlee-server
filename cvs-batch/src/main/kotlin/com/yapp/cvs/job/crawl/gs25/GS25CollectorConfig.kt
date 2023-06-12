@@ -33,16 +33,27 @@ class GS25CollectorConfig(
     @Bean
     fun gs25CollectorJob(): Job {
         return jobBuilderFactory[JOB_NAME]
-            .start(gs25CollectorStep())
+            .start(gs25ProductCollectorStep())
+            .next(gs25PromotionCollectorStep())
             .incrementer(RunUniqueIdIncrementer())
             .build()
     }
 
     @Bean
     @JobScope
-    fun gs25CollectorStep(): Step {
+    fun gs25ProductCollectorStep(): Step {
         return stepBuilderFactory[STEP_NAME]
-            .tasklet(gs25CollectorTasklet())
+            .tasklet(gs25ProductCollectorTasklet())
+            .allowStartIfComplete(true)
+            .transactionManager(ResourcelessTransactionManager())
+            .build()
+    }
+
+    @Bean
+    @JobScope
+    fun gs25PromotionCollectorStep(): Step {
+        return stepBuilderFactory[STEP_NAME]
+            .tasklet(gs25PromotionCollectorTasklet())
             .allowStartIfComplete(true)
             .transactionManager(ResourcelessTransactionManager())
             .build()
@@ -50,7 +61,9 @@ class GS25CollectorConfig(
 
     @Bean
     @StepScope
-    fun gs25CollectorTasklet(): Tasklet = GS25CollectorTasklet(
-        productDataProcessor = productDataProcessor,
-    )
+    fun gs25ProductCollectorTasklet(): Tasklet = GS25ProductCollectorTasklet(productDataProcessor)
+
+    @Bean
+    @StepScope
+    fun gs25PromotionCollectorTasklet(): Tasklet = GS25PromotionCollectorTasklet(productDataProcessor)
 }

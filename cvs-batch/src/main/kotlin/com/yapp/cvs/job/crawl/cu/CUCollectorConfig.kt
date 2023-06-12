@@ -33,16 +33,27 @@ class CUCollectorConfig(
     @Bean
     fun cuCollectorJob(): Job {
         return jobBuilderFactory[JOB_NAME]
-            .start(cuCollectorStep())
+            .start(cuProductCollectorStep())
+            .next(cuPromotionStep())
             .incrementer(RunUniqueIdIncrementer())
             .build()
     }
 
     @Bean
     @JobScope
-    fun cuCollectorStep(): Step {
+    fun cuProductCollectorStep(): Step {
         return stepBuilderFactory[STEP_NAME]
-            .tasklet(cuCollectorTasklet())
+            .tasklet(cuProductCollectorTasklet())
+            .allowStartIfComplete(true)
+            .transactionManager(ResourcelessTransactionManager())
+            .build()
+    }
+
+    @Bean
+    @JobScope
+    fun cuPromotionStep(): Step {
+        return stepBuilderFactory[STEP_NAME]
+            .tasklet(cuPromotionCollectorTasklet())
             .allowStartIfComplete(true)
             .transactionManager(ResourcelessTransactionManager())
             .build()
@@ -50,7 +61,9 @@ class CUCollectorConfig(
 
     @Bean
     @StepScope
-    fun cuCollectorTasklet(): Tasklet = CUCollectorTasklet(
-        productDataProcessor = productDataProcessor,
-    )
+    fun cuProductCollectorTasklet(): Tasklet = CUProductCollectorTasklet(productDataProcessor)
+
+    @Bean
+    @StepScope
+    fun cuPromotionCollectorTasklet(): Tasklet = CUPromotionCollectorTasklet(productDataProcessor)
 }
