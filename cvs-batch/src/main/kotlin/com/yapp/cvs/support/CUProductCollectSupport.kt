@@ -1,12 +1,13 @@
 package com.yapp.cvs.support
 
 import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.domains.extension.containsKeywords
+import com.yapp.cvs.domains.product.entity.ProductPromotionType
 
 enum class CUProductCollectSupport(
     val url: String,
     val productCategoryType: ProductCategoryType? = null,
-    val isPbProduct: Boolean = false
+    val promotionType: ProductPromotionType? = null,
+    val isPbProduct: Boolean = false,
 ) {
     DOSIRAK_URL(
         "https://cu.bgfretail.com/product/productAjax.do?searchMainCategory=10&searchSubCategory=1",
@@ -81,14 +82,21 @@ enum class CUProductCollectSupport(
 
     PB_URL(
         "https://cu.bgfretail.com/product/pbAjax.do?searchgubun=PBG",
+        isPbProduct = true
     ),
 
     CU_ONLY_URL(
-        "https://cu.bgfretail.com/product/pbAjax.do?searchgubun=CUG"
+        "https://cu.bgfretail.com/product/pbAjax.do?searchgubun=CUG",
+        isPbProduct = true
     ),
 
-    DISCOUNT_URL(
-        "https://cu.bgfretail.com/event/plusAjax.do"
+    ONE_PLUS_ONE_URL(
+        "https://cu.bgfretail.com/event/plusAjax.do?searchCondition=23",
+        promotionType = ProductPromotionType.ONE_PLUS_ONE
+    ),
+    TWO_PLUS_ONE_URL(
+        "https://cu.bgfretail.com/event/plusAjax.do?searchCondition=24",
+        promotionType = ProductPromotionType.TWO_PLUS_ONE
     )
     ;
 }

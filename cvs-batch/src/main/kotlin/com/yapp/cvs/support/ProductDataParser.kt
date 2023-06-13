@@ -25,7 +25,7 @@ object ProductDataParser {
 
     /** 가격 문자열을 숫자로 변환합니다 */
     fun parsePrice(price: String): Long {
-        return price.replace(
+        return price.substringBefore('.').replace(
             Regex("\\D+"),
             "",
         ).toLongOrNull() ?: 0

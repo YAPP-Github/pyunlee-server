@@ -4,7 +4,6 @@ import com.yapp.cvs.common.entity.BaseTimeEntity
 import com.yapp.cvs.domains.enums.RetailerType
 import javax.persistence.*
 
-
 @Entity
 @Table(name = "promotion_products")
 class PromotionProduct(
@@ -20,5 +19,4 @@ class PromotionProduct(
     @Enumerated(EnumType.STRING)
     val retailerType: RetailerType,
 
-): BaseTimeEntity() {
-}
+) : BaseTimeEntity()

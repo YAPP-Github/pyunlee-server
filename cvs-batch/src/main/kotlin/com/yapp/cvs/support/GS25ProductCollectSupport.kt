@@ -1,97 +1,92 @@
 package com.yapp.cvs.support
 
 import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.DISCOUNT
-import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.FRESH_FOOD
-import com.yapp.cvs.support.GS25ProductCollectSupport.CategoryURL.PB
+import com.yapp.cvs.domains.product.entity.ProductPromotionType
 
 enum class GS25ProductCollectSupport(
     val url: String,
+    val jsonDataKey: String?,
     val productCategoryType: ProductCategoryType? = null,
-    val tabId: String? = null,
+    val searchProduct: String? = null,
     val isPbProduct: Boolean = false,
+    val promotionType: ProductPromotionType? = null,
 ) {
     DOSIRAK_URL(
-        FRESH_FOOD.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=FreshFoodKey",
+        "SubPageListData",
         ProductCategoryType.DOSIRAK,
         "productLunch",
-        true,
+        true
     ),
     GIMBAP_URL(
-        FRESH_FOOD.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=FreshFoodKey",
+        "SubPageListData",
         ProductCategoryType.GIMBAP,
         "productRice",
-        true,
+        true
     ),
     SANDWICH_URL(
-        FRESH_FOOD.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=FreshFoodKey",
+        "SubPageListData",
         ProductCategoryType.SANDWICH,
         "productBurger",
-        true,
+        true
     ),
     SIMPLE_MEAL_URL(
-        FRESH_FOOD.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=FreshFoodKey",
+        "SubPageListData",
         ProductCategoryType.INSTANT_MEAL,
         "productSnack",
-        true,
+        true
     ),
 
     DRINK_URL(
-        PB.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=DifferentServiceKey",
+        "SubPageListData",
         ProductCategoryType.DRINK,
         "productDrink",
-        true,
+        true
     ),
-
     DIARY_URL(
-        PB.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=DifferentServiceKey",
+        "SubPageListData",
         ProductCategoryType.DIARY,
         "productMilk",
-        true,
+        true
     ),
     BISCUIT_URL(
-        PB.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=DifferentServiceKey",
+        "SubPageListData",
         ProductCategoryType.BISCUIT,
         "productCookie",
-        true,
+        true
     ),
     INSTANT_MEAL_URL(
-        PB.URL,
+        "http://gs25.gsretail.com/products/youus-freshfoodDetail-search?searchSrvFoodCK=DifferentServiceKey",
+        "SubPageListData",
         ProductCategoryType.INSTANT_MEAL,
         "productRamen",
-        true,
+        true
     ),
 
-    DISCOUNT_URL(
-        DISCOUNT.URL,
-        null,
-        tabId = "TOTAL",
-        isPbProduct = false,
+    ONE_PLUS_ONE_URL(
+        "http://gs25.gsretail.com/gscvs/ko/products/event-goods-search?parameterList=TOTAL&parameterList=ONE_TO_ONE",
+        "results",
+        promotionType = ProductPromotionType.ONE_PLUS_ONE,
     ),
+
+    TWO_PLUS_ONE_URL(
+        "http://gs25.gsretail.com/gscvs/ko/products/event-goods-search?parameterList=TOTAL&parameterList=TWO_TO_ONE",
+        "results",
+        promotionType = ProductPromotionType.TWO_PLUS_ONE,
+    )
     ;
 
-    fun getItemsXPath(): String {
-        return when {
-            this.isPbProduct -> "${BaseXPath.PB.value} > div.tab_cont > ul > li"
-            else -> "${BaseXPath.EVENT.value} > ul > li"
-        }
-    }
-
-    fun getNextPageButtonXPath(): String {
-        return when {
-            this.isPbProduct -> "${BaseXPath.PB.value} > div.paging > a.next"
-            else -> "${BaseXPath.EVENT.value} > div.paging > a.next"
-        }
-    }
-
-    enum class CategoryURL(val URL: String) {
-        FRESH_FOOD("https://gs25.gsretail.com/gscvs/ko/products/youus-freshfood"),
-        PB("https://gs25.gsretail.com/gscvs/ko/products/youus-different-service"),
-        DISCOUNT("https://gs25.gsretail.com/gscvs/ko/products/event-goods")
-    }
-
-    enum class BaseXPath(val value: String) {
-        PB("#contents > div.yCmsComponent > div > div > div > div > div > div.tblwrap"),
-        EVENT("#contents > div.cnt > div.mt50 > div > div > div:nth-of-type(4)")
+    fun getQueryParams(): Map<String, Any?> {
+        return mapOf(
+            "pageNum" to 1,
+            "pageSize" to 10000,
+            "searchProduct" to searchProduct
+        )
     }
 }
