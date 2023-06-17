@@ -1,7 +1,7 @@
-package com.yapp.cvs.domains.product.entity
+package com.yapp.cvs.domain.product.entity
 
-import com.yapp.cvs.common.entity.BaseTimeEntity
-import com.yapp.cvs.domains.enums.ProductCategoryType
+import com.yapp.cvs.domain.base.BaseEntity
+import com.yapp.cvs.domain.enums.ProductCategoryType
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -12,7 +12,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "products")
-data class ProductEntity(
+data class Product(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val productId: Long? = null,
@@ -31,4 +31,4 @@ data class ProductEntity(
     val imageUrl: String,
 
     val valid: Boolean = true
-) : BaseTimeEntity()
+) : BaseEntity()

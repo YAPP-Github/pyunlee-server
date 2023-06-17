@@ -1,4 +1,4 @@
-package com.yapp.cvs.config
+package com.yapp.cvs.configuration.swagger
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.swagger.v3.core.jackson.ModelResolver

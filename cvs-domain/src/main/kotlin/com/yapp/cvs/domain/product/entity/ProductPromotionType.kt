@@ -1,4 +1,4 @@
-package com.yapp.cvs.domains.product.entity
+package com.yapp.cvs.domain.product.entity
 
 enum class ProductPromotionType(
     val displayName: String,

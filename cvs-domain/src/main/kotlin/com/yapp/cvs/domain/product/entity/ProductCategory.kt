@@ -1,10 +1,10 @@
-package com.yapp.cvs.domains.product.entity
+package com.yapp.cvs.domain.product.entity
 
-import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.BEVERAGE
-import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.COOK
-import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.FOOD
-import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.SIMPLE_MEAL
-import com.yapp.cvs.domains.product.entity.ProductCategory.ProductSuperCategory.SNACK
+import com.yapp.cvs.domain.product.entity.ProductCategory.ProductSuperCategory.BEVERAGE
+import com.yapp.cvs.domain.product.entity.ProductCategory.ProductSuperCategory.COOK
+import com.yapp.cvs.domain.product.entity.ProductCategory.ProductSuperCategory.FOOD
+import com.yapp.cvs.domain.product.entity.ProductCategory.ProductSuperCategory.SIMPLE_MEAL
+import com.yapp.cvs.domain.product.entity.ProductCategory.ProductSuperCategory.SNACK
 
 @Suppress("SpellCheckingInspection")
 enum class ProductCategory(

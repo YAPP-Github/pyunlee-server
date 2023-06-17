@@ -2,7 +2,7 @@ package com.yapp.cvs.job.crawl.cu
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domain.collect.application.ProductDataProcessor
-import com.yapp.cvs.domains.enums.RetailerType
+import com.yapp.cvs.domain.enums.RetailerType
 import com.yapp.cvs.support.CUProductCollectSupport
 import com.yapp.cvs.support.JsoupHandler
 import com.yapp.cvs.support.ProductCategoryRule

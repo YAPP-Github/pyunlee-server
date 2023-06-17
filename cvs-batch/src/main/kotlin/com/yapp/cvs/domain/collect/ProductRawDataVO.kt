@@ -1,8 +1,8 @@
 package com.yapp.cvs.domain.collect
 
-import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.domains.enums.RetailerType
-import com.yapp.cvs.domains.product.entity.ProductEntity
+import com.yapp.cvs.domain.enums.ProductCategoryType
+import com.yapp.cvs.domain.enums.RetailerType
+import com.yapp.cvs.domain.product.entity.Product
 
 data class ProductRawDataVO(
     val name: String,
@@ -14,8 +14,8 @@ data class ProductRawDataVO(
     val retailerType: RetailerType,
     val isPbProduct: Boolean = false,
 ) {
-    fun to(): ProductEntity {
-        return ProductEntity(
+    fun to(): Product {
+        return Product(
             productName = name,
             brandName = brandName,
             price = price,

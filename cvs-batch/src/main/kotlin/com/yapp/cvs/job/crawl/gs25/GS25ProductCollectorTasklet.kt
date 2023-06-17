@@ -3,7 +3,7 @@ package com.yapp.cvs.job.crawl.gs25
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domain.collect.application.ProductDataProcessor
-import com.yapp.cvs.domains.enums.RetailerType
+import com.yapp.cvs.domain.enums.RetailerType
 import com.yapp.cvs.support.GS25ProductCollectSupport
 import com.yapp.cvs.support.ProductCategoryRule
 import com.yapp.cvs.support.ProductDataParser

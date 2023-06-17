@@ -1,4 +1,4 @@
-package com.yapp.cvs.domains.product
+package com.yapp.cvs.domain.product.application
 
 import org.springframework.stereotype.Service
 

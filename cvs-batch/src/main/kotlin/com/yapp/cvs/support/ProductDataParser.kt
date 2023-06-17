@@ -1,8 +1,8 @@
 package com.yapp.cvs.support
 
-import com.yapp.cvs.domains.extension.containsKeywords
-import com.yapp.cvs.domains.extension.removeStringsFromStart
-import com.yapp.cvs.domains.extension.startsWithKeyword
+import com.yapp.cvs.domain.extension.containsKeywords
+import com.yapp.cvs.domain.extension.removeStringsFromStart
+import com.yapp.cvs.domain.extension.startsWithKeyword
 import com.yapp.cvs.support.ProductDataParser.PBBrandNameRule.NONE
 
 object ProductDataParser {

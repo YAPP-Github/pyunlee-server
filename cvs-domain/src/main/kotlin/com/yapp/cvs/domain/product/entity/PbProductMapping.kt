@@ -1,6 +1,6 @@
-package com.yapp.cvs.domains.product.entity
+package com.yapp.cvs.domain.product.entity
 
-import com.yapp.cvs.common.entity.BaseTimeEntity
+import com.yapp.cvs.domain.base.BaseEntity
 import javax.persistence.*
 
 @Entity
@@ -11,11 +11,11 @@ class PbProductMapping(
     val pbProductMappingId: Long? = null,
 
     val productId: Long,
-) : BaseTimeEntity() {
+) : BaseEntity() {
     companion object {
-        fun of(productEntity: ProductEntity): PbProductMapping {
+        fun of(product: Product): PbProductMapping {
             return PbProductMapping(
-                productId = productEntity.productId!!,
+                productId = product.productId!!,
             )
         }
     }
