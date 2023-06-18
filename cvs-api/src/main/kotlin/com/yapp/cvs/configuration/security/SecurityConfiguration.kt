@@ -15,11 +15,11 @@ class SecurityConfiguration() {
             .cors().and()
             .csrf().disable()
             .requestMatcher(AntPathRequestMatcher("/**"))
-            .authorizeRequests{auth ->
-                auth.anyRequest().authenticated()
-            }/*.authorizeRequests{auth ->
-                auth.mvcMatchers(SWAGGER_PATTERNS).permitAll()
-            }*/
+//            .authorizeRequests{auth ->
+//                auth.anyRequest().authenticated()
+//            }/*.authorizeRequests{auth ->
+//                auth.mvcMatchers(SWAGGER_PATTERNS).permitAll()
+//            }*/
             .build()
     }
 
