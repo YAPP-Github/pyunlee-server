@@ -2,7 +2,7 @@ package com.yapp.cvs.job.crawl.cu
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domain.collect.application.ProductDataProcessor
-import com.yapp.cvs.domains.product.entity.ProductPromotionType
+import com.yapp.cvs.domain.product.entity.ProductPromotionType
 import com.yapp.cvs.support.CUProductCollectSupport
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

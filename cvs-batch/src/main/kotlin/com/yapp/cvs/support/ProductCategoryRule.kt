@@ -1,7 +1,7 @@
 package com.yapp.cvs.support
 
-import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.domains.extension.containsKeywords
+import com.yapp.cvs.domain.enums.ProductCategoryType
+import com.yapp.cvs.domain.extension.containsKeywords
 
 enum class ProductCategoryRule(
     val keywords: List<String>,

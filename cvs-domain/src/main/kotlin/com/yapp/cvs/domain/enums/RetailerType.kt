@@ -1,4 +1,4 @@
-package com.yapp.cvs.domains.enums
+package com.yapp.cvs.domain.enums
 
 enum class RetailerType(
     val retailerName: String,

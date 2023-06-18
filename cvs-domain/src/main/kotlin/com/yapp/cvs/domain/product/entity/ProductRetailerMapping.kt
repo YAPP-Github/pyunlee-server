@@ -1,7 +1,7 @@
-package com.yapp.cvs.domains.product.entity
+package com.yapp.cvs.domain.product.entity
 
-import com.yapp.cvs.common.entity.BaseTimeEntity
-import com.yapp.cvs.domains.enums.RetailerType
+import com.yapp.cvs.domain.base.BaseEntity
+import com.yapp.cvs.domain.enums.RetailerType
 import javax.persistence.*
 
 @Entity
@@ -15,11 +15,11 @@ class ProductRetailerMapping(
 
     @Enumerated(EnumType.STRING)
     val retailerType: RetailerType
-) : BaseTimeEntity() {
+) : BaseEntity() {
     companion object {
-        fun of(productEntity: ProductEntity, retailerType: RetailerType): ProductRetailerMapping {
+        fun of(product: Product, retailerType: RetailerType): ProductRetailerMapping {
             return ProductRetailerMapping(
-                productId = productEntity.productId!!,
+                productId = product.productId!!,
                 retailerType = retailerType,
             )
         }

@@ -1,4 +1,4 @@
-package com.yapp.cvs.common.entity
+package com.yapp.cvs.domain.base
 
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
@@ -9,7 +9,7 @@ import javax.persistence.MappedSuperclass
 
 @MappedSuperclass
 @EntityListeners(value = [AuditingEntityListener::class])
-open class BaseTimeEntity(
+open class BaseEntity(
     @CreatedDate
     var createdAt: LocalDateTime = LocalDateTime.now(),
 

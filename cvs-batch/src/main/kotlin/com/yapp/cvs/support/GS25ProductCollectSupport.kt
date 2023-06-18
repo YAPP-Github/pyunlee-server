@@ -1,7 +1,7 @@
 package com.yapp.cvs.support
 
-import com.yapp.cvs.domains.enums.ProductCategoryType
-import com.yapp.cvs.domains.product.entity.ProductPromotionType
+import com.yapp.cvs.domain.enums.ProductCategoryType
+import com.yapp.cvs.domain.product.entity.ProductPromotionType
 
 enum class GS25ProductCollectSupport(
     val url: String,

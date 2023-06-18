@@ -2,8 +2,8 @@ package com.yapp.cvs.job.crawl.seveneleven
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domain.collect.application.ProductDataProcessor
-import com.yapp.cvs.domains.enums.RetailerType
-import com.yapp.cvs.domains.extension.commaStringToLong
+import com.yapp.cvs.domain.enums.RetailerType
+import com.yapp.cvs.domain.extension.commaStringToLong
 import com.yapp.cvs.support.JsoupHandler
 import com.yapp.cvs.support.ProductCategoryRule
 import com.yapp.cvs.support.ProductDataParser

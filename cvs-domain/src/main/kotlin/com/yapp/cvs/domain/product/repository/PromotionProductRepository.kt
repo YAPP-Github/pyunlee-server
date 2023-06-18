@@ -1,6 +1,6 @@
-package com.yapp.cvs.domains.product.repository
+package com.yapp.cvs.domain.product.repository
 
-import com.yapp.cvs.domains.product.entity.PromotionProduct
+import com.yapp.cvs.domain.product.entity.PromotionProduct
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface PromotionProductRepository : JpaRepository<PromotionProduct, Long>

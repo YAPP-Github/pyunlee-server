@@ -1,4 +1,4 @@
-package com.yapp.cvs.domains.extension
+package com.yapp.cvs.domain.extension
 
 fun String.commaStringToLong(): Long {
     return this.replace(",", "").toLong()
