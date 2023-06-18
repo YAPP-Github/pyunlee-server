@@ -23,6 +23,11 @@ spring:
     defer-datasource-initialization: true
     open-in-view: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://127.0.0.1:6379"
 logging:
   level:
 #    com.zaxxer.hikari.HikariConfig: DEBUG
