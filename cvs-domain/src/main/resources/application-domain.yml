@@ -26,6 +26,11 @@ spring:
     defer-datasource-initialization: true
     open-in-view: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  redis:
+    redisson:
+      config: |
+        singleServerConfig:
+          address: "redis://127.0.0.1:6379"
   security:
     oauth2:
       client:
@@ -41,8 +46,6 @@ logging:
 #    com.zaxxer.hikari: TRACE
     org.springframework.orm.jpa: ${LOGGING_LEVEL:DEBUG}
     org.springframework.transaction: ${LOGGING_LEVEL:DEBUG}
-
-
 ---
 spring:
   config:
