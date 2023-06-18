@@ -17,18 +17,18 @@ class Member(
     @Enumerated(EnumType.STRING)
     val loginType: OAuthLoginType,
 
-    val nickName: String = "",
+    val nickName: String,
 
     @Enumerated(EnumType.STRING)
     val memberStatus: MemberStatus,
 ) : BaseEntity() {
 
     companion object {
-        fun google(attributes: Map<String, Any>): Member{
+        fun google(attributes: Map<String, Any>, nickName: String): Member{
             return Member(
                 email = attributes["email"].toString(),
                 loginType = OAuthLoginType.GOOGLE,
-                nickName = attributes["email"].toString().split("@")[0],
+                nickName = nickName,
                 memberStatus = MemberStatus.ACTIVATED
             )
         }

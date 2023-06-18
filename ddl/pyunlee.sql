@@ -68,4 +68,4 @@ CREATE TABLE members
 
 create index members_idx01 on members (createdAt);
 create index members_idx02 on members (updatedAt);
-create index members_idx03 on members (email, loginType);
+create index members_idx03 on members (email, loginType, memberStatus);

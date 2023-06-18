@@ -1,5 +1,7 @@
 package com.yapp.cvs.domain.member.application
 
+import com.yapp.cvs.domain.enums.MemberStatus
+import com.yapp.cvs.domain.enums.NickNameRule
 import com.yapp.cvs.domain.enums.OAuthLoginType
 import com.yapp.cvs.domain.member.repository.MemberRepository
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
@@ -16,16 +18,23 @@ class OAuthService (
         val delegate = DefaultOAuth2UserService()
         val oauth2User = delegate.loadUser(userRequest)
 
-        // oauth 이름
         val registrationId = userRequest.clientRegistration.registrationId
         val oAuthLoginType = OAuthLoginType.getByRegistrationId(registrationId)
         val attributes = oauth2User.attributes
 
-        val tempMember = oAuthLoginType.create(attributes)
-        val member = memberRepository.findByEmailAndLoginType(tempMember.email, tempMember.loginType)
-            ?: memberRepository.save(tempMember.to())
+        val member = oAuthLoginType.generateMember(attributes, generateNotDuplicatedNickName())
+        if(memberRepository.findByEmailAndLoginTypeAndMemberStatus(member.email, member.loginType, MemberStatus.ACTIVATED) == null) {
+            memberRepository.save(member)
+        }
 
         // TODO: member 정보로 token 생성
         return oauth2User
+    }
+    private fun generateNotDuplicatedNickName(): String {
+        var nickName = NickNameRule.generateNickName()
+        while (memberRepository.countByNickName(nickName) > 0) {
+            nickName = NickNameRule.generateNickName()
+        }
+        return nickName
     }
 }
