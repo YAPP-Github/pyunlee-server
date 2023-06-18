@@ -57,6 +57,9 @@ subprojects {
         testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+        implementation ("org.springframework.boot:spring-boot-starter-security")
+        implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
     }
 
     the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().apply {
