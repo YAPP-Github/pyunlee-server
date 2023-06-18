@@ -16,10 +16,10 @@ import javax.transaction.Transactional
 
 @Service
 class ProductDataProcessor(
-        private val productRepository: ProductRepository,
-        private val productRetailerMappingRepository: ProductRetailerMappingRepository,
-        private val pbProductMappingRepository: PbProductMappingRepository,
-        private val promotionProductRepository: PromotionProductRepository
+    private val productRepository: ProductRepository,
+    private val productRetailerMappingRepository: ProductRetailerMappingRepository,
+    private val pbProductMappingRepository: PbProductMappingRepository,
+    private val promotionProductRepository: PromotionProductRepository
 ) {
     @Transactional
     fun saveProduct(productRawDataVO: ProductRawDataVO) {

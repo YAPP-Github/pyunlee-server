@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration
 import javax.servlet.ServletContext
 
 @Configuration
-class SwaggerConfig {
+class SwaggerConfiguration {
 
     @Bean
     fun openAPI(servletContext: ServletContext): OpenAPI {
