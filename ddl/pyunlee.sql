@@ -54,3 +54,18 @@ CREATE TABLE promotion_products
 
 create index promotion_products_idx01 on pb_product_mappings (createdAt);
 create index promotion_products_idx02 on pb_product_mappings (updatedAt);
+
+CREATE TABLE members
+(
+    memberId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'memberId',
+    email VARCHAR(100) NOT NULL COMMENT '이메일',
+    loginType VARCHAR(20) NOT NULL COMMENT '로그인타입',
+    nickName VARCHAR(20) NOT NULL COMMENT '닉네임',
+    memberStatus VARCHAR(20) NOT NULL COMMENT '회원상태',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+) CHARSET = utf8 COMMENT='회원 정보';
+
+create index members_idx01 on members (createdAt);
+create index members_idx02 on members (updatedAt);
+create index members_idx03 on members (email, loginType, memberStatus);
