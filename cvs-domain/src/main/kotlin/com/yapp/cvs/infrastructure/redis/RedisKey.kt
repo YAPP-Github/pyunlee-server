@@ -15,5 +15,6 @@ class RedisKey constructor(
 enum class RedisKeyType(
     val key: String
 ) {
-    MEMBER_ACCESS_TOKEN("member-access-token")
+    MEMBER_ACCESS_TOKEN("member-access-token"),
+    PRODUCT_VIEW("product-view"),
 }

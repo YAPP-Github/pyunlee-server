@@ -5,11 +5,11 @@ import com.yapp.cvs.domain.enums.RetailerType
 import javax.persistence.*
 
 @Entity
-@Table(name = "promotion_products")
-class PromotionProduct(
+@Table(name = "product_promotions")
+class ProductPromotion(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val promotionProductId: Long? = null,
+    val productPromotionId: Long? = null,
 
     val productId: Long,
 
@@ -19,4 +19,4 @@ class PromotionProduct(
     @Enumerated(EnumType.STRING)
     val retailerType: RetailerType,
 
-) : BaseEntity()
+    ) : BaseEntity()

@@ -1,10 +1,7 @@
 spring:
-  profiles:
-    group:
-      dev: oauth
   config:
     activate:
-      on-profile: dev
+      on-profile: develop
   datasource:
     url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT:3306}/${MYSQL_DATABASE}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false
     driver-class-name: com.mysql.cj.jdbc.Driver

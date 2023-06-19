@@ -9,6 +9,7 @@ plugins {
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
+    kotlin("kapt") version "1.7.10"
 }
 
 buildscript {
@@ -57,7 +58,7 @@ subprojects {
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        kapt("org.springframework.boot:spring-boot-configuration-processor")
 
         implementation ("org.springframework.boot:spring-boot-starter-security")
         implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
@@ -182,3 +183,4 @@ sonarqube {
         property("sonar.java.coveragePlugin", "jacoco")
     }
 }
+
