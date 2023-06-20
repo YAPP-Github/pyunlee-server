@@ -20,7 +20,7 @@ class DistributedLockAop(
         val methodSignature = joinPoint.signature as MethodSignature
         val method = methodSignature.method
         val distributedLock: DistributedLock = method.getAnnotation(DistributedLock::class.java)
-        val dynamicKey = getDynamicKeyFromMethodArg(
+        val dynamicKey = createDynamicKeyFromMethodArg(
             methodSignature.parameterNames,
             joinPoint.args,
             distributedLock.key
@@ -44,7 +44,7 @@ class DistributedLockAop(
         }
     }
 
-    fun getDynamicKeyFromMethodArg(
+    fun createDynamicKeyFromMethodArg(
         methodParameterNames: Array<String>,
         methodArgs: Array<Any>,
         key: String
