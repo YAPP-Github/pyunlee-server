@@ -2,6 +2,7 @@ package com.yapp.cvs.domain.product.entity
 
 import com.yapp.cvs.domain.base.BaseEntity
 import com.yapp.cvs.domain.enums.RetailerType
+import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
@@ -18,5 +19,7 @@ class ProductPromotion(
 
     @Enumerated(EnumType.STRING)
     val retailerType: RetailerType,
+
+    val validAt: LocalDateTime
 
     ) : BaseEntity()

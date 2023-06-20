@@ -1,7 +1,9 @@
 package com.yapp.cvs.domain.product.application
 
+import com.yapp.cvs.domain.product.entity.Product
 import com.yapp.cvs.domain.product.repository.ProductRepository
 import com.yapp.cvs.domain.product.vo.ProductPbVO
+import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import com.yapp.cvs.exception.NotFoundSourceException
 import com.yapp.cvs.infrastructure.redis.RedisKey
 import com.yapp.cvs.infrastructure.redis.RedisKeyType
@@ -22,4 +24,17 @@ class ProductService(
         redisService.increment(RedisKey.createKey(RedisKeyType.PRODUCT_VIEW, productId.toString()))
     }
 
+    fun searchProductList(productSearchVO: ProductSearchVO): List<Product> {
+        return productRepository.findProductList(
+            productSearchVO.minPrice,
+            productSearchVO.maxPrice,
+            productSearchVO.productCategoryTypeList,
+            productSearchVO.pbOnly,
+            productSearchVO.promotionTypeList,
+            productSearchVO.promotionRetailerList,
+            productSearchVO.appliedDateTime,
+            productSearchVO.pageSize,
+            productSearchVO.offsetProductId
+        )
+    }
 }
