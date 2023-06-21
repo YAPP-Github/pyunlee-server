@@ -8,6 +8,8 @@ import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.OneToMany
 import javax.persistence.Table
 
 @Entity
@@ -30,5 +32,13 @@ data class Product(
 
     val imageUrl: String,
 
-    val valid: Boolean = true
+    val valid: Boolean = true,
+
+    @OneToMany
+    @JoinColumn(name = "productId", insertable = false, updatable = false)
+    val productPromotionList: Set<ProductPromotion> = setOf(),
+
+    @OneToMany
+    @JoinColumn(name = "productId", insertable = false, updatable = false)
+    val pbProductMappingList: Set<PbProductMapping> = setOf()
 ) : BaseEntity()
