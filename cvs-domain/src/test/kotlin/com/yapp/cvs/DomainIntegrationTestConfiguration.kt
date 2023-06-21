@@ -1,9 +1,10 @@
-package com.yapp.cvs.infrastructure.redis.lock
+package com.yapp.cvs
 
-import com.yapp.cvs.PyunleeDomainApplication
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@ComponentScan(basePackageClasses = [PyunleeDomainApplication::class])
+@EnableAutoConfiguration
+@ComponentScan
 class DomainIntegrationTestConfiguration

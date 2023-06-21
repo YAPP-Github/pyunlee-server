@@ -1,59 +1,33 @@
 package com.yapp.cvs.infrastructure.redis.lock
 
+import com.yapp.cvs.exception.InvalidLockException
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
-import org.redisson.api.RedissonClient
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Aspect
 @Component
 class DistributedLockAop(
-    private val redissonClient: RedissonClient,
-    private val aopForNewTransaction: AopForNewTransaction
+        private val lockManager: LockManager,
 ) {
-    @Around("@annotation(com.yapp.cvs.infrastructure.redis.lock.DistributedLock)")
-    fun lock(joinPoint: ProceedingJoinPoint): Any? {
+    @Around("@annotation(distributedLock)")
+    fun lock(joinPoint: ProceedingJoinPoint, distributedLock: DistributedLock): Any? {
+        val dynamicKey = createDynamicKey(joinPoint, distributedLock.keys)
+        val lockName = "${distributedLock.type.lockName}:$dynamicKey"
+        return lockManager.lock({ joinPoint.proceed() }, lockName)
+    }
+
+    private fun createDynamicKey(joinPoint: ProceedingJoinPoint, keys: Array<String>): String {
         val methodSignature = joinPoint.signature as MethodSignature
-        val method = methodSignature.method
-        val distributedLock: DistributedLock = method.getAnnotation(DistributedLock::class.java)
-        val dynamicKey = createDynamicKeyFromMethodArg(
-            methodSignature.parameterNames,
-            joinPoint.args,
-            distributedLock.key
-        )
-        val rLock = redissonClient.getLock("${distributedLock.lockName}:$dynamicKey")
+        val methodParameterNames = methodSignature.parameterNames
+        val methodArgs = joinPoint.args
 
-        try {
-            val available = rLock.tryLock(distributedLock.waitTime, distributedLock.leaseTime, distributedLock.timeUnit)
-            if (!available) {
-                throw Exception("RedissonLock Not Available")
-            }
-            return aopForNewTransaction.proceed(joinPoint)
-        } catch (e: InterruptedException) {
-            throw e
-        } finally {
-            try {
-                rLock.unlock()
-            } catch (e: IllegalMonitorStateException) {
-                log.info("RedissonLock Already unlocked", e)
-            }
+        val dynamicKey = keys.joinToString(separator = ":") { key ->
+            val indexOfKey = methodParameterNames.indexOf(key)
+            methodArgs.getOrNull(indexOfKey)?.toString() ?: throw InvalidLockException("Invalid Lock Key")
         }
-    }
-
-    fun createDynamicKeyFromMethodArg(
-        methodParameterNames: Array<String>,
-        methodArgs: Array<Any>,
-        key: String
-    ): String {
-        val keyIndex = methodParameterNames.indexOf(key)
-        return methodArgs.getOrNull(keyIndex)?.toString() ?: throw Exception("Bad RedissonLock Key")
-    }
-
-    companion object {
-        private val log: Logger = LoggerFactory.getLogger(this::class.java)
+        return dynamicKey
     }
 }
