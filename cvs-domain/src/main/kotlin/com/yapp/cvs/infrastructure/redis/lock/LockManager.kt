@@ -4,5 +4,5 @@ import org.springframework.stereotype.Component
 
 @Component
 interface LockManager {
-    fun lock(operation: () -> Any?, lockName: String): Any?
+    fun lock(lockName: String, operation: () -> Any?): Any?
 }

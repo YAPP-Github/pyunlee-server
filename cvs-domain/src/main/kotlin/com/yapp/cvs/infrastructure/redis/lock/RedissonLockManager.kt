@@ -3,14 +3,17 @@ package com.yapp.cvs.infrastructure.redis.lock
 import com.yapp.cvs.exception.InvalidLockException
 import org.redisson.api.RedissonClient
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.TimeUnit
 
 @Component
 class RedissonLockManager(
     private val redissonClient: RedissonClient,
-    private val transactionManagerSupport: TransactionManagerSupport
 ): LockManager {
-    override fun lock(operation: () -> Any?, lockName: String): Any? {
+    // 트랜잭션이 모두 Lock 내부에서 실행됨을 보장한다
+    @Transactional(propagation = Propagation.NEVER)
+    override fun lock(lockName: String, operation: () -> Any?): Any? {
         val rLock = redissonClient.getLock(lockName)
 
         try {
@@ -18,7 +21,7 @@ class RedissonLockManager(
             if (!available) {
                 throw InvalidLockException("Redisson Lock Not Available")
             }
-            return transactionManagerSupport.execute { operation() }
+            return operation()
         } finally {
             rLock.unlock()
         }

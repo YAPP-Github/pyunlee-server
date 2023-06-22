@@ -2,7 +2,6 @@ package com.yapp.cvs.infrastructure.redis
 
 import com.yapp.cvs.DomainIntegrationTest
 import com.yapp.cvs.domain.enums.DistributedLockType
-import com.yapp.cvs.exception.InvalidLockException
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.IllegalTransactionStateException
 import org.springframework.transaction.annotation.Transactional
 import java.util.concurrent.atomic.AtomicLong
 
@@ -20,20 +20,25 @@ class DistributedLockAopTest {
     private lateinit var recommendService: RecommendService
 
     @Service
-    class RecommendService(var status: Boolean = false) {
+    class RecommendService(val anotherService: AnotherService) {
+        var status: Boolean = false
+
+        @Transactional
         @DistributedLock(DistributedLockType.LIKE, ["productId"])
         fun recommendByIdWithLock(productId: Long) {
             execute()
         }
 
+        @Transactional
         @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
         fun recommendByCompositeKeyWithLock(productId: Long, memberId: Long) {
             execute()
         }
 
         @Transactional
-        @DistributedLock(DistributedLockType.LIKE, ["productId"])
-        fun recommendWithTransactional(productId: Long) {}
+        fun callAnotherServiceMethod(productId: Long) {
+            anotherService.anotherMethod(productId)
+        }
 
         fun recommendByIdWithoutLock(productId: Long) {
             execute()
@@ -46,6 +51,14 @@ class DistributedLockAopTest {
                 throw RuntimeException("이미 추천한 상품입니다.")
             }
         }
+    }
+
+    @Service
+    class AnotherService {
+        // 내부 메소드 호출은 트랜잭션 적용되지 않아 별도의 서비스 클래스 선언
+        @Transactional
+        @DistributedLock(DistributedLockType.LIKE, ["anotherId"])
+        fun anotherMethod(anotherId: Long) {}
     }
 
     @BeforeEach
@@ -82,10 +95,12 @@ class DistributedLockAopTest {
     }
 
     @Test
-    @DisplayName("각 쓰레드는 @Transactional 을 포함한 선행 트랜잭션에 참여하면 안된다")
-    fun threadTransactionalFailTest() {
+    @DisplayName("선행 트랜잭션 내부에서 Lock 연산이 발생하면 안된다")
+    fun transactionalFailTest() {
         // then
-        assertThrows<InvalidLockException> { recommendService.recommendWithTransactional(1L) }
+        assertThrows<IllegalTransactionStateException> {
+            recommendService.callAnotherServiceMethod(1L)
+        }
     }
 
     @Test

@@ -5,10 +5,13 @@ import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.reflect.MethodSignature
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 
 @Aspect
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 class DistributedLockAop(
         private val lockManager: LockManager,
 ) {
@@ -16,7 +19,7 @@ class DistributedLockAop(
     fun lock(joinPoint: ProceedingJoinPoint, distributedLock: DistributedLock): Any? {
         val dynamicKey = createDynamicKey(joinPoint, distributedLock.keys)
         val lockName = "${distributedLock.type.lockName}:$dynamicKey"
-        return lockManager.lock({ joinPoint.proceed() }, lockName)
+        return lockManager.lock(lockName) { joinPoint.proceed() }
     }
 
     private fun createDynamicKey(joinPoint: ProceedingJoinPoint, keys: Array<String>): String {
