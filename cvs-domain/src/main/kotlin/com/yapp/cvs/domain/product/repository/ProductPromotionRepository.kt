@@ -1,6 +1,5 @@
 package com.yapp.cvs.domain.product.repository
 
-import com.yapp.cvs.domain.base.vo.OffsetOrderType
 import com.yapp.cvs.domain.product.entity.ProductPromotion
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDateTime
