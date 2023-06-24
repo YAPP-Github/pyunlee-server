@@ -1,11 +1,11 @@
-name: Build And Deploy Api Server Dev
+name: Build And Deploy for Develop Api Server
 
 on:
   push:
-    branches: ['dev']
+    branches: ['develop']
 
 env:
-  ACTIVE_PROFILE: "dev"
+  ACTIVE_PROFILE: "develop"
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
   DOCKERHUB_IMAGE_NAME: ${{ secrets.DOCKERHUB_IMAGE_NAME }}
