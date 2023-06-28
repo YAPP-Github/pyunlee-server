@@ -30,7 +30,7 @@ data class Product(
 
     val barcode: String,
 
-    val imageUrl: String,
+    val imageUrl: String? = null,
 
     val valid: Boolean = true,
 

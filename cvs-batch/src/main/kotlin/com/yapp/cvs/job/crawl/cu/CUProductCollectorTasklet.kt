@@ -41,7 +41,8 @@ open class CUProductCollectorTasklet(
             productElements.forEach { productRawElement ->
                 val title = productRawElement.getElementsByClass("name").text()
                 val price = productRawElement.getElementsByClass("price").text()
-                val imgURL = productRawElement.getElementsByClass("prod_img").attr("src")
+                val imgURL = productRawElement.getElementsByClass("prod_img")[1].absUrl("src")
+
                 productCollections.add(
                     ProductRawDataVO(
                         name = ProductDataParser.parseProductName(title),
