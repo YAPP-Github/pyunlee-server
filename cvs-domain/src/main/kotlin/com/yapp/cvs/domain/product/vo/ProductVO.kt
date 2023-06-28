@@ -11,7 +11,7 @@ data class ProductVO(
     val productCategoryType: ProductCategoryType,
     val isPbProduct: Boolean,
     val isPromotion: Boolean,
-    val imageUrl: String,
+    val imageUrl: String?,
 ) {
     companion object {
         fun from(product: Product): ProductVO {

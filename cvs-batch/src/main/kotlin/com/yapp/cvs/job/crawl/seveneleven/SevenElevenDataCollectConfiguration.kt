@@ -24,7 +24,7 @@ class SevenElevenDataCollectConfiguration(
     private val productDataProcessor: ProductDataProcessor,
 ) {
     companion object {
-        const val J0B_NAME = "seven-eleven.product"
+        const val J0B_NAME = "seven-eleven-collect-job"
     }
 
     @Bean
