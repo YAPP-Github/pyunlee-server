@@ -25,16 +25,6 @@ class ProductService(
     }
 
     fun searchProductList(productSearchVO: ProductSearchVO): List<Product> {
-        return productRepository.findProductList(
-            productSearchVO.minPrice,
-            productSearchVO.maxPrice,
-            productSearchVO.productCategoryTypeList,
-            productSearchVO.pbOnly,
-            productSearchVO.promotionTypeList,
-            productSearchVO.promotionRetailerList,
-            productSearchVO.appliedDateTime,
-            productSearchVO.pageSize,
-            productSearchVO.offsetProductId
-        )
+        return productRepository.findProductList(productSearchVO)
     }
 }

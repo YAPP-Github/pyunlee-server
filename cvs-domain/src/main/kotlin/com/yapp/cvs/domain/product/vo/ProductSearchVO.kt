@@ -2,6 +2,7 @@ package com.yapp.cvs.domain.product.vo
 
 import com.yapp.cvs.domain.enums.ProductCategoryType
 import com.yapp.cvs.domain.enums.RetailerType
+import com.yapp.cvs.domain.product.entity.ProductOrderType
 import com.yapp.cvs.domain.product.entity.ProductPromotionType
 import java.time.LocalDateTime
 
@@ -13,7 +14,9 @@ data class ProductSearchVO(
     val promotionTypeList: List<ProductPromotionType>,
     val promotionRetailerList: List<RetailerType>,
     val appliedDateTime: LocalDateTime,
+    val keyWord: String?,
     val pageSize: Long,
-    val offsetProductId: Long?
+    val offsetProductId: Long?,
+    val orderBy: ProductOrderType
 ) {
 }

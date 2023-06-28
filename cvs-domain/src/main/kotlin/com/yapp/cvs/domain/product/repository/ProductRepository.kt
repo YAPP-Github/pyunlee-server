@@ -6,6 +6,7 @@ import com.yapp.cvs.domain.enums.RetailerType
 import com.yapp.cvs.domain.product.entity.Product
 import com.yapp.cvs.domain.product.entity.ProductPromotionType
 import com.yapp.cvs.domain.product.vo.ProductPbVO
+import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import org.springframework.data.jpa.repository.JpaRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -17,15 +18,5 @@ interface ProductRepository : JpaRepository<Product, Long>, ProductRepositoryCus
 
 interface ProductRepositoryCustom {
     fun findWithPbInfoByProductId(productId: Long): ProductPbVO?
-    fun findProductList(
-        minPrice: Long?,
-        maxPrice: Long?,
-        productCategoryTypeList: List<ProductCategoryType>,
-        pbOnly: Boolean,
-        promotionTypeList: List<ProductPromotionType>,
-        promotionRetailerList: List<RetailerType>,
-        appliedDateTime: LocalDateTime,
-        pageSize: Long,
-        offsetProductId: Long?
-    ): List<Product>
+    fun findProductList(productSearchVO: ProductSearchVO): List<Product>
 }
