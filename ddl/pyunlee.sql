@@ -80,6 +80,10 @@ CREATE TABLE product_like_histories
     updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
 ) CHARSET = utf8 COMMENT='상품 좋아요 정보';
 
+create index product_like_histories_idx01 on product_like_histories (createdAt);
+create index product_like_histories_idx02 on product_like_histories (updatedAt);
+create index product_like_histories_idx03 on product_like_histories (productId, memberId);
+
 CREATE TABLE product_like_summaries
 (
     productLikeSummaryId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productLikeSummaryId',

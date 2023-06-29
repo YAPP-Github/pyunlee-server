@@ -6,13 +6,19 @@ import javax.persistence.*
 @Entity
 @Table(name = "product_like_summaries")
 data class ProductLikeSummary(
-    @Id
+        @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val productLikeSummaryId: Long? = null,
 
     val productId: Long,
 
-    val likeCount: Long,
+    val likeCount: Long = 0L,
 
-    val totalCount: Long,
-) : BaseEntity()
+    val totalCount: Long = 0L
+) : BaseEntity() {
+    companion object {
+        fun from(productId: Long): ProductLikeSummary {
+            return ProductLikeSummary(productId = productId)
+        }
+    }
+}

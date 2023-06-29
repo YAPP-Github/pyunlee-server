@@ -27,7 +27,7 @@ spring:
     redisson:
       config: |
         singleServerConfig:
-          address: "redis://127.0.0.1:6379"
+          address: redis://${REDIS_HOST:127.0.0.1}:6379
   security:
     oauth2:
       client:
@@ -43,6 +43,19 @@ logging:
 #    com.zaxxer.hikari: TRACE
     org.springframework.orm.jpa: ${LOGGING_LEVEL:DEBUG}
     org.springframework.transaction: ${LOGGING_LEVEL:DEBUG}
+
+cloud:
+  aws:
+    s3:
+      bucket: cvs-asset
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+
 ---
 spring:
   config:
@@ -53,20 +66,22 @@ spring:
   sql:
     init:
       mode: never
-#spring:
-#  config:
-#    activate:
-#      on-profile: prod
-#  datasource:
-#    hikari:
-#      maximum-pool-size: 20
-#  jpa:
-#    properties:
-#      hibernate:
-#        default_batch_fetch_size: ${JPA_BATCH_FETCH_SIZE:100}
-#    hibernate:
-#      ddl-auto: none
-#logging:
-#  level:
-#    org.springframework.orm.jpa: DEBUG
-#    org.springframework.transaction: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: ${JPA_BATCH_FETCH_SIZE:100}
+    hibernate:
+      ddl-auto: none
+logging:
+  level:
+    org.springframework.orm.jpa: DEBUG
+    org.springframework.transaction: DEBUG

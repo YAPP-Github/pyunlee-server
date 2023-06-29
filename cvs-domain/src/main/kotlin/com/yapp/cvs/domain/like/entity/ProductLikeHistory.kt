@@ -7,7 +7,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "product_like_histories")
 data class ProductLikeHistory(
-        @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val productLikeHistoryId: Long? = null,
 
@@ -19,12 +19,16 @@ data class ProductLikeHistory(
     val likeType: ProductLikeType = ProductLikeType.NONE,
 ) : BaseEntity() {
     companion object {
-        fun of(productId: Long, memberId: Long, likeType: ProductLikeType): ProductLikeHistory {
-            return ProductLikeHistory(
-                    productId = productId,
-                    memberId = memberId,
-                    likeType = likeType
-            )
+        fun like(productId: Long, memberId: Long): ProductLikeHistory {
+            return ProductLikeHistory(productId =  productId, memberId = memberId, likeType = ProductLikeType.LIKE)
+        }
+
+        fun dislike(productId: Long, memberId: Long): ProductLikeHistory {
+            return ProductLikeHistory(productId =  productId, memberId = memberId, likeType = ProductLikeType.DISLIKE)
+        }
+
+        fun none(productId: Long, memberId: Long): ProductLikeHistory {
+            return ProductLikeHistory(productId =  productId, memberId = memberId, likeType = ProductLikeType.NONE)
         }
     }
 }

@@ -1,50 +1,42 @@
 package com.yapp.cvs.domain.like.application
 
-import com.yapp.cvs.domain.enums.DistributedLockType
 import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.like.entity.ProductLikeHistory
 import com.yapp.cvs.domain.like.repository.ProductLikeHistoryRepository
-import com.yapp.cvs.domain.like.vo.ProductLikeVO
 import com.yapp.cvs.exception.BadRequestException
-import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ProductLikeHistoryService(
         private val productLikeHistoryRepository: ProductLikeHistoryRepository
 ) {
-    fun findLatestByProductIdAndMemberId(productId: Long, memberId: Long): ProductLikeVO {
+    fun findLatest(productId: Long, memberId: Long): ProductLikeHistory {
         return productLikeHistoryRepository.findLatestByProductIdAndMemberId(productId, memberId)
-                ?: ProductLikeVO.noneOf(productId)
+                ?: ProductLikeHistory.none(productId, memberId)
     }
 
-    @Transactional
-    @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
-    fun like(productId: Long, memberId: Long): ProductLikeVO {
-        return createProductLike(productId, memberId, ProductLikeType.LIKE)
+    fun findLatestType(productId: Long, memberId: Long): ProductLikeType {
+        return this.findLatest(productId, memberId).likeType
     }
 
-    @Transactional
-    @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
-    fun dislike(productId: Long, memberId: Long): ProductLikeVO {
-        return createProductLike(productId, memberId, ProductLikeType.DISLIKE)
+    fun like(productId: Long, memberId: Long): ProductLikeHistory {
+        validateDuplicatedLike(productId, memberId, ProductLikeType.LIKE)
+        return ProductLikeHistory.like(productId, memberId)
     }
 
-    @Transactional
-    @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
-    fun cancel(productId: Long, memberId: Long): ProductLikeVO {
-        return createProductLike(productId, memberId, ProductLikeType.NONE)
+    fun dislike(productId: Long, memberId: Long): ProductLikeHistory {
+        validateDuplicatedLike(productId, memberId, ProductLikeType.DISLIKE)
+        return ProductLikeHistory.dislike(productId, memberId)
     }
 
-    private fun createProductLike(productId: Long, memberId: Long, likeType: ProductLikeType): ProductLikeVO {
-        validateDuplicatedLike(productId, memberId, likeType)
-        val productLike = ProductLikeHistory.of(productId, memberId, likeType)
-        return ProductLikeVO.from(productLikeHistoryRepository.save(productLike))
+    fun cancel(productId: Long, memberId: Long): ProductLikeHistory {
+        validateDuplicatedLike(productId, memberId, ProductLikeType.NONE)
+        return ProductLikeHistory.none(productId, memberId)
     }
 
     private fun validateDuplicatedLike(productId: Long, memberId: Long, likeType: ProductLikeType) {
-        if (productLikeHistoryRepository.existsLatestByProductIdAndMemberIdAndType(productId, memberId, likeType)) {
+        val latestType = this.findLatestType(productId, memberId)
+        if (latestType == likeType) {
             throw BadRequestException("중복된 평가 요청입니다.")
         }
     }

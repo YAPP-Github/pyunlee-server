@@ -60,4 +60,8 @@ class RedissonRedisService(
     override fun increment(key: RedisKey): Long {
         return redissonClient.getAtomicLong(key.value).incrementAndGet()
     }
+
+    override fun decrement(key: RedisKey): Long {
+        return redissonClient.getAtomicLong(key.value).decrementAndGet()
+    }
 }
