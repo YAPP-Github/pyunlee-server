@@ -1,29 +1,30 @@
 package com.yapp.cvs.domain.like.application
 
 import com.yapp.cvs.domain.enums.ProductLikeType
-import com.yapp.cvs.domain.like.repository.ProductLikeSummaryRepository
-import com.yapp.cvs.infrastructure.redis.RedisKey
-import com.yapp.cvs.infrastructure.redis.RedisKeyType
-import com.yapp.cvs.infrastructure.redis.service.RedisService
+import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
+import com.yapp.cvs.domain.like.repository.MemberProductLikeMappingRepository
+import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
 import org.springframework.stereotype.Service
 
 
 @Service
 class ProductLikeSummaryService(
-        private val productLikeSummaryRepository: ProductLikeSummaryRepository,
-        private val redisService: RedisService
+        private val memberProductLikeMappingRepository: MemberProductLikeMappingRepository
 ) {
-    fun increase(productId: Long, likeType: ProductLikeType) {
-        if (likeType != ProductLikeType.NONE) {
-            val redisKey = RedisKey.createKey(RedisKeyType.PRODUCT_LIKE_HISTORY, likeType.name, productId.toString())
-            redisService.increment(redisKey)
-        }
+    fun upsertProductLikeMapping(productId: Long, memberId: Long, likeType: ProductLikeType) {
+        val memberProductLikeMapping = memberProductLikeMappingRepository.findByProductIdAndMemberId(productId, memberId)
+                ?.apply { this.likeType = likeType }
+                ?: MemberProductLikeMapping(productId = productId, memberId = memberId, likeType = likeType)
+        memberProductLikeMappingRepository.save(memberProductLikeMapping)
     }
 
-    fun decrease(productId: Long, likeType: ProductLikeType) {
-        if (likeType != ProductLikeType.NONE) {
-            val redisKey = RedisKey.createKey(RedisKeyType.PRODUCT_LIKE_HISTORY, likeType.name, productId.toString())
-            redisService.decrement(redisKey)
-        }
+    fun getProductLikeSummary(productId: Long): ProductLikeSummaryVO {
+        val mappings = memberProductLikeMappingRepository.findAllByProductId(productId)
+        return ProductLikeSummaryVO(
+                productId = productId,
+                likeCount = mappings.count { it.likeType == ProductLikeType.LIKE }.toLong(),
+                dislikeCount = mappings.count { it.likeType == ProductLikeType.DISLIKE }.toLong(),
+                totalCount = mappings.size.toLong()
+        )
     }
 }
