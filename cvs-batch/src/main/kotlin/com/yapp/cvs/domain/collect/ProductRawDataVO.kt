@@ -14,14 +14,14 @@ data class ProductRawDataVO(
     val retailerType: RetailerType,
     val isPbProduct: Boolean = false,
 ) {
-    fun to(): Product {
+    fun to(s3ImageUrl: String?): Product {
         return Product(
             productName = name,
             brandName = brandName,
             price = price,
             productCategoryType = categoryType,
             barcode = barcode,
-            imageUrl = imageUrl,
+            imageUrl = s3ImageUrl,
         )
     }
 }

@@ -1,30 +1,35 @@
 package com.yapp.cvs.domain.collect.application
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
+import com.yapp.cvs.domain.extension.endOfMonth
 import com.yapp.cvs.domain.product.entity.PbProductMapping
+import com.yapp.cvs.domain.product.entity.ProductPromotion
 import com.yapp.cvs.domain.product.entity.ProductPromotionType
 import com.yapp.cvs.domain.product.entity.ProductRetailerMapping
-import com.yapp.cvs.domain.product.entity.ProductPromotion
 import com.yapp.cvs.domain.product.repository.PbProductMappingRepository
+import com.yapp.cvs.domain.product.repository.ProductPromotionRepository
 import com.yapp.cvs.domain.product.repository.ProductRepository
 import com.yapp.cvs.domain.product.repository.ProductRetailerMappingRepository
-import com.yapp.cvs.domain.product.repository.ProductPromotionRepository
+import com.yapp.cvs.infrastructure.s3.service.S3Service
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import javax.transaction.Transactional
 
 @Service
 class ProductDataProcessor(
-        private val productRepository: ProductRepository,
-        private val productRetailerMappingRepository: ProductRetailerMappingRepository,
-        private val pbProductMappingRepository: PbProductMappingRepository,
-        private val productPromotionRepository: ProductPromotionRepository
+    private val productRepository: ProductRepository,
+    private val productRetailerMappingRepository: ProductRetailerMappingRepository,
+    private val pbProductMappingRepository: PbProductMappingRepository,
+    private val productPromotionRepository: ProductPromotionRepository,
+    private val s3Service: S3Service
 ) {
     @Transactional
     fun saveProduct(productRawDataVO: ProductRawDataVO) {
         if (productRepository.findByBarcode(productRawDataVO.barcode) == null) {
-            val productEntity = productRepository.save(productRawDataVO.to())
+            val imageUrl = s3Service.copyAndUploadIfExist(productRawDataVO.imageUrl, productRawDataVO.barcode)
+            val productEntity = productRepository.save(productRawDataVO.to(imageUrl))
             productRetailerMappingRepository.save(
                 ProductRetailerMapping.of(
                     productEntity,
@@ -49,6 +54,7 @@ class ProductDataProcessor(
                     productId = product.productId!!,
                     promotionType = productPromotionType,
                     retailerType = productRawDataVO.retailerType,
+                    validAt = LocalDateTime.now().endOfMonth()
                 )
             )
         }

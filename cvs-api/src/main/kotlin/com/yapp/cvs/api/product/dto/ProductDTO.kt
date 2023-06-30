@@ -10,7 +10,7 @@ data class ProductDTO(
     val productCategoryType: String,
     val isPbProduct: Boolean,
     val isPromotion: Boolean,
-    val imageUrl: String,
+    val imageUrl: String?,
 ) {
     companion object {
         fun from(productVO: ProductVO): ProductDTO {
