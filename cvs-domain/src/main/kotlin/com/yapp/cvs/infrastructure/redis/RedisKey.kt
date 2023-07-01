@@ -17,4 +17,5 @@ enum class RedisKeyType(
 ) {
     MEMBER_ACCESS_TOKEN("member-access-token"),
     PRODUCT_VIEW("product-view"),
+    PRODUCT_LIKE("product-like"),
 }

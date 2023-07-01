@@ -69,3 +69,46 @@ CREATE TABLE members
 create index members_idx01 on members (createdAt);
 create index members_idx02 on members (updatedAt);
 create index members_idx03 on members (email, loginType, memberStatus);
+
+CREATE TABLE product_like_histories
+(
+    productLikeHistoryId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productLikeHistoryId',
+    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
+    memberId BIGINT(20) UNSIGNED COMMENT '회원ID',
+    likeType VARCHAR(20) NOT NULL COMMENT '추천상태',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+) CHARSET = utf8 COMMENT='상품 좋아요 정보';
+
+create index product_like_histories_idx01 on product_like_histories (createdAt);
+create index product_like_histories_idx02 on product_like_histories (updatedAt);
+create index product_like_histories_idx03 on product_like_histories (productId, memberId);
+
+CREATE TABLE member_product_like_mappings
+(
+    memberProductLikeMappingId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'memberProductLikeMappingId',
+    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
+    memberId BIGINT(20) UNSIGNED COMMENT '회원ID',
+    likeType VARCHAR(20) NOT NULL COMMENT '추천상태',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+) CHARSET = utf8 COMMENT='유저 상품 좋아요 정보 mapping';
+
+create index member_product_like_mappings_idx01 on member_product_like_mappings (createdAt);
+create index member_product_like_mappings_idx02 on member_product_like_mappings (updatedAt);
+create index member_product_like_mappings_idx03 on member_product_like_mappings (productId);
+create index member_product_like_mappings_idx04 on member_product_like_mappings (memberId);
+
+CREATE TABLE product_like_summaries
+(
+    productLikeSummaryId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productLikeSummaryId',
+    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
+    likeCount BIGINT(20) UNSIGNED COMMENT '좋아요 개수',
+    totalCount BIGINT(20) UNSIGNED COMMENT '전체 평가 개수',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+) CHARSET = utf8 COMMENT='상품 좋아요 정보 요약';
+
+create index product_like_summaries_idx01 on product_like_summaries (createdAt);
+create index product_like_summaries_idx02 on product_like_summaries (updatedAt);
+create index product_like_summaries_idx03 on product_like_summaries (productId);

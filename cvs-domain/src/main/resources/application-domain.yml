@@ -27,7 +27,7 @@ spring:
     redisson:
       config: |
         singleServerConfig:
-          address: "redis://127.0.0.1:6379"
+          address: redis://${REDIS_HOST:127.0.0.1}:6379
   security:
     oauth2:
       client:
