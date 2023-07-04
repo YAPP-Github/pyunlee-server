@@ -1,10 +1,9 @@
 package com.yapp.cvs.domain.like.application
 
+import com.yapp.cvs.domain.comment.application.ProductCommentSummaryService
 import com.yapp.cvs.domain.enums.DistributedLockType
 import com.yapp.cvs.domain.enums.ProductLikeType
-import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
 import com.yapp.cvs.domain.like.entity.ProductLikeHistory
-import com.yapp.cvs.domain.like.repository.MemberProductLikeMappingRepository
 import com.yapp.cvs.domain.like.vo.ProductLikeHistoryVO
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
@@ -16,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class ProductLikeProcessor(
         private val productLikeHistoryService: ProductLikeHistoryService,
         private val productLikeSummaryService: ProductLikeSummaryService,
+        private val productCommentSummaryService: ProductCommentSummaryService
 ) {
     fun findLatestRate(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.findLatest(productId, memberId)
@@ -31,6 +31,7 @@ class ProductLikeProcessor(
     fun likeProduct(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.like(productId, memberId)
         productLikeSummaryService.upsertProductLikeMapping(productId, memberId, ProductLikeType.LIKE)
+        productCommentSummaryService.activateCommentMapping(productId, memberId)
         return ProductLikeHistoryVO.from(productLikeHistory)
     }
 
@@ -38,6 +39,7 @@ class ProductLikeProcessor(
     fun dislikeProduct(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.dislike(productId, memberId)
         productLikeSummaryService.upsertProductLikeMapping(productId, memberId, ProductLikeType.DISLIKE)
+        productCommentSummaryService.activateCommentMapping(productId, memberId)
         return ProductLikeHistoryVO.from(productLikeHistory)
     }
 
@@ -45,6 +47,7 @@ class ProductLikeProcessor(
     fun cancelEvaluation(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.cancel(productId, memberId)
         productLikeSummaryService.upsertProductLikeMapping(productId, memberId, ProductLikeType.NONE)
+        productCommentSummaryService.inactivateCommentMapping(productId, memberId)
         return ProductLikeHistoryVO.from(productLikeHistory)
     }
 }
