@@ -1,2 +1,2 @@
 rootProject.name = "cvs"
-include("cvs-api", "cvs-batch", "cvs-domain")
+include("cvs-api", "cvs-batch", "cvs-admin", "cvs-domain")

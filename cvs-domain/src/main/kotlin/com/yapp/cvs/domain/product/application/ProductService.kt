@@ -15,6 +15,14 @@ class ProductService(
     private val productRepository: ProductRepository,
     private val redisService: RedisService
 ) {
+    fun findProductById(productId: Long): Product? {
+        return productRepository.findById(productId).orElse(null)
+    }
+
+    fun saveProduct(product: Product) {
+        productRepository.save(product)
+    }
+
     fun findProductPbInfo(productId: Long): ProductPbVO {
         return productRepository.findWithPbInfoByProductId(productId)
             ?: throw NotFoundSourceException("productId: $productId 가 존재하지 않습니다")
