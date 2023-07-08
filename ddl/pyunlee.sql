@@ -118,7 +118,7 @@ CREATE TABLE product_comments
     productCommentId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productCommentId',
     productId BIGINT(20) UNSIGNED COMMENT '상품ID',
     memberId BIGINT(20) UNSIGNED COMMENT '회원ID',
-    productCommentHistoryId BIGINT(20) UNSIGNED COMMENT '코멘트ID',
+    content VARCHAR(300) NOT NULL COMMENT '내용',
     valid TINYINT(1) NOT NULL COMMENT 'valid',
     createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
     updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
@@ -128,18 +128,3 @@ create index product_comments_idx01 on product_comments (createdAt);
 create index product_comments_idx02 on product_comments (updatedAt);
 create index product_comments_idx03 on product_comments (productId);
 create index product_comments_idx04 on product_comments (memberId);
-
-CREATE TABLE product_comment_histories
-(
-    productCommentHistoryId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productCommentHistoryId',
-    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
-    memberId BIGINT(20) UNSIGNED COMMENT '회원ID',
-    content VARCHAR(300) NOT NULL COMMENT '내용',
-    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
-    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
-) CHARSET = utf8 COMMENT='상품 리뷰 코멘트 이력';
-
-create index product_comment_histories_idx01 on product_comment_histories (createdAt);
-create index product_comment_histories_idx02 on product_comment_histories (updatedAt);
-create index product_comment_histories_idx03 on product_comment_histories (productId);
-create index product_comment_histories_idx04 on product_comment_histories (memberId);

@@ -1,6 +1,6 @@
 package com.yapp.cvs.domain.like.application
 
-import com.yapp.cvs.domain.comment.application.ProductCommentSummaryService
+import com.yapp.cvs.domain.comment.application.ProductCommentService
 import com.yapp.cvs.domain.enums.DistributedLockType
 import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.like.entity.ProductLikeHistory
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class ProductLikeProcessor(
         private val productLikeHistoryService: ProductLikeHistoryService,
         private val productLikeSummaryService: ProductLikeSummaryService,
-        private val productCommentSummaryService: ProductCommentSummaryService
+        private val productCommentService: ProductCommentService
 ) {
     fun findLatestRate(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.findLatest(productId, memberId)
@@ -27,27 +27,27 @@ class ProductLikeProcessor(
         return productLikeSummaryService.getProductLikeSummary(productId)
     }
 
-    @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
+    @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productId", "memberId"])
     fun likeProduct(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.like(productId, memberId)
         productLikeSummaryService.upsertProductLikeMapping(productId, memberId, ProductLikeType.LIKE)
-        productCommentSummaryService.activateCommentMapping(productId, memberId)
+        productCommentService.activate(productId, memberId)
         return ProductLikeHistoryVO.from(productLikeHistory)
     }
 
-    @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
+    @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productId", "memberId"])
     fun dislikeProduct(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.dislike(productId, memberId)
         productLikeSummaryService.upsertProductLikeMapping(productId, memberId, ProductLikeType.DISLIKE)
-        productCommentSummaryService.activateCommentMapping(productId, memberId)
+        productCommentService.activate(productId, memberId)
         return ProductLikeHistoryVO.from(productLikeHistory)
     }
 
-    @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
+    @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productId", "memberId"])
     fun cancelEvaluation(productId: Long, memberId: Long): ProductLikeHistoryVO {
         val productLikeHistory = productLikeHistoryService.cancel(productId, memberId)
         productLikeSummaryService.upsertProductLikeMapping(productId, memberId, ProductLikeType.NONE)
-        productCommentSummaryService.inactivateCommentMapping(productId, memberId)
+        productCommentService.inactivateIfExist(productId, memberId)
         return ProductLikeHistoryVO.from(productLikeHistory)
     }
 }

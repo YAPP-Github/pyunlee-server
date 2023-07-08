@@ -6,6 +6,7 @@ import com.yapp.cvs.api.comment.dto.ProductCommentDetailDTO
 import com.yapp.cvs.api.comment.dto.ProductCommentSearchDTO
 import com.yapp.cvs.api.common.dto.OffsetPageDTO
 import com.yapp.cvs.domain.comment.application.ProductCommentProcessor
+import com.yapp.cvs.domain.like.application.ProductLikeProcessor
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.api.annotations.ParameterObject
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/product")
 class ProductCommentController(
-        private val productCommentProcessor: ProductCommentProcessor
+        private val productCommentProcessor: ProductCommentProcessor,
+        private val productLikeProcessor: ProductLikeProcessor
 ) {
     private val memberId = 1L //TODO : security context 에서 memberId 가져오기
 
@@ -31,16 +33,25 @@ class ProductCommentController(
     }
 
     @PostMapping("/{productId}/comment/write")
-    @Operation(description = "상품에 대한 평가 코멘트를 작성, 또는 수정합니다.")
+    @Operation(description = "상품에 대한 평가 코멘트를 작성합니다.")
     fun writeComment(@PathVariable productId: Long,
                      @RequestBody productCommentContentDTO: ProductCommentContentDTO): ProductCommentDTO {
         val comment = productCommentProcessor.createComment(productId, memberId, productCommentContentDTO.content)
         return ProductCommentDTO.from(comment)
     }
 
+    @PostMapping("/{productId}/comment/edit")
+    @Operation(description = "상품에 대한 평가 코멘트를 수정합니다.")
+    fun updateComment(@PathVariable productId: Long,
+                      @RequestBody productCommentContentDTO: ProductCommentContentDTO): ProductCommentDTO {
+        val comment = productCommentProcessor.updateComment(productId, memberId, productCommentContentDTO.content)
+        return ProductCommentDTO.from(comment)
+    }
+
     @PostMapping("/{productId}/comment/delete")
     @Operation(description = "상품에 대한 평가 코멘트를 삭제합니다.")
     fun deleteComment(@PathVariable productId: Long) {
-        productCommentProcessor.deleteComment(productId, memberId)
+        productCommentProcessor.inactivateComment(productId, memberId)
+        productLikeProcessor.cancelEvaluation(productId, memberId)
     }
 }

@@ -18,17 +18,7 @@ class ProductComment(
 
         val memberId: Long,
 
-        var productCommentHistoryId: Long,
+        var content: String,
 
         var valid: Boolean = true,
-): BaseEntity() {
-        companion object {
-                fun from(productCommentHistory: ProductCommentHistory): ProductComment {
-                        return ProductComment(
-                                productId = productCommentHistory.productId,
-                                memberId = productCommentHistory.memberId,
-                                productCommentHistoryId = productCommentHistory.productCommentHistoryId!!
-                        )
-                }
-        }
-}
+): BaseEntity()

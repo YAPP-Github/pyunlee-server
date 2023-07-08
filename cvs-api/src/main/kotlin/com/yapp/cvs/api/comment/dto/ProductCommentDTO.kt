@@ -1,17 +1,17 @@
 package com.yapp.cvs.api.comment.dto
 
-import com.yapp.cvs.domain.comment.vo.ProductCommentHistoryVO
+import com.yapp.cvs.domain.comment.vo.ProductCommentVO
 
 data class ProductCommentDTO(
-        val productCommentHistoryId: Long,
+        val productCommentId: Long,
         val productId: Long,
         val memberId: Long,
         val content: String
 ) {
     companion object {
-        fun from(productCommentVO: ProductCommentHistoryVO): ProductCommentDTO {
+        fun from(productCommentVO: ProductCommentVO): ProductCommentDTO {
             return ProductCommentDTO(
-                    productCommentHistoryId = productCommentVO.productCommentHistoryId,
+                    productCommentId = productCommentVO.productCommentId,
                     productId = productCommentVO.productId,
                     memberId = productCommentVO.memberId,
                     content = productCommentVO.content

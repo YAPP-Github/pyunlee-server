@@ -5,7 +5,6 @@ import java.time.LocalDateTime
 
 data class ProductCommentDetailVO(
         val productCommentId: Long,
-        val productCommentHistoryId: Long,
         val content: String,
         val commentLikeCount: Long,
         val createdAt: LocalDateTime,

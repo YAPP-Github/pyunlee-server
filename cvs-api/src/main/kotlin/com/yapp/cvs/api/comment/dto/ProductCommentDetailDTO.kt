@@ -6,7 +6,6 @@ import java.time.LocalDateTime
 
 data class ProductCommentDetailDTO(
         val productCommentId: Long,
-        val productCommentHistoryId: Long,
         val content: String,
         val commentLikeCount: Long,
         val isOwner: Boolean,
@@ -22,7 +21,6 @@ data class ProductCommentDetailDTO(
         fun from(productCommentDetailVO: ProductCommentDetailVO): ProductCommentDetailDTO {
             return ProductCommentDetailDTO(
                     productCommentId = productCommentDetailVO.productCommentId,
-                    productCommentHistoryId = productCommentDetailVO.productCommentHistoryId,
                     content = productCommentDetailVO.content,
                     commentLikeCount = productCommentDetailVO.commentLikeCount,
                     isOwner = productCommentDetailVO.isOwner,
