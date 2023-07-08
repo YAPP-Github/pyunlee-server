@@ -1,6 +1,6 @@
 FROM openjdk:17-alpine
 
-EXPOSE 8080
+EXPOSE 10001
 
 ARG PROFILE=develop
 ENV PROFILE=${PROFILE}

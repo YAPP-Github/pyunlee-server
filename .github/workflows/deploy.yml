@@ -8,7 +8,8 @@ env:
   ACTIVE_PROFILE: "develop"
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-  DOCKERHUB_IMAGE_NAME: ${{ secrets.DOCKERHUB_IMAGE_NAME }}
+  DOCKERHUB_API_IMAGE_NAME: ${{ secrets.DOCKERHUB_API_IMAGE_NAME }}
+  DOCKERHUB_ADMIN_IMAGE_NAME: ${{ secrets.DOCKERHUB_ADMIN_IMAGE_NAME }}
 
 jobs:
   build-and-push:
@@ -33,7 +34,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Execute Gradle build
-        run: ./gradlew :cvs-api:build --no-daemon
+        run: |
+          ./gradlew :cvs-api:build --no-daemon
+          ./gradlew :cvs-admin:build --no-daemon
 
       - name: Make image tag
         run: echo "IMAGE_TAG=$ACTIVE_PROFILE-${GITHUB_SHA::7}" >> $GITHUB_ENV
@@ -44,8 +47,10 @@ jobs:
       - name: Build docker image and push image
         run: |
           docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
-          docker build --build-arg PROFILE=$ACTIVE_PROFILE -t $DOCKERHUB_USERNAME/$DOCKERHUB_IMAGE_NAME:${{env.IMAGE_TAG}} ./cvs-api
-          docker push $DOCKERHUB_USERNAME/$DOCKERHUB_IMAGE_NAME:${{env.IMAGE_TAG}}
+          docker build --build-arg PROFILE=$ACTIVE_PROFILE -t $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE_NAME:${{env.IMAGE_TAG}} ./cvs-api
+          docker build --build-arg PROFILE=$ACTIVE_PROFILE -t $DOCKERHUB_USERNAME/$DOCKERHUB_ADMIN_IMAGE_NAME:${{env.IMAGE_TAG}} ./cvs-admin
+          docker push $DOCKERHUB_USERNAME/$DOCKERHUB_API_IMAGE_NAME:${{env.IMAGE_TAG}}
+          docker push $DOCKERHUB_USERNAME/$DOCKERHUB_ADMIN_IMAGE_NAME:${{env.IMAGE_TAG}}
 
       - name: Pass Image tag value
         id: image_tag
@@ -68,8 +73,10 @@ jobs:
           script: |
             sudo touch .env
             echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_NAME }}:${{env.IMAGE_TAG}}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_API_IMAGE_NAME }}:${{env.IMAGE_TAG}}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_ADMIN_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker stop $(docker ps -a -q)
-            docker run --restart=unless-stopped -d -p 8080:8080 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_IMAGE_NAME }}:${{env.IMAGE_TAG}}
+            docker run --restart=unless-stopped -d -p 8080:8080 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_API_IMAGE_NAME }}:${{env.IMAGE_TAG}}
+            docker run --restart=unless-stopped -d -p 10001:10001 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_ADMIN_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker rm $(docker ps --filter 'status=exited' -a -q)
             docker image prune -a -f
