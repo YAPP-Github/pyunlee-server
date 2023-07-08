@@ -17,27 +17,17 @@ class ProductLikeHistoryService(
     }
 
     fun like(productId: Long, memberId: Long): ProductLikeHistory {
-        validateDuplicatedLike(productId, memberId, ProductLikeType.LIKE)
-        val rate = ProductLikeHistory.like(productId, memberId)
-        return productLikeHistoryRepository.save(rate)
+        val rating = ProductLikeHistory.like(productId, memberId)
+        return productLikeHistoryRepository.save(rating)
     }
 
     fun dislike(productId: Long, memberId: Long): ProductLikeHistory {
-        validateDuplicatedLike(productId, memberId, ProductLikeType.DISLIKE)
-        val rate = ProductLikeHistory.dislike(productId, memberId)
-        return productLikeHistoryRepository.save(rate)
+        val rating = ProductLikeHistory.dislike(productId, memberId)
+        return productLikeHistoryRepository.save(rating)
     }
 
     fun cancel(productId: Long, memberId: Long): ProductLikeHistory {
-        validateDuplicatedLike(productId, memberId, ProductLikeType.NONE)
-        val rate = ProductLikeHistory.none(productId, memberId)
-        return productLikeHistoryRepository.save(rate)
-    }
-
-    private fun validateDuplicatedLike(productId: Long, memberId: Long, likeType: ProductLikeType) {
-        val latestType = this.findLatest(productId, memberId)?.likeType
-        if (latestType == likeType) {
-            throw BadRequestException("중복된 평가 요청입니다.")
-        }
+        val rating = ProductLikeHistory.none(productId, memberId)
+        return productLikeHistoryRepository.save(rating)
     }
 }
