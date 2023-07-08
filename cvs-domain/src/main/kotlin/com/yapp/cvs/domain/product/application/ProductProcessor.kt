@@ -3,6 +3,7 @@ package com.yapp.cvs.domain.product.application
 import com.yapp.cvs.domain.base.vo.OffsetPageVO
 import com.yapp.cvs.domain.product.vo.ProductDetailVO
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
+import com.yapp.cvs.domain.product.vo.ProductUpdateVO
 import com.yapp.cvs.domain.product.vo.ProductVO
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -28,5 +29,13 @@ class ProductProcessor(
             productList.lastOrNull()?.productId,
             productList.map { ProductVO.from(it) }
         )
+    }
+
+    fun updateProduct(productId: Long, productUpdateVO: ProductUpdateVO) {
+        val product = productService.findProductById(productId)
+            ?: throw RuntimeException ("not found product")
+
+        product.update(productUpdateVO)
+        productService.saveProduct(product)
     }
 }
