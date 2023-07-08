@@ -2,7 +2,7 @@ FROM openjdk:17-alpine
 
 EXPOSE 8080
 
-ARG PROFILE=dev
+ARG PROFILE=develop
 ENV PROFILE=${PROFILE}
 ENV TZ "Asia/Seoul"
 ENV JAVA_OPTS="-Dspring.profiles.active=$PROFILE"

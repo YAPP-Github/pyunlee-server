@@ -60,8 +60,6 @@ subprojects {
 
         kapt("org.springframework.boot:spring-boot-configuration-processor")
 
-        implementation ("org.springframework.boot:spring-boot-starter-security")
-        implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
         implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 

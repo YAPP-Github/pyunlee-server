@@ -15,4 +15,7 @@ dependencies {
 
     implementation("org.springdoc:springdoc-openapi-ui:1.6.12")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+    implementation ("org.springframework.boot:spring-boot-starter-security")
+    implementation ("org.springframework.boot:spring-boot-starter-oauth2-client")
 }
