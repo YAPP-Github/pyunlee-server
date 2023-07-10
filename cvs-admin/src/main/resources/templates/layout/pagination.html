@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:fragment="pagination(page, totalPages)">
+  <div class="row">
+    <div class="col" style="margin: auto">
+      <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+        <ul class="pagination" style="align-items: center; justify-content: center"
+          th:with="start = ${page - page%5}">
+          <li class="paginate_button page-item previous" id="dataTable_previous"
+            th:classappend="${page eq 0} ? 'disabled'">
+            <a th:onclick="|javascript:pageMove(${page -1})|"
+               data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>
+          <li class="paginate_button page-item"
+              th:each="i : ${#numbers.sequence(start, (totalPages - 1 > start + 4 ? start + 4 : totalPages - 1), 1)}"
+              th:classappend="${i eq page} ? active">
+            <a class="page-link"
+               th:onclick="|javascript:pageMove(${i})|"
+               th:text="${i + 1}" data-toggle="tooltip"
+               style="cursor: pointer"></a>
+          </li>
+          <li class="paginate_button page-item next disabled" id="dataTable_next"
+              th:classappend="${(page + 1) eq totalPages} or ${totalPages eq 0} ? 'disabled'">
+            <a th:onclick="|javascript:pageMove(${page + 1})|"
+               style="cursor: pointer" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</th:block>
+</html>

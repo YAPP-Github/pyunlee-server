@@ -22,7 +22,7 @@
 
     <!-- Custom styles for this page -->
     <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
-
+    <script src="/js/paginations.js"></script>
 </head>
 
 <body id="page-top">
@@ -366,14 +366,12 @@
 
             <!-- Begin Page Content -->
             <div class="container-fluid">
-
                 <!-- Page Heading -->
-                <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-                <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below.
-                    For more information about DataTables, please visit the <a target="_blank"
-                                                                               href="https://datatables.net">official
-                        DataTables documentation</a>.</p>
+                <h1 class="h3 mb-2 text-gray-800">상품 목록</h1>
 
+                <form id="searchForm">
+                    <input type="hidden" id="pageNum" name="pageNum" th:value="${searchForm.pageNum}">
+                </form>
                 <!-- DataTales Example -->
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">
@@ -405,29 +403,9 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
-                                <ul class="pagination">
-                                    <li class="paginate_button page-item previous" id="dataTable_previous"><a
-                                            href="#" aria-controls="dataTable" data-dt-idx="0" tabindex="0"
-                                            class="page-link">Previous</a></li>
-                                    <li class="paginate_button page-item"
-                                        th:each="pageNumber : ${#numbers.sequence(0,  10)}">
-                                        <a class="page-link"
-                                           th:href="@{/product/list(pageSize=${result.pageSize}, pageNum=${pageNumber})}"
-                                           th:text="${pageNumber}"
-                                           th:classappend="${pageNumber==result.pageNum + 1} ? active"></a>
-                                    </li>
-                                    <li class="paginate_button page-item next disabled" id="dataTable_next"><a href="#"
-                                                                                                               aria-controls="dataTable"
-                                                                                                               data-dt-idx="2"
-                                                                                                               tabindex="0"
-                                                                                                               class="page-link">Next</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div th:if="${result.totalPage > 0}" class="dataTables_paginate paging_simple_numbers"
-                                 th:each="pageNumber : ${result.pageNum}">
 
+                            <div th:if="${result.totalPage != 0}">
+                                <div th:replace="layout/pagination :: pagination(${result.pageNum}, ${result.totalPage})"></div>
                             </div>
                         </div>
                     </div>
@@ -470,11 +448,6 @@
 <!-- Custom scripts for all pages-->
 <script src="/js/sb-admin-2.min.js"></script>
 
-<!-- Page level plugins -->
-<script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
-
-<!-- Page level custom scripts -->
-<script src="/js/demo/datatables-demo.js"></script>
 
 </body>
 

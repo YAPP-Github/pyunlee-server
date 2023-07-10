@@ -15,10 +15,11 @@ class ProductController(
 
     @GetMapping("/list")
     fun getProductList(
-        searchFormDto: ProductSearchFormDTO,
+        @ModelAttribute searchForm: ProductSearchFormDTO,
         model: Model
     ): String{
-        val result = productProcessor.searchProductPage(searchFormDto.toPageSearchVO(), searchFormDto.toVO())
+        val result = productProcessor.searchProductPage(searchForm.toPageSearchVO(), searchForm.toVO())
+        model.addAttribute("searchForm", searchForm)
         model.addAttribute("result", result)
         return "product/list"
     }
