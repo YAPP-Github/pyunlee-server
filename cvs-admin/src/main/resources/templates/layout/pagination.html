@@ -18,8 +18,8 @@
                th:text="${i + 1}" data-toggle="tooltip"
                style="cursor: pointer"></a>
           </li>
-          <li class="paginate_button page-item next disabled" id="dataTable_next"
-              th:classappend="${(page + 1) eq totalPages} or ${totalPages eq 0} ? 'disabled'">
+          <li class="paginate_button page-item next" id="dataTable_next"
+              th:classappend="(${(page + 1) eq totalPages} or ${totalPages eq 0}) ? 'disabled'">
             <a th:onclick="|javascript:pageMove(${page + 1})|"
                style="cursor: pointer" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
           </li>
