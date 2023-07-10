@@ -1,5 +1,8 @@
 package com.yapp.cvs.domain.product.application
 
+import com.yapp.cvs.domain.base.vo.OffsetSearchVO
+import com.yapp.cvs.domain.base.vo.PageSearchVO
+import com.yapp.cvs.domain.base.vo.PageVO
 import com.yapp.cvs.domain.product.entity.Product
 import com.yapp.cvs.domain.product.repository.ProductRepository
 import com.yapp.cvs.domain.product.vo.ProductPbVO
@@ -8,6 +11,9 @@ import com.yapp.cvs.exception.NotFoundSourceException
 import com.yapp.cvs.infrastructure.redis.RedisKey
 import com.yapp.cvs.infrastructure.redis.RedisKeyType
 import com.yapp.cvs.infrastructure.redis.service.RedisService
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,7 +38,14 @@ class ProductService(
         redisService.increment(RedisKey.createKey(RedisKeyType.PRODUCT_VIEW, productId.toString()))
     }
 
-    fun searchProductList(productSearchVO: ProductSearchVO): List<Product> {
-        return productRepository.findProductList(productSearchVO)
+    fun searchProductList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): List<Product> {
+        return productRepository.findProductList(offsetSearchVO, productSearchVO)
+    }
+
+    fun searchProductPage(pageSearchVO: PageSearchVO, productSearchVO: ProductSearchVO): Page<Product> {
+        return productRepository.findProductPage(
+            PageRequest.of(pageSearchVO.pageNum, pageSearchVO.pageSize),
+            productSearchVO
+        )
     }
 }
