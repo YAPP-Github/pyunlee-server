@@ -1,0 +1,49 @@
+package com.yapp.cvs.domain.comment.application
+
+import com.yapp.cvs.domain.comment.entity.ProductComment
+import com.yapp.cvs.domain.comment.repository.ProductCommentRepository
+import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
+import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
+import com.yapp.cvs.exception.BadRequestException
+import com.yapp.cvs.exception.NotFoundSourceException
+import org.springframework.stereotype.Service
+
+@Service
+class ProductCommentService(
+        val productCommentRepository: ProductCommentRepository
+) {
+    fun findProductCommentsPage(productId: Long, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
+        return productCommentRepository.findAllByProductIdAndPageOffset(productId, productCommentSearchVO)
+    }
+
+    fun write(productId: Long, memberId: Long, content: String): ProductComment {
+        validateCommentDuplication(productId, memberId)
+        val comment = ProductComment(productId = productId, memberId = memberId, content = content)
+        return productCommentRepository.save(comment)
+    }
+
+    fun update(productId: Long, memberId: Long, content: String): ProductComment {
+        inactivate(productId, memberId)
+        val newComment = ProductComment(productId = productId, memberId = memberId, content = content)
+        return productCommentRepository.save(newComment)
+    }
+
+    fun activate(productId: Long, memberId: Long) {
+        productCommentRepository.findLatestByProductIdAndMemberId(productId, memberId)?.apply { if(!valid) valid = true }
+    }
+
+    fun inactivate(productId: Long, memberId: Long) {
+        productCommentRepository.findLatestByProductIdAndMemberId(productId, memberId)?.apply { if(valid) valid = false }
+                ?: throw NotFoundSourceException("productId: $productId 에 대한 코멘트가 존재하지 않습니다.")
+    }
+
+    fun inactivateIfExist(productId: Long, memberId: Long) {
+        productCommentRepository.findLatestByProductIdAndMemberId(productId, memberId)?.apply { if(valid) valid = false }
+    }
+
+    private fun validateCommentDuplication(productId: Long, memberId: Long) {
+        if (productCommentRepository.existsByProductIdAndMemberIdAndValidTrue(productId, memberId)) {
+            throw BadRequestException("productId: $productId 에 대한 코멘트가 이미 존재합니다.")
+        }
+    }
+}
