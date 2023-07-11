@@ -1,5 +1,7 @@
 package com.yapp.cvs.admin.product.dto
 
+import com.yapp.cvs.domain.base.dto.PageSearchFormDTO
+import com.yapp.cvs.domain.base.vo.PageSearchVO
 import com.yapp.cvs.domain.enums.ProductCategoryType
 import com.yapp.cvs.domain.enums.RetailerType
 import com.yapp.cvs.domain.product.entity.ProductOrderType
@@ -15,10 +17,9 @@ class ProductSearchFormDTO(
     val promotionTypeList: List<ProductPromotionType> = listOf(),
     val promotionRetailerList: List<RetailerType> = listOf(),
     val keyword: String? = null,
-    val pageSize: Long = 10,
-    val offsetProductId: Long? = null,
     val orderBy: ProductOrderType = ProductOrderType.RECENT,
-) {
+    override val pageNum: Int = 0
+): PageSearchFormDTO() {
     fun toVO(): ProductSearchVO {
         return ProductSearchVO(
             minPrice = minPrice,
@@ -29,9 +30,13 @@ class ProductSearchFormDTO(
             promotionRetailerList = promotionRetailerList,
             appliedDateTime = LocalDateTime.now(),
             keyWord = keyword,
-            pageSize = pageSize,
-            offsetProductId = offsetProductId,
             orderBy = orderBy,
+        )
+    }
+    fun toPageSearchVO(): PageSearchVO {
+        return PageSearchVO(
+            pageNum = pageNum,
+            pageSize = pageSize
         )
     }
 }

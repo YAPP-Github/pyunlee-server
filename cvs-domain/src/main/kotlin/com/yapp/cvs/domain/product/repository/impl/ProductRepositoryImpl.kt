@@ -2,6 +2,8 @@ package com.yapp.cvs.domain.product.repository.impl
 
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.BooleanExpression
+import com.yapp.cvs.domain.base.vo.OffsetSearchVO
 import com.yapp.cvs.domain.enums.ProductCategoryType
 import com.yapp.cvs.domain.enums.RetailerType
 import com.yapp.cvs.domain.extension.ifNotEmpty
@@ -16,6 +18,10 @@ import com.yapp.cvs.domain.product.entity.QProductPromotion.productPromotion
 import com.yapp.cvs.domain.product.repository.ProductRepositoryCustom
 import com.yapp.cvs.domain.product.vo.ProductPbVO
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -40,8 +46,42 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             ).fetchFirst()
     }
 
-    override fun findProductList(productSearchVO: ProductSearchVO): List<Product> {
-        val predicate = product.valid.eq(true)
+    override fun findProductList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): List<Product> {
+        val predicate = productSearchWhere(productSearchVO)
+            .and(offsetSearchVO.offsetId.ifNotNull { product.productId.lt(offsetSearchVO.offsetId) })
+
+        return from(product)
+            .leftJoin(product.pbProductMappingList, pbProductMapping)
+            .fetchJoin()
+            .leftJoin(product.productPromotionList, productPromotion)
+            .fetchJoin()
+            .where(predicate)
+            .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
+            .limit(offsetSearchVO.pageSize.toLong())
+            .select(product)
+            .fetch()
+    }
+
+    override fun findProductPage(pageable: Pageable, productSearchVO: ProductSearchVO): Page<Product> {
+        val predicate = productSearchWhere(productSearchVO)
+
+        val result =  from(product)
+            .leftJoin(product.pbProductMappingList, pbProductMapping)
+            .fetchJoin()
+            .leftJoin(product.productPromotionList, productPromotion)
+            .fetchJoin()
+            .where(predicate)
+            .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
+            .limit(pageable.pageSize.toLong())
+            .offset(pageable.offset)
+            .select(product)
+            .fetchResults()
+
+        return  PageImpl(result.results, pageable, result.total)
+    }
+
+    private fun productSearchWhere(productSearchVO: ProductSearchVO): BooleanExpression {
+        return product.valid.eq(true)
             .and(productSearchVO.minPrice.ifNotNull { product.price.goe(productSearchVO.minPrice) })
             .and(productSearchVO.maxPrice.ifNotNull { product.price.loe(productSearchVO.maxPrice) })
             .and(productSearchVO.productCategoryTypeList.ifNotEmpty { product.productCategoryType.`in`(productSearchVO.productCategoryTypeList) })
@@ -54,20 +94,7 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
                     .and(productSearchVO.promotionRetailerList.ifNotEmpty { productPromotion.retailerType.`in`(productSearchVO.promotionRetailerList) })
                     .and(productPromotion.validAt.gt(productSearchVO.appliedDateTime))
                 })
-            .and(productSearchVO.offsetProductId.ifNotNull { product.productId.lt(productSearchVO.offsetProductId) })
-
-        return from(product)
-            .leftJoin(product.pbProductMappingList, pbProductMapping)
-            .fetchJoin()
-            .leftJoin(product.productPromotionList, productPromotion)
-            .fetchJoin()
-            .where(predicate)
-            .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
-            .limit(productSearchVO.pageSize)
-            .select(product)
-            .fetch()
     }
-
     private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>{
         if(productOrderType == ProductOrderType.RECENT){
             return product.productId.desc()

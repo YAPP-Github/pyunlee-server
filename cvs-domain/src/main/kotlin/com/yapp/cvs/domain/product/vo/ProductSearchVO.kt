@@ -15,8 +15,6 @@ data class ProductSearchVO(
     val promotionRetailerList: List<RetailerType>,
     val appliedDateTime: LocalDateTime,
     val keyWord: String?,
-    val pageSize: Long,
-    val offsetProductId: Long?,
     val orderBy: ProductOrderType
 ) {
 }
