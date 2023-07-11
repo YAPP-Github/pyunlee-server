@@ -17,6 +17,13 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::class.java), ProductCommentCustom {
+    override fun findLatestById(commentId: Long): ProductComment? {
+        return from(productComment)
+                .where(productComment.productCommentId.eq(commentId))
+                .orderBy(productComment.productCommentId.desc())
+                .fetchFirst()
+    }
+
     override fun findLatestByProductIdAndMemberId(productId: Long, memberId: Long): ProductComment? {
         return from(productComment)
                 .where(

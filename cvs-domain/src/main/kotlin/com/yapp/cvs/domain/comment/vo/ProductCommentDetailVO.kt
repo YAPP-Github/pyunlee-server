@@ -13,5 +13,6 @@ data class ProductCommentDetailVO(
 
         val memberId: Long,
         val nickname: String,
-        var isOwner: Boolean = false
+        val liked: Boolean,
+        var isOwner: Boolean = false,
 )

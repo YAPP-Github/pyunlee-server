@@ -25,7 +25,7 @@ class ProductCommentController(
     private val memberId = 1L //TODO : security context 에서 memberId 가져오기
 
     @GetMapping("/{productId}/comments")
-    @Operation(description = "해당 상품에 작성된 평가 코멘트를 조건만큼 가져옵니다.")
+    @Operation(summary = "해당 상품에 작성된 평가 코멘트를 조건만큼 가져옵니다.")
     fun getProductComments(@PathVariable productId: Long,
                            @ParameterObject productCommentSearchDTO: ProductCommentSearchDTO): OffsetPageDTO<ProductCommentDetailDTO> {
         val result = productCommentProcessor.getCommentDetails(productId, memberId, productCommentSearchDTO.toVO())
@@ -33,7 +33,7 @@ class ProductCommentController(
     }
 
     @PostMapping("/{productId}/comment/write")
-    @Operation(description = "상품에 대한 평가 코멘트를 작성합니다.")
+    @Operation(summary = "상품에 대한 평가 코멘트를 작성합니다.")
     fun writeComment(@PathVariable productId: Long,
                      @RequestBody productCommentContentDTO: ProductCommentContentDTO): ProductCommentDTO {
         val comment = productCommentProcessor.createComment(productId, memberId, productCommentContentDTO.content)
@@ -41,7 +41,7 @@ class ProductCommentController(
     }
 
     @PostMapping("/{productId}/comment/edit")
-    @Operation(description = "상품에 대한 평가 코멘트를 수정합니다.")
+    @Operation(summary = "상품에 대한 평가 코멘트를 수정합니다.")
     fun updateComment(@PathVariable productId: Long,
                       @RequestBody productCommentContentDTO: ProductCommentContentDTO): ProductCommentDTO {
         val comment = productCommentProcessor.updateComment(productId, memberId, productCommentContentDTO.content)
@@ -49,7 +49,7 @@ class ProductCommentController(
     }
 
     @PostMapping("/{productId}/comment/delete")
-    @Operation(description = "상품에 대한 평가 코멘트를 삭제합니다.")
+    @Operation(summary = "상품에 대한 평가 코멘트를 삭제합니다.")
     fun deleteComment(@PathVariable productId: Long) {
         productCommentProcessor.inactivateComment(productId, memberId)
         productLikeProcessor.cancelEvaluation(productId, memberId)
