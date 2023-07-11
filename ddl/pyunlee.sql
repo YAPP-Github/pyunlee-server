@@ -122,7 +122,7 @@ CREATE TABLE product_comments
     valid TINYINT(1) NOT NULL COMMENT 'valid',
     createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
     updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
-) CHARSET = utf8 COMMENT='상품 리뷰 코멘트 mapping';
+) CHARSET = utf8mb4 COMMENT='상품 리뷰 코멘트 mapping';
 
 create index product_comments_idx01 on product_comments (createdAt);
 create index product_comments_idx02 on product_comments (updatedAt);
