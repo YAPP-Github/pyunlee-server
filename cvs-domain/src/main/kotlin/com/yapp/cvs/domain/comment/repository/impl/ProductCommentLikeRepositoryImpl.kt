@@ -19,4 +19,14 @@ class ProductCommentLikeRepositoryImpl: QuerydslRepositorySupport(ProductComment
                 .orderBy(productCommentLike.productCommentLikeId.desc())
                 .fetchFirst()
     }
+
+    override fun countByProductIdAndMemberId(productId: Long, memberId: Long): Long {
+        return from(productCommentLike)
+                .where(
+                        productCommentLike.productId.eq(productId),
+                        productCommentLike.memberId.eq(memberId),
+                        productCommentLike.valid.isTrue
+                )
+                .fetchCount()
+    }
 }

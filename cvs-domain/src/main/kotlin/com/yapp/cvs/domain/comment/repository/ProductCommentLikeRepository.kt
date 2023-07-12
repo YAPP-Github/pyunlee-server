@@ -7,4 +7,5 @@ interface ProductCommentLikeRepository : JpaRepository<ProductCommentLike, Long>
 
 interface ProductCommentLikeCustom {
     fun findLatestLike(productId: Long, memberId: Long, likeMemberId: Long): ProductCommentLike?
+    fun countByProductIdAndMemberId(productId: Long, memberId: Long): Long
 }
