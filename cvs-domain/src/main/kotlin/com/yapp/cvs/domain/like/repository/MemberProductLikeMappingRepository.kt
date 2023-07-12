@@ -1,9 +1,6 @@
 package com.yapp.cvs.domain.like.repository
 
 import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
-import com.yapp.cvs.domain.like.entity.ProductLikeHistory
-import com.yapp.cvs.domain.like.entity.ProductLikeSummary
-import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface MemberProductLikeMappingRepository

@@ -12,6 +12,7 @@ data class ProductVO(
     val isPbProduct: Boolean,
     val isPromotion: Boolean,
     val imageUrl: String?,
+    val productScoreVO: ProductScoreVO?,
 ) {
     companion object {
         fun from(product: Product): ProductVO {
@@ -23,7 +24,8 @@ data class ProductVO(
                 productCategoryType = product.productCategoryType,
                 isPbProduct = product.pbProductMappingList.isEmpty().not(),
                 isPromotion = product.productPromotionList.isEmpty().not(),
-                imageUrl = product.imageUrl
+                imageUrl = product.imageUrl,
+                productScoreVO = product.productLikeSummaryList.firstOrNull()?.let { ProductScoreVO.from(it) }
             )
         }
     }

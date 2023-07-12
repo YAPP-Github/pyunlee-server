@@ -29,8 +29,8 @@ class ProductService(
         productRepository.save(product)
     }
 
-    fun findProductPbInfo(productId: Long): ProductPbVO {
-        return productRepository.findWithPbInfoByProductId(productId)
+    fun findProduct(productId: Long): Product {
+        return productRepository.findByProductId(productId)
             ?: throw NotFoundSourceException("productId: $productId 가 존재하지 않습니다")
     }
 

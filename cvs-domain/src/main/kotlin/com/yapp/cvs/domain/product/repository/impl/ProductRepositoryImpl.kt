@@ -4,46 +4,37 @@ import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.yapp.cvs.domain.base.vo.OffsetSearchVO
-import com.yapp.cvs.domain.enums.ProductCategoryType
-import com.yapp.cvs.domain.enums.RetailerType
 import com.yapp.cvs.domain.extension.ifNotEmpty
 import com.yapp.cvs.domain.extension.ifNotNull
 import com.yapp.cvs.domain.extension.ifTrue
 import com.yapp.cvs.domain.product.entity.Product
 import com.yapp.cvs.domain.product.entity.ProductOrderType
-import com.yapp.cvs.domain.product.entity.ProductPromotionType
 import com.yapp.cvs.domain.product.entity.QPbProductMapping.pbProductMapping
 import com.yapp.cvs.domain.product.entity.QProduct.product
 import com.yapp.cvs.domain.product.entity.QProductPromotion.productPromotion
+import com.yapp.cvs.domain.like.entity.QProductLikeSummary.productLikeSummary
 import com.yapp.cvs.domain.product.repository.ProductRepositoryCustom
-import com.yapp.cvs.domain.product.vo.ProductPbVO
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
-import java.time.LocalDateTime
 
 
 @Repository
 class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), ProductRepositoryCustom {
-    override fun findWithPbInfoByProductId(productId: Long): ProductPbVO? {
+
+    override fun findByProductId(productId: Long): Product? {
         return from(product)
-            .leftJoin(pbProductMapping)
-            .on(product.productId.eq(pbProductMapping.productId))
+            .leftJoin(product.productLikeSummaryList, productLikeSummary)
+            .fetchJoin()
+            .leftJoin(product.pbProductMappingList, pbProductMapping)
+            .fetchJoin()
+            .leftJoin(product.productPromotionList, productPromotion)
+            .fetchJoin()
             .where(product.productId.eq(productId))
-            .select(Projections.constructor(
-                ProductPbVO::class.java,
-                product.productId,
-                product.brandName,
-                product.productName,
-                product.price,
-                product.productCategoryType,
-                pbProductMapping.pbProductMappingId.isNotNull,
-                product.imageUrl)
-            ).fetchFirst()
+            .select(product).fetchFirst()
     }
 
     override fun findProductList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): List<Product> {
@@ -51,6 +42,8 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .and(offsetSearchVO.offsetId.ifNotNull { product.productId.lt(offsetSearchVO.offsetId) })
 
         return from(product)
+            .leftJoin(product.productLikeSummaryList, productLikeSummary)
+            .fetchJoin()
             .leftJoin(product.pbProductMappingList, pbProductMapping)
             .fetchJoin()
             .leftJoin(product.productPromotionList, productPromotion)

@@ -27,6 +27,7 @@ class DistributedLockAop(
         val methodParameterNames = methodSignature.parameterNames
         val methodArgs = joinPoint.args
 
+        // TODO: args 객체에서 꺼내서 만들수 있게, 지금은 toString임
         val dynamicKey = keys.joinToString(separator = ":") { key ->
             val indexOfKey = methodParameterNames.indexOf(key)
             methodArgs.getOrNull(indexOfKey)?.toString() ?: throw InvalidLockException("Invalid Lock Key")

@@ -1,5 +1,6 @@
 package com.yapp.cvs.api.product.dto
 
+import com.yapp.cvs.domain.product.vo.ProductScoreVO
 import com.yapp.cvs.domain.product.vo.ProductVO
 
 data class ProductDTO(
@@ -11,6 +12,7 @@ data class ProductDTO(
     val isPbProduct: Boolean,
     val isPromotion: Boolean,
     val imageUrl: String?,
+    val score: ProductScoreDTO?
 ) {
     companion object {
         fun from(productVO: ProductVO): ProductDTO {
@@ -22,7 +24,8 @@ data class ProductDTO(
                 productCategoryType = productVO.productCategoryType.displayName,
                 isPbProduct = productVO.isPbProduct,
                 isPromotion = productVO.isPromotion,
-                imageUrl = productVO.imageUrl
+                imageUrl = productVO.imageUrl,
+                score = productVO.productScoreVO?.let { ProductScoreDTO.from(it) }
             )
         }
     }

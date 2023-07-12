@@ -14,16 +14,14 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 class ProductProcessor(
-    private val productService: ProductService,
-    private val productPromotionService: ProductPromotionService,
+    private val productService: ProductService
 ) {
     fun getProductDetail(productId: Long): ProductDetailVO {
-        val productPbVO = productService.findProductPbInfo(productId)
-        val productPromotionList = productPromotionService.findProductPromotionList(productId)
+        val product = productService.findProduct(productId)
 
         productService.increaseProductViewCount(productId)
 
-        return ProductDetailVO.of(productPbVO, productPromotionList)
+        return ProductDetailVO.from(product)
     }
 
     fun searchProductPageList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): OffsetPageVO<ProductVO> {

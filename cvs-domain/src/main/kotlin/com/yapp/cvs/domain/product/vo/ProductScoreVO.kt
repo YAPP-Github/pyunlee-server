@@ -1,5 +1,7 @@
 package com.yapp.cvs.domain.product.vo
 
+import com.yapp.cvs.domain.like.entity.ProductLikeSummary
+
 class ProductScoreVO(
     val totalCount: Long,
     val likeCount: Long,
@@ -8,13 +10,13 @@ class ProductScoreVO(
     val dislikeRatio: Int
 ) {
     companion object {
-        fun tempEmpty(): ProductScoreVO {
+        fun from(productLikeSummary: ProductLikeSummary): ProductScoreVO {
             return ProductScoreVO(
-                totalCount = 100,
-                likeCount = 82,
-                dislikeCount = 18,
-                likeRatio = 82,
-                dislikeRatio = 18
+                totalCount = productLikeSummary.totalCount,
+                likeCount = productLikeSummary.likeCount,
+                dislikeCount = productLikeSummary.getDislikeCount(),
+                likeRatio = productLikeSummary.getLikeRatio(),
+                dislikeRatio = productLikeSummary.getDislikeRatio()
             )
         }
     }

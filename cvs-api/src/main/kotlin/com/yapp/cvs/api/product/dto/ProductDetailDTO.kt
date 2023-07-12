@@ -9,9 +9,9 @@ data class ProductDetailDTO(
     val price: Long,
     val categoryType: String,
     val isPbProduct: Boolean,
-    val imageUrl: String,
+    val imageUrl: String?,
     val promotionList: List<ProductPromotionDTO>,
-    val score: ProductScoreDTO
+    val score: ProductScoreDTO?
 ) {
     companion object {
         fun from(productDetailVO: ProductDetailVO): ProductDetailDTO {
@@ -24,7 +24,7 @@ data class ProductDetailDTO(
                 isPbProduct = productDetailVO.isPbProduct,
                 imageUrl = productDetailVO.imageUrl,
                 promotionList = productDetailVO.productPromotionVOList.map { ProductPromotionDTO.from(it) },
-                score = ProductScoreDTO.from(productDetailVO.productScoreVO)
+                score = productDetailVO.productScoreVO?.let { ProductScoreDTO.from(it) }
             )
         }
     }

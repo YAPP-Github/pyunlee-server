@@ -2,9 +2,12 @@ package com.yapp.cvs.api.like
 
 import com.yapp.cvs.api.like.dto.ProductLikeHistoryDTO
 import com.yapp.cvs.api.like.dto.ProductLikeSummaryDTO
+import com.yapp.cvs.api.product.dto.ProductScoreDTO
 import com.yapp.cvs.domain.like.application.ProductLikeProcessor
 import com.yapp.cvs.domain.like.entity.ProductLikeHistory
+import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
+import com.yapp.cvs.domain.product.vo.ProductScoreVO
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,19 +35,25 @@ class ProductLikeHistoryController(
 
     @PostMapping("/{productId}/rate/like")
     @Operation(summary = "\"또 먹을거에요\" 평가를 남깁니다.")
-    fun postProductLike(@PathVariable productId: Long): ProductLikeHistoryDTO {
-        return ProductLikeHistoryDTO.from(productLikeProcessor.likeProduct(productId, 1L))
+    fun postProductLike(@PathVariable productId: Long): ProductScoreDTO {
+        return ProductScoreDTO.from(
+            productLikeProcessor.likeProduct(ProductLikeRequestVO(productId = productId, 1L))
+        )
     }
 
     @PostMapping("/{productId}/rate/dislike")
     @Operation(summary = "\"또 안 사먹을래요\" 평가를 남깁니다.")
-    fun postProductDislike(@PathVariable productId: Long): ProductLikeHistoryDTO {
-        return ProductLikeHistoryDTO.from(productLikeProcessor.dislikeProduct(productId, 1L))
+    fun postProductDislike(@PathVariable productId: Long): ProductScoreDTO {
+        return ProductScoreDTO.from(
+            productLikeProcessor.dislikeProduct(ProductLikeRequestVO(productId = productId, 1L))
+        )
     }
 
     @PostMapping("/{productId}/rate/cancel")
     @Operation(summary = "평가를 취소합니다.")
-    fun postProductLikeCancel(@PathVariable productId: Long): ProductLikeHistoryDTO {
-        return ProductLikeHistoryDTO.from(productLikeProcessor.cancelEvaluation(productId, 1L))
+    fun postProductLikeCancel(@PathVariable productId: Long): ProductScoreDTO {
+        return ProductScoreDTO.from(
+            productLikeProcessor.cancelEvaluation(ProductLikeRequestVO(productId = productId, 1L))
+        )
     }
 }

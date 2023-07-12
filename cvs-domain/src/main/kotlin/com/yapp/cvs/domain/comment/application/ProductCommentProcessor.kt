@@ -35,9 +35,4 @@ class ProductCommentProcessor(
         val commentHistory = productCommentService.update(productId, memberId, content)
         return ProductCommentVO.from(commentHistory)
     }
-
-    @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productId", "memberId"])
-    fun inactivateComment(productId: Long, memberId: Long) {
-        productCommentService.inactivate(productId, memberId)
-    }
 }

@@ -19,16 +19,28 @@ data class ProductLikeHistory(
     val likeType: ProductLikeType = ProductLikeType.NONE,
 ) : BaseEntity() {
     companion object {
-        fun like(productId: Long, memberId: Long): ProductLikeHistory {
-            return ProductLikeHistory(productId =  productId, memberId = memberId, likeType = ProductLikeType.LIKE)
+        fun like(memberProductMappingKey: MemberProductMappingKey): ProductLikeHistory {
+            return ProductLikeHistory(
+                productId = memberProductMappingKey.productId,
+                memberId = memberProductMappingKey.memberId,
+                likeType = ProductLikeType.LIKE
+            )
         }
 
-        fun dislike(productId: Long, memberId: Long): ProductLikeHistory {
-            return ProductLikeHistory(productId =  productId, memberId = memberId, likeType = ProductLikeType.DISLIKE)
+        fun dislike(memberProductMappingKey: MemberProductMappingKey): ProductLikeHistory {
+            return ProductLikeHistory(
+                productId = memberProductMappingKey.productId,
+                memberId = memberProductMappingKey.memberId,
+                likeType = ProductLikeType.DISLIKE
+            )
         }
 
-        fun none(productId: Long, memberId: Long): ProductLikeHistory {
-            return ProductLikeHistory(productId =  productId, memberId = memberId, likeType = ProductLikeType.NONE)
+        fun none(memberProductMappingKey: MemberProductMappingKey): ProductLikeHistory {
+            return ProductLikeHistory(
+                productId = memberProductMappingKey.productId,
+                memberId = memberProductMappingKey.memberId,
+                likeType = ProductLikeType.NONE
+            )
         }
     }
 }
