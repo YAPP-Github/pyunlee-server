@@ -27,6 +27,22 @@ class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::cl
                 .fetchFirst()
     }
 
+    override fun findRecentComments(): List<ProductCommentDetailVO> {
+        return from(productComment)
+                .leftJoin(member)
+                .on(productComment.memberId.eq(member.memberId))
+                .leftJoin(memberProductLikeMapping)
+                .on(
+                        productComment.productId.eq(memberProductLikeMapping.productId),
+                        productComment.memberId.eq(memberProductLikeMapping.memberId)
+                )
+                .where(productComment.valid.isTrue)
+                .orderBy(productComment.productCommentId.desc())
+                .select(productDetailVOProjection())
+                .limit(10)
+                .fetch()
+    }
+
     override fun findAllByProductIdAndPageOffset(productId: Long,
                                                  productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
         val size = productCommentSearchVO.pageSize

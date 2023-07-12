@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service
 class ProductCommentService(
         val productCommentRepository: ProductCommentRepository
 ) {
+    fun findRecentProductComments(): List<ProductCommentDetailVO> {
+        return productCommentRepository.findRecentComments()
+    }
+
     fun findProductCommentsPage(productId: Long, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
         return productCommentRepository.findAllByProductIdAndPageOffset(productId, productCommentSearchVO)
     }

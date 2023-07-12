@@ -5,9 +5,6 @@ import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentVO
 import com.yapp.cvs.domain.enums.DistributedLockType
-import com.yapp.cvs.domain.enums.ProductLikeType
-import com.yapp.cvs.domain.like.application.ProductLikeHistoryService
-import com.yapp.cvs.domain.like.application.ProductLikeSummaryService
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,6 +14,13 @@ import org.springframework.transaction.annotation.Transactional
 class ProductCommentProcessor(
         private val productCommentService: ProductCommentService
 ) {
+    fun getRecentCommentDetails(memberId: Long): List<ProductCommentDetailVO> {
+        val result = productCommentService.findRecentProductComments()
+        result.filter { it.memberId == memberId }
+                .forEach { it.isOwner = true }
+        return result
+    }
+
     fun getCommentDetails(productId: Long, memberId: Long, productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentDetailVO> {
         val result = productCommentService.findProductCommentsPage(productId, productCommentSearchVO)
         result.filter { it.memberId == memberId }

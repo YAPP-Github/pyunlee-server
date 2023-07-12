@@ -13,5 +13,6 @@ interface ProductCommentRepository : JpaRepository<ProductComment, Long>, Produc
 
 interface ProductCommentCustom {
     fun findLatestByProductIdAndMemberId(productId: Long, memberId: Long): ProductComment?
+    fun findRecentComments(): List<ProductCommentDetailVO>
     fun findAllByProductIdAndPageOffset(productId: Long, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO>
 }

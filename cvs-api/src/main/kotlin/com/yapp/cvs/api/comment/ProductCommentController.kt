@@ -24,6 +24,13 @@ class ProductCommentController(
 ) {
     private val memberId = 1L //TODO : security context 에서 memberId 가져오기
 
+    @GetMapping("/comments")
+    @Operation(summary = "해당 상품에 작성된 평가 코멘트를 최대 10개 가져옵니다.")
+    fun getRecentProductComments(): List<ProductCommentDetailDTO> {
+        val result = productCommentProcessor.getRecentCommentDetails(memberId)
+        return result.map { ProductCommentDetailDTO.from(it) }
+    }
+
     @GetMapping("/{productId}/comments")
     @Operation(description = "해당 상품에 작성된 평가 코멘트를 조건만큼 가져옵니다.")
     fun getProductComments(@PathVariable productId: Long,
