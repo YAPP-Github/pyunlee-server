@@ -1,4 +1,4 @@
-GET localhost:8080/api/v1/product/729/detail
+GET localhost:8080/api/v1/product/908/detail
 Content-Type: application/json
 ###
 
@@ -15,6 +15,6 @@ Content-Type: application/json
 
 
 ###
-POST localhost:8080/api/v1/product/800/rate/like
+POST localhost:8080/api/v1/product/908/rate/like
 ###
 GET localhost:8080/temp

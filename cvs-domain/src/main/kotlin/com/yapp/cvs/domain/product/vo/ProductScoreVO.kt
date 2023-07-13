@@ -10,6 +10,50 @@ class ProductScoreVO(
     val dislikeRatio: Int
 ) {
     companion object {
+        fun like(productLikeSummary: ProductLikeSummary): ProductScoreVO {
+            productLikeSummary.like()
+            return ProductScoreVO(
+                totalCount = productLikeSummary.totalCount,
+                likeCount = productLikeSummary.likeCount,
+                dislikeCount = productLikeSummary.getDislikeCount(),
+                likeRatio = productLikeSummary.getLikeRatio(),
+                dislikeRatio = productLikeSummary.getDislikeRatio()
+            )
+        }
+
+        fun dislike(productLikeSummary: ProductLikeSummary): ProductScoreVO {
+            productLikeSummary.dislike()
+            return ProductScoreVO(
+                totalCount = productLikeSummary.totalCount,
+                likeCount = productLikeSummary.likeCount,
+                dislikeCount = productLikeSummary.getDislikeCount(),
+                likeRatio = productLikeSummary.getLikeRatio(),
+                dislikeRatio = productLikeSummary.getDislikeRatio()
+            )
+        }
+
+        fun cancelLike(productLikeSummary: ProductLikeSummary): ProductScoreVO {
+            productLikeSummary.cancelLike()
+            return ProductScoreVO(
+                totalCount = productLikeSummary.totalCount,
+                likeCount = productLikeSummary.likeCount,
+                dislikeCount = productLikeSummary.getDislikeCount(),
+                likeRatio = productLikeSummary.getLikeRatio(),
+                dislikeRatio = productLikeSummary.getDislikeRatio()
+            )
+        }
+
+        fun cancelDislike(productLikeSummary: ProductLikeSummary): ProductScoreVO {
+            productLikeSummary.cancelDislike()
+            return ProductScoreVO(
+                totalCount = productLikeSummary.totalCount,
+                likeCount = productLikeSummary.likeCount,
+                dislikeCount = productLikeSummary.getDislikeCount(),
+                likeRatio = productLikeSummary.getLikeRatio(),
+                dislikeRatio = productLikeSummary.getDislikeRatio()
+            )
+        }
+
         fun from(productLikeSummary: ProductLikeSummary): ProductScoreVO {
             return ProductScoreVO(
                 totalCount = productLikeSummary.totalCount,
