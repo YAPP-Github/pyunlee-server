@@ -36,45 +36,44 @@ class ProductLikeProcessor(
 
     @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productLikeRequestVO"])
     fun likeProduct(productLikeRequestVO: ProductLikeRequestVO): ProductScoreVO {
-        val memberProductLikeMapping = memberProductLikeMappingService
+        val lastMapping = memberProductLikeMappingService
             .findByMemberProductLike(productLikeRequestVO.memberProductMappingKey)
             ?.also { if(it.likeType.isLike()) throw BadRequestException("이미 좋아요 한 상품입니다.") }
+
+        val lastRatingType = lastMapping?.likeType
+
+        val memberProductLikeMapping = lastMapping
             ?.apply { likeType = ProductLikeType.LIKE }
             ?: MemberProductLikeMapping.like(productLikeRequestVO.memberProductMappingKey)
 
         productLikeHistoryService.like(productLikeRequestVO.memberProductMappingKey)
-
         memberProductLikeMappingService.saveMemberProductLikeMapping(memberProductLikeMapping)
         productCommentService.activate(productLikeRequestVO.memberProductMappingKey)
 
-        // 응답용 데이터 조회 실제 like는 async로
-        val productLikeSummary = productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId)
-        productLikeSummary.like()
+        productLikeSummaryService.likeProductLikeSummary(productLikeRequestVO.productId, lastRatingType)
 
-        productLikeSummaryService.likeProductLikeSummary(productLikeRequestVO.productId)
-
-        return ProductScoreVO.from(productLikeSummary)
+        return ProductScoreVO.like(productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId))
     }
 
     @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productLikeRequestVO"])
     fun dislikeProduct(productLikeRequestVO: ProductLikeRequestVO): ProductScoreVO {
-        val memberProductLikeMapping = memberProductLikeMappingService
+        val lastMapping = memberProductLikeMappingService
             .findByMemberProductLike(productLikeRequestVO.memberProductMappingKey)
-            ?.also { if(it.likeType.isLike()) throw BadRequestException("이미 싫어요 한 상품입니다.") }
+            ?.also { if(it.likeType.isDislike()) throw BadRequestException("이미 싫어요 한 상품입니다.") }
+
+        val lastRatingType = lastMapping?.likeType
+
+        val memberProductLikeMapping = lastMapping
             ?.apply { likeType = ProductLikeType.DISLIKE }
             ?: MemberProductLikeMapping.dislike(productLikeRequestVO.memberProductMappingKey)
 
         productLikeHistoryService.dislike(productLikeRequestVO.memberProductMappingKey)
-
         memberProductLikeMappingService.saveMemberProductLikeMapping(memberProductLikeMapping)
         productCommentService.activate(productLikeRequestVO.memberProductMappingKey)
 
-        val productLikeSummary = productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId)
-        productLikeSummary.dislike()
+        productLikeSummaryService.dislikeProductLikeSummary(productLikeRequestVO.productId, lastRatingType)
 
-        productLikeSummaryService.dislikeProductLikeSummary(productLikeRequestVO.productId)
-
-        return ProductScoreVO.from(productLikeSummary)
+        return ProductScoreVO.dislike(productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId))
     }
 
     @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productLikeRequestVO"])
@@ -92,14 +91,14 @@ class ProductLikeProcessor(
 
         val productLikeSummary = productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId)
 
-        if (lastLikeType.isLike()) {
-            productLikeSummary.cancelLike()
-            productLikeSummaryService.cancelLikeProductLikeSummary(productLikeRequestVO.productId)
-        } else if(lastLikeType.isDisLike()) {
-            productLikeSummary.cancelDislike()
+        return if (lastLikeType.isLike()) {
+            productLikeSummaryService.cancelLikeProductRating(productLikeRequestVO.productId)
+            ProductScoreVO.cancelLike(productLikeSummary)
+        } else if(lastLikeType.isDislike()) {
             productLikeSummaryService.cancelDislikeProductLikeSummary(productLikeRequestVO.productId)
+            ProductScoreVO.cancelDislike(productLikeSummary)
+        } else {
+            throw BadRequestException("잘못된 요청")
         }
-
-        return ProductScoreVO.from(productLikeSummary)
     }
 }

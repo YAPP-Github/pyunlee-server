@@ -9,7 +9,7 @@ enum class ProductLikeType(val displayName: String) {
         return this == LIKE
     }
 
-    fun isDisLike(): Boolean {
+    fun isDislike(): Boolean {
         return this == DISLIKE
     }
 
