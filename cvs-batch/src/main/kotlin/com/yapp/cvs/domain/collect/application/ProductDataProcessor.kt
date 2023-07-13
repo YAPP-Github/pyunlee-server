@@ -2,6 +2,8 @@ package com.yapp.cvs.domain.collect.application
 
 import com.yapp.cvs.domain.collect.ProductRawDataVO
 import com.yapp.cvs.domain.extension.endOfMonth
+import com.yapp.cvs.domain.like.entity.ProductLikeSummary
+import com.yapp.cvs.domain.like.repository.ProductLikeSummaryRepository
 import com.yapp.cvs.domain.product.entity.PbProductMapping
 import com.yapp.cvs.domain.product.entity.ProductPromotion
 import com.yapp.cvs.domain.product.entity.ProductPromotionType
@@ -23,6 +25,7 @@ class ProductDataProcessor(
     private val productRetailerMappingRepository: ProductRetailerMappingRepository,
     private val pbProductMappingRepository: PbProductMappingRepository,
     private val productPromotionRepository: ProductPromotionRepository,
+    private val productLikeSummaryRepository: ProductLikeSummaryRepository,
     private val s3Service: S3Service
 ) {
     @Transactional
@@ -40,6 +43,8 @@ class ProductDataProcessor(
             if (productRawDataVO.isPbProduct) {
                 pbProductMappingRepository.save(PbProductMapping.of(productEntity))
             }
+
+            productLikeSummaryRepository.save(ProductLikeSummary.empty(productEntity.productId!!))
         }
     }
 
