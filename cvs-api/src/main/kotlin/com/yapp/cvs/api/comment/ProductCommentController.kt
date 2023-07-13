@@ -7,6 +7,7 @@ import com.yapp.cvs.api.comment.dto.ProductCommentSearchDTO
 import com.yapp.cvs.api.common.dto.OffsetPageDTO
 import com.yapp.cvs.domain.comment.application.ProductCommentProcessor
 import com.yapp.cvs.domain.like.application.ProductLikeProcessor
+import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import io.swagger.v3.oas.annotations.Operation
 import org.springdoc.api.annotations.ParameterObject
 import org.springframework.web.bind.annotation.GetMapping
@@ -51,7 +52,6 @@ class ProductCommentController(
     @PostMapping("/{productId}/comment/delete")
     @Operation(description = "상품에 대한 평가 코멘트를 삭제합니다.")
     fun deleteComment(@PathVariable productId: Long) {
-        productCommentProcessor.inactivateComment(productId, memberId)
-        productLikeProcessor.cancelEvaluation(productId, memberId)
+        productLikeProcessor.cancelEvaluation(ProductLikeRequestVO(productId = productId, memberId = memberId))
     }
 }

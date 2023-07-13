@@ -24,13 +24,13 @@ class DistributedLockAopTest {
         var status: Boolean = false
 
         @Transactional
-        @DistributedLock(DistributedLockType.LIKE, ["productId"])
+        @DistributedLock(DistributedLockType.PRODUCT_LIKE, ["productId"])
         fun recommendByIdWithLock(productId: Long) {
             execute()
         }
 
         @Transactional
-        @DistributedLock(DistributedLockType.LIKE, ["productId", "memberId"])
+        @DistributedLock(DistributedLockType.PRODUCT_LIKE, ["productId", "memberId"])
         fun recommendByCompositeKeyWithLock(productId: Long, memberId: Long) {
             execute()
         }
@@ -57,7 +57,7 @@ class DistributedLockAopTest {
     class AnotherService {
         // 내부 메소드 호출은 트랜잭션 적용되지 않아 별도의 서비스 클래스 선언
         @Transactional
-        @DistributedLock(DistributedLockType.LIKE, ["anotherId"])
+        @DistributedLock(DistributedLockType.PRODUCT_LIKE, ["anotherId"])
         fun anotherMethod(anotherId: Long) {}
     }
 
