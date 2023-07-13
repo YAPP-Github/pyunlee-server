@@ -9,6 +9,7 @@ data class ProductDetailDTO(
     val price: Long,
     val categoryType: String,
     val isPbProduct: Boolean,
+    val productRatingType: String,
     val imageUrl: String?,
     val promotionList: List<ProductPromotionDTO>,
     val score: ProductScoreDTO?
@@ -22,6 +23,7 @@ data class ProductDetailDTO(
                 price = productDetailVO.price,
                 categoryType = productDetailVO.productCategoryType.name,
                 isPbProduct = productDetailVO.isPbProduct,
+                productRatingType = productDetailVO.productRatingType.name,
                 imageUrl = productDetailVO.imageUrl,
                 promotionList = productDetailVO.productPromotionVOList.map { ProductPromotionDTO.from(it) },
                 score = productDetailVO.productScoreVO?.let { ProductScoreDTO.from(it) }

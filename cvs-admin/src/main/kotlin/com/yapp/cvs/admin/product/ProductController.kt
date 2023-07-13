@@ -29,7 +29,7 @@ class ProductController(
         @PathVariable productId: Long,
         model: Model
     ): String{
-        val vo = productProcessor.getProductDetail(productId)
+        val vo = productProcessor.getProductDetail(productId, 1L)
         model.addAttribute("contents", vo)
         return "product/detail"
     }

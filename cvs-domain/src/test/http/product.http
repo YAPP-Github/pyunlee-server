@@ -1,4 +1,4 @@
-GET localhost:8080/api/v1/product/908/detail
+GET localhost:8080/api/v1/product/910/detail
 Content-Type: application/json
 ###
 
