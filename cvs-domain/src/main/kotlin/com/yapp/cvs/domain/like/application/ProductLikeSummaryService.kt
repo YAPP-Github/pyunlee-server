@@ -1,6 +1,7 @@
 package com.yapp.cvs.domain.like.application
 
 import com.yapp.cvs.domain.enums.DistributedLockType
+import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.like.entity.ProductLikeSummary
 import com.yapp.cvs.domain.like.repository.ProductLikeSummaryRepository
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
@@ -23,22 +24,32 @@ class ProductLikeSummaryService(
 
     @Async(value = "productLikeSummaryTaskExecutor")
     @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun likeProductLikeSummary(productId: Long) {
+    fun likeProductLikeSummary(productId: Long, lastRatingType: ProductLikeType?){
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
+
+        if(lastRatingType != null && lastRatingType.isDislike()) {
+            productLikeSummary.cancelDislike()
+        }
+
         productLikeSummary.like()
         productLikeSummaryRepository.save(productLikeSummary)
     }
 
     @Async(value = "productLikeSummaryTaskExecutor")
     @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun dislikeProductLikeSummary(productId: Long) {
+    fun dislikeProductLikeSummary(productId: Long, lastRatingType: ProductLikeType?){
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
+
+        if(lastRatingType != null && lastRatingType.isLike()) {
+            productLikeSummary.cancelLike()
+        }
+
         productLikeSummary.dislike()
         productLikeSummaryRepository.save(productLikeSummary)
     }
     @Async(value = "productLikeSummaryTaskExecutor")
     @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun cancelLikeProductLikeSummary(productId: Long) {
+    fun cancelLikeProductRating(productId: Long) {
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
         productLikeSummary.cancelLike()
         productLikeSummaryRepository.save(productLikeSummary)
