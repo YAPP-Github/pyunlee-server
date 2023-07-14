@@ -1,15 +1,19 @@
 package com.yapp.cvs.domain.comment.repository.impl
 
 import com.querydsl.core.types.ConstructorExpression
+import com.querydsl.core.types.Expression
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions
+import com.querydsl.core.types.dsl.NumberExpression
 import com.yapp.cvs.domain.comment.entity.ProductComment
 import com.yapp.cvs.domain.comment.entity.ProductCommentOrderType
 import com.yapp.cvs.domain.comment.entity.QProductComment.productComment
 import com.yapp.cvs.domain.comment.repository.ProductCommentCustom
 import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
+import com.yapp.cvs.domain.extension.ifNotNull
 import com.yapp.cvs.domain.like.entity.QMemberProductLikeMapping.memberProductLikeMapping
 import com.yapp.cvs.domain.member.entity.QMember.member
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
@@ -27,15 +31,10 @@ class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::cl
                 .fetchFirst()
     }
 
-    override fun findAllByProductIdAndPageOffset(productId: Long,
-                                                 productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
-        val size = productCommentSearchVO.pageSize
-        val offsetId = productCommentSearchVO.offsetProductCommentId
-        var predicate = productComment.productId.eq(productId)
-                .and(productComment.valid.isTrue)
-        if (offsetId != null) {
-            predicate = predicate.and(productComment.productCommentId.lt(offsetId))
-        }
+    override fun findAllByCondition(productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
+        val predicate = productComment.valid.isTrue
+                .and(productCommentSearchVO.productId?.let { productComment.productId.eq(it) })
+                .and(productCommentSearchVO.offsetProductCommentId?.let { productComment.productCommentId.lt(it) })
 
         return from(productComment)
                 .leftJoin(member)
@@ -47,12 +46,12 @@ class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::cl
                 )
                 .where(predicate)
                 .orderBy(getOrderBy(productCommentSearchVO.orderBy))
-                .select(productDetailVOProjection())
-                .limit(size)
+                .limit(productCommentSearchVO.pageSize)
+                .select(productCommentDetailVOProjection())
                 .fetch()
     }
 
-    private fun productDetailVOProjection(): ConstructorExpression<ProductCommentDetailVO>? {
+    private fun productCommentDetailVOProjection(): ConstructorExpression<ProductCommentDetailVO>? {
         // TODO : commentLikeCount 입력
         val tempCommentLikeCount = 10L
 
