@@ -30,13 +30,4 @@ class ProductComment(
         var content: String,
 
         var valid: Boolean = true,
-
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumn(name = "memberId", referencedColumnName = "memberId", insertable = false, updatable = false)
-        val member: Member? = null,
-
-        @OneToMany(fetch = FetchType.LAZY)
-        @JoinColumn(name = "productId", referencedColumnName = "productId", insertable = false, updatable = false)
-        @JoinColumn(name = "memberId", referencedColumnName = "memberId", insertable = false, updatable = false)
-        val memberProductLikeMappingList: Set<MemberProductLikeMapping> = setOf()
 ): BaseEntity(), Serializable

@@ -17,7 +17,9 @@ class ProductCommentProcessor(
 ) {
     fun getCommentDetails(memberId: Long, productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentDetailVO> {
         val result = productCommentService.findProductCommentsPage(productCommentSearchVO)
-        return OffsetPageVO(result.lastOrNull()?.productCommentId, result.map { ProductCommentDetailVO.of(it, memberId) } )
+        result.filter { it.memberVO.memberId == memberId }
+                .forEach { it.isOwner = true }
+        return OffsetPageVO(result.lastOrNull()?.productCommentId, result)
     }
 
     @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productCommentRequestVO"])

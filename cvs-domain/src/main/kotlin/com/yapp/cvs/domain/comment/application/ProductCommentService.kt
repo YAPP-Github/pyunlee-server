@@ -2,6 +2,7 @@ package com.yapp.cvs.domain.comment.application
 
 import com.yapp.cvs.domain.comment.entity.ProductComment
 import com.yapp.cvs.domain.comment.repository.ProductCommentRepository
+import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
 import com.yapp.cvs.exception.BadRequestException
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service
 class ProductCommentService(
         val productCommentRepository: ProductCommentRepository
 ) {
-    fun findProductCommentsPage(productCommentSearchVO: ProductCommentSearchVO): List<ProductComment> {
+    fun findProductCommentsPage(productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
         return productCommentRepository.findAllByCondition(productCommentSearchVO)
     }
 

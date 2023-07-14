@@ -3,7 +3,6 @@ package com.yapp.cvs.api.comment.dto
 import com.yapp.cvs.api.member.dto.MemberDTO
 import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.enums.ProductLikeType
-import com.yapp.cvs.domain.member.vo.MemberVO
 import java.time.LocalDateTime
 
 data class ProductCommentDetailDTO(
@@ -21,7 +20,7 @@ data class ProductCommentDetailDTO(
             return ProductCommentDetailDTO(
                     productCommentId = productCommentDetailVO.productCommentId,
                     productId = productCommentDetailVO.productId,
-                    member = productCommentDetailVO.memberVO ?.let { MemberDTO.from(it) },
+                    member = MemberDTO.from(productCommentDetailVO.memberVO),
                     isOwner = productCommentDetailVO.isOwner,
                     likeType = productCommentDetailVO.likeType,
                     content = productCommentDetailVO.content,
