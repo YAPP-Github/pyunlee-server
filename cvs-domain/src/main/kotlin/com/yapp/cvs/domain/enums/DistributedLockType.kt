@@ -4,6 +4,7 @@ enum class DistributedLockType(
     val lockName: String
 ) {
     MEMBER("memberLock"),
-    LIKE("productLikeLock"),
-    MEMBER_PRODUCT("memberProductLock")
+    PRODUCT_LIKE("productLikeLock"),
+    MEMBER_PRODUCT("memberProductLock"),
+    COMMENT_LIKE("productCommentLock")
 }

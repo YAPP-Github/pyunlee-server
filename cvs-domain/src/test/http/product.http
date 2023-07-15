@@ -1,4 +1,4 @@
-GET localhost:8080/api/v1/product/707/detail
+GET localhost:8080/api/v1/product/910/detail
 Content-Type: application/json
 ###
 
@@ -10,5 +10,11 @@ GET localhost:8080/api/v1/product/search?keyword=라면&offsetProductId=6222
 Content-Type: application/json
 
 ###
-GET localhost:8080/api/v1/product/search?minPrice=0&promotionRetailerList=SEVEN_ELEVEN&pageSize=10&offsetProductId=0
+GET localhost:8080/api/v1/product/search
 Content-Type: application/json
+
+
+###
+POST localhost:8080/api/v1/product/908/rate/like
+###
+GET localhost:8080/temp

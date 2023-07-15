@@ -4,26 +4,33 @@ import com.yapp.cvs.domain.base.vo.OffsetPageVO
 import com.yapp.cvs.domain.base.vo.OffsetSearchVO
 import com.yapp.cvs.domain.base.vo.PageSearchVO
 import com.yapp.cvs.domain.base.vo.PageVO
+import com.yapp.cvs.domain.like.application.MemberProductLikeMappingService
+import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
+import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
 import com.yapp.cvs.domain.product.vo.ProductDetailVO
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import com.yapp.cvs.domain.product.vo.ProductUpdateVO
 import com.yapp.cvs.domain.product.vo.ProductVO
 import org.springframework.stereotype.Service
+import java.security.PrivateKey
 import javax.transaction.Transactional
 
 @Service
 @Transactional
 class ProductProcessor(
     private val productService: ProductService,
-    private val productPromotionService: ProductPromotionService,
+    private val memberProductLikeMappingService: MemberProductLikeMappingService
 ) {
-    fun getProductDetail(productId: Long): ProductDetailVO {
-        val productPbVO = productService.findProductPbInfo(productId)
-        val productPromotionList = productPromotionService.findProductPromotionList(productId)
+    fun getProductDetail(productId: Long, memberId: Long): ProductDetailVO {
+        val product = productService.findProduct(productId)
+
+        val memberProductLikeMapping = memberProductLikeMappingService.findByMemberProductLike(
+            MemberProductMappingKey(productId, memberId)
+        )
 
         productService.increaseProductViewCount(productId)
 
-        return ProductDetailVO.of(productPbVO, productPromotionList)
+        return ProductDetailVO.from(product, memberProductLikeMapping)
     }
 
     fun searchProductPageList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): OffsetPageVO<ProductVO> {

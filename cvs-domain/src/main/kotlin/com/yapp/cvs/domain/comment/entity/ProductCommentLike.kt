@@ -1,6 +1,7 @@
 package com.yapp.cvs.domain.comment.entity
 
 import com.yapp.cvs.domain.base.BaseEntity
+import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -23,11 +24,11 @@ class ProductCommentLike(
         var valid: Boolean
 ): BaseEntity() {
         companion object {
-                fun like(productId: Long, memberId: Long, likeMemberId: Long): ProductCommentLike {
+                fun like(memberProductMappingKey: MemberProductMappingKey, memberId: Long): ProductCommentLike {
                         return ProductCommentLike(
-                                productId = productId,
-                                memberId = memberId,
-                                likeMemberId = likeMemberId,
+                                productId = memberProductMappingKey.productId,
+                                memberId = memberProductMappingKey.memberId,
+                                likeMemberId = memberId,
                                 valid = true
                         )
                 }

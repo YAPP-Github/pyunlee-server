@@ -18,7 +18,7 @@ class ProductController(
 ) {
     @GetMapping("/{productId}/detail")
     fun getProductDetail(@PathVariable productId: Long): ProductDetailDTO {
-        return ProductDetailDTO.from(productProcessor.getProductDetail(productId))
+        return ProductDetailDTO.from(productProcessor.getProductDetail(productId, 1L))
     }
 
     @GetMapping("/search")

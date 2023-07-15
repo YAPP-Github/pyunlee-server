@@ -2,16 +2,9 @@ package com.yapp.cvs.domain.product.entity
 
 import com.yapp.cvs.domain.base.BaseEntity
 import com.yapp.cvs.domain.enums.ProductCategoryType
+import com.yapp.cvs.domain.like.entity.ProductLikeSummary
 import com.yapp.cvs.domain.product.vo.ProductUpdateVO
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "products")
@@ -41,7 +34,12 @@ data class Product(
 
     @OneToMany
     @JoinColumn(name = "productId", insertable = false, updatable = false)
-    val pbProductMappingList: Set<PbProductMapping> = setOf()
+    val pbProductMappingList: Set<PbProductMapping> = setOf(),
+
+    @OneToMany
+    @JoinColumn(name = "productId",  insertable = false, updatable = false)
+    val productLikeSummaryList: Set<ProductLikeSummary> = setOf()
+
 ) : BaseEntity() {
     fun update(productUpdateVO: ProductUpdateVO) {
         productName = productUpdateVO.productName

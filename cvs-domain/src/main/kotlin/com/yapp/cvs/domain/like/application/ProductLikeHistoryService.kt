@@ -2,6 +2,7 @@ package com.yapp.cvs.domain.like.application
 
 import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
+import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
 import com.yapp.cvs.domain.like.entity.ProductLikeHistory
 import com.yapp.cvs.domain.like.repository.MemberProductLikeMappingRepository
 import com.yapp.cvs.domain.like.repository.ProductLikeHistoryRepository
@@ -16,18 +17,18 @@ class ProductLikeHistoryService(
         return productLikeHistoryRepository.findLatestByProductIdAndMemberId(productId, memberId)
     }
 
-    fun like(productId: Long, memberId: Long): ProductLikeHistory {
-        val rating = ProductLikeHistory.like(productId, memberId)
+    fun like(memberProductMappingKey: MemberProductMappingKey): ProductLikeHistory {
+        val rating = ProductLikeHistory.like(memberProductMappingKey)
         return productLikeHistoryRepository.save(rating)
     }
 
-    fun dislike(productId: Long, memberId: Long): ProductLikeHistory {
-        val rating = ProductLikeHistory.dislike(productId, memberId)
+    fun dislike(memberProductMappingKey: MemberProductMappingKey): ProductLikeHistory {
+        val rating = ProductLikeHistory.dislike(memberProductMappingKey)
         return productLikeHistoryRepository.save(rating)
     }
 
-    fun cancel(productId: Long, memberId: Long): ProductLikeHistory {
-        val rating = ProductLikeHistory.none(productId, memberId)
+    fun cancel(memberProductMappingKey: MemberProductMappingKey): ProductLikeHistory {
+        val rating = ProductLikeHistory.none(memberProductMappingKey)
         return productLikeHistoryRepository.save(rating)
     }
 }

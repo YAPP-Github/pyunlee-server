@@ -2,6 +2,7 @@ package com.yapp.cvs.domain.like.entity
 
 import com.yapp.cvs.domain.base.BaseEntity
 import com.yapp.cvs.domain.enums.ProductLikeType
+import java.io.Serializable
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -23,8 +24,25 @@ class MemberProductLikeMapping(
 
     @Enumerated(EnumType.STRING)
     var likeType: ProductLikeType
-): BaseEntity() {
+): BaseEntity(), Serializable {
+
     companion object {
+        fun like(memberProductMappingKey: MemberProductMappingKey): MemberProductLikeMapping{
+            return MemberProductLikeMapping(
+                productId = memberProductMappingKey.productId,
+                memberId = memberProductMappingKey.memberId,
+                likeType = ProductLikeType.LIKE
+            )
+        }
+
+        fun dislike(memberProductMappingKey: MemberProductMappingKey): MemberProductLikeMapping{
+            return MemberProductLikeMapping(
+                productId = memberProductMappingKey.productId,
+                memberId = memberProductMappingKey.memberId,
+                likeType = ProductLikeType.DISLIKE
+            )
+        }
+
         fun from(productLikeHistory: ProductLikeHistory): MemberProductLikeMapping {
             return MemberProductLikeMapping(
                     productId = productLikeHistory.productId,
@@ -34,3 +52,8 @@ class MemberProductLikeMapping(
         }
     }
 }
+
+class MemberProductMappingKey(
+    val productId: Long,
+    val memberId: Long
+)
