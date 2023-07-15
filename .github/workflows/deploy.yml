@@ -79,8 +79,10 @@ jobs:
             echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_API_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_ADMIN_IMAGE_NAME }}:${{env.IMAGE_TAG}}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_WEB_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker stop $(docker ps -a -q)
             docker run --restart=unless-stopped -d -p 8080:8080 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_API_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker run --restart=unless-stopped -d -p 10001:10001 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_ADMIN_IMAGE_NAME }}:${{env.IMAGE_TAG}}
+            docker run --restart=unless-stopped -d -p 10002:10002 --env-file .env --add-host=host.docker.internal:host-gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_WEB_IMAGE_NAME }}:${{env.IMAGE_TAG}}
             docker rm $(docker ps --filter 'status=exited' -a -q)
             docker image prune -a -f
