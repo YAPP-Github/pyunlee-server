@@ -52,17 +52,13 @@ subprojects {
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-        implementation("org.redisson:redisson-spring-boot-starter:3.22.0")
-        runtimeOnly("io.github.microutils:kotlin-logging-jvm:3.0.5")//logger
-
+        runtimeOnly("io.github.microutils:kotlin-logging-jvm:3.0.5") //logger
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
 
         kapt("org.springframework.boot:spring-boot-configuration-processor")
 
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-        implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
-
     }
 
     the<io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension>().apply {
