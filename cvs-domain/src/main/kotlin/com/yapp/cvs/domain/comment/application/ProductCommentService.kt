@@ -14,7 +14,7 @@ class ProductCommentService(
         val productCommentRepository: ProductCommentRepository
 ) {
     fun findProductComment(commentId: Long): ProductComment {
-        return productCommentRepository.findByProductCommentId(commentId)
+        return productCommentRepository.findByProductCommentIdAndValidTrue(commentId)
                 ?: throw NotFoundSourceException("commentId: $commentId 에 해당하는 코멘트가 존재하지 않습니다.")
     }
 

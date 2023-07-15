@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class ProductCommentProcessor(
         private val productCommentService: ProductCommentService,
-        private val productCommentLikeSummaryService: ProductCommentLikeSummaryService
 ) {
     fun getComment(commentId: Long): ProductCommentVO {
         return ProductCommentVO.from(productCommentService.findProductComment(commentId))

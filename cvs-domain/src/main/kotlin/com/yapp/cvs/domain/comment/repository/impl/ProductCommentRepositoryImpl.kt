@@ -53,12 +53,18 @@ class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::cl
                         productComment.productId.eq(memberProductLikeMapping.productId),
                         productComment.memberId.eq(memberProductLikeMapping.memberId)
                 )
+                .leftJoin(productCommentLike)
+                .on(
+                        productCommentLike.valid.isTrue,
+                        productCommentSearchVO.memberId ?.let { productCommentLike.likeMemberId.eq(it) },
+                        productComment.productId.eq(productCommentLike.productId),
+                        productComment.memberId.eq(productCommentLike.memberId)
+                )
                 .leftJoin(productCommentLikeSummary)
                 .on(
                         productComment.productId.eq(productCommentLikeSummary.productId),
                         productComment.memberId.eq(productCommentLikeSummary.memberId),
                 )
-                .fetchJoin()
                 .where(predicate)
                 .orderBy(getOrderBy(productCommentSearchVO.orderBy))
                 .limit(productCommentSearchVO.pageSize)
@@ -71,13 +77,13 @@ class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::cl
                 ProductCommentDetailVO::class.java,
                 productComment.productCommentId,
                 productComment.content,
+                productCommentLikeSummary.likeCount,
                 productComment.createdAt,
                 memberProductLikeMapping.likeType,
-                productCommentLikeSummary.likeCount,
                 productComment.productId,
                 productComment.memberId,
                 member.nickName,
-                memberId?.let { productCommentLike.likeMemberId.eq(memberId) },
+                productCommentLike.isNotNull,
                 memberId?.let { productComment.memberId.eq(memberId) }
         )
     }

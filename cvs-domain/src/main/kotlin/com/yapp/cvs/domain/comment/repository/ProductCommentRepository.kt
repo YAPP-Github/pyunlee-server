@@ -6,7 +6,7 @@ import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface ProductCommentRepository : JpaRepository<ProductComment, Long>, ProductCommentCustom {
-    fun findByProductCommentId(commentId: Long): ProductComment?
+    fun findByProductCommentIdAndValidTrue(commentId: Long): ProductComment?
     fun existsByProductIdAndMemberIdAndValidTrue(productId: Long, memberId: Long): Boolean
 }
 
