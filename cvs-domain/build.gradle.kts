@@ -5,6 +5,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("mysql:mysql-connector-java:8.0.27")
     implementation("com.querydsl:querydsl-jpa:5.0.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+    implementation("org.redisson:redisson-spring-boot-starter:3.22.0")
     kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
     api("com.h2database:h2")
 }
