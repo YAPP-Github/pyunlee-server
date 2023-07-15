@@ -9,7 +9,7 @@ data class ProductCommentDetailVO(
         val content: String,
         val commentLikeCount: Long,
         val createdAt: LocalDateTime,
-        val likeType: ProductLikeType,
+        val likeType: ProductLikeType? = ProductLikeType.NONE,
         val productId: Long,
         private val memberId: Long,
         private val nickname: String,
