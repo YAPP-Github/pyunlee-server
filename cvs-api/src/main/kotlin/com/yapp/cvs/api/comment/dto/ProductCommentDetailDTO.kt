@@ -22,7 +22,7 @@ data class ProductCommentDetailDTO(
                     productId = productCommentDetailVO.productId,
                     member = MemberDTO.from(productCommentDetailVO.memberVO),
                     isOwner = productCommentDetailVO.isOwner,
-                    likeType = productCommentDetailVO.likeType,
+                    likeType = productCommentDetailVO.likeType ?: ProductLikeType.NONE,
                     content = productCommentDetailVO.content,
                     commentLikeCount = productCommentDetailVO.commentLikeCount,
                     createdAt = productCommentDetailVO.createdAt
