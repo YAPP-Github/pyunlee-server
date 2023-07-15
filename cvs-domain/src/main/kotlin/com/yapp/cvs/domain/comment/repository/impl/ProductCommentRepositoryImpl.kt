@@ -10,6 +10,8 @@ import com.querydsl.core.types.dsl.NumberExpression
 import com.yapp.cvs.domain.comment.entity.ProductComment
 import com.yapp.cvs.domain.comment.entity.ProductCommentOrderType
 import com.yapp.cvs.domain.comment.entity.QProductComment.productComment
+import com.yapp.cvs.domain.comment.entity.QProductCommentLike.productCommentLike
+import com.yapp.cvs.domain.comment.entity.QProductCommentLikeSummary.productCommentLikeSummary
 import com.yapp.cvs.domain.comment.repository.ProductCommentCustom
 import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
@@ -21,6 +23,13 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::class.java), ProductCommentCustom {
+    override fun findLatestById(commentId: Long): ProductComment? {
+        return from(productComment)
+                .where(productComment.productCommentId.eq(commentId))
+                .orderBy(productComment.productCommentId.desc())
+                .fetchFirst()
+    }
+
     override fun findLatestByProductIdAndMemberId(productId: Long, memberId: Long): ProductComment? {
         return from(productComment)
                 .where(
@@ -44,28 +53,38 @@ class ProductCommentRepositoryImpl: QuerydslRepositorySupport(ProductComment::cl
                         productComment.productId.eq(memberProductLikeMapping.productId),
                         productComment.memberId.eq(memberProductLikeMapping.memberId)
                 )
+                .leftJoin(productCommentLike)
+                .on(
+                        productCommentLike.valid.isTrue,
+                        productCommentSearchVO.memberId ?.let { productCommentLike.likeMemberId.eq(it) },
+                        productComment.productId.eq(productCommentLike.productId),
+                        productComment.memberId.eq(productCommentLike.memberId)
+                )
+                .leftJoin(productCommentLikeSummary)
+                .on(
+                        productComment.productId.eq(productCommentLikeSummary.productId),
+                        productComment.memberId.eq(productCommentLikeSummary.memberId),
+                )
                 .where(predicate)
                 .orderBy(getOrderBy(productCommentSearchVO.orderBy))
                 .limit(productCommentSearchVO.pageSize)
-                .select(productCommentDetailVOProjection())
+                .select(productCommentDetailVOProjection(productCommentSearchVO.memberId))
                 .fetch()
     }
 
-    private fun productCommentDetailVOProjection(): ConstructorExpression<ProductCommentDetailVO>? {
-        // TODO : commentLikeCount 입력
-        val tempCommentLikeCount = 10L
-
+    private fun productCommentDetailVOProjection(memberId: Long?): ConstructorExpression<ProductCommentDetailVO>? {
         return Projections.constructor(
                 ProductCommentDetailVO::class.java,
                 productComment.productCommentId,
                 productComment.content,
-                Expressions.asNumber(tempCommentLikeCount),
+                productCommentLikeSummary.likeCount,
                 productComment.createdAt,
                 memberProductLikeMapping.likeType,
                 productComment.productId,
                 productComment.memberId,
                 member.nickName,
-                Expressions.FALSE
+                productCommentLike.isNotNull,
+                memberId?.let { productComment.memberId.eq(memberId) }
         )
     }
 

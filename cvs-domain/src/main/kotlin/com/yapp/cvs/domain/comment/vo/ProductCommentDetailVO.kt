@@ -13,7 +13,8 @@ data class ProductCommentDetailVO(
         val productId: Long,
         private val memberId: Long,
         private val nickname: String,
-        var isOwner: Boolean
+        var liked: Boolean? = false,
+        var isOwner: Boolean? = false
 ) {
-    val memberVO = MemberVO(memberId, nickname)
+        val memberVO = MemberVO(memberId, nickname)
 }

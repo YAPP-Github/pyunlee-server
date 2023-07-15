@@ -13,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ProductCommentProcessor(
-        private val productCommentService: ProductCommentService
+        private val productCommentService: ProductCommentService,
 ) {
-    fun getCommentDetails(memberId: Long, productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentDetailVO> {
-        val result = productCommentService.findProductCommentsPage(productCommentSearchVO)
-        result.filter { it.memberVO.memberId == memberId }
-                .forEach { it.isOwner = true }
+    fun getComment(commentId: Long): ProductCommentVO {
+        return ProductCommentVO.from(productCommentService.findProductComment(commentId))
+    }
+
+    fun getCommentDetails(productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentDetailVO> {
+        val result = productCommentService.getProductCommentsPage(productCommentSearchVO)
         return OffsetPageVO(result.lastOrNull()?.productCommentId, result)
     }
 

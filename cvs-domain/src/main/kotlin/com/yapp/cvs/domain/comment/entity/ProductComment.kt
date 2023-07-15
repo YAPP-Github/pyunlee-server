@@ -30,4 +30,4 @@ class ProductComment(
         var content: String,
 
         var valid: Boolean = true,
-): BaseEntity(), Serializable
+): BaseEntity()

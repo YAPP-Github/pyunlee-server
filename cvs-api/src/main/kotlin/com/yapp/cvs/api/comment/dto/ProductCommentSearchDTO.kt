@@ -9,12 +9,13 @@ data class ProductCommentSearchDTO(
         val offsetProductCommentId: Long? = null,
         val orderBy: ProductCommentOrderType = ProductCommentOrderType.RECENT
 ) {
-    fun toVO(productId: Long ?= null): ProductCommentSearchVO {
+    fun toVO(productId: Long ?= null, memberId: Long ?= null): ProductCommentSearchVO {
         return ProductCommentSearchVO(
                 pageSize = pageSize,
                 offsetProductCommentId = offsetProductCommentId,
                 orderBy = orderBy,
-                productId = productId
+                productId = productId,
+                memberId = memberId
         )
     }
 }

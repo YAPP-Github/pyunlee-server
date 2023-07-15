@@ -5,5 +5,6 @@ enum class DistributedLockType(
 ) {
     MEMBER("memberLock"),
     PRODUCT_LIKE("productLikeLock"),
-    MEMBER_PRODUCT("memberProductLock")
+    MEMBER_PRODUCT("memberProductLock"),
+    COMMENT_LIKE("productCommentLock")
 }

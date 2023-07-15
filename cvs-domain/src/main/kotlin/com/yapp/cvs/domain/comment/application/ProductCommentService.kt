@@ -13,7 +13,12 @@ import org.springframework.stereotype.Service
 class ProductCommentService(
         val productCommentRepository: ProductCommentRepository
 ) {
-    fun findProductCommentsPage(productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
+    fun findProductComment(commentId: Long): ProductComment {
+        return productCommentRepository.findByProductCommentIdAndValidTrue(commentId)
+                ?: throw NotFoundSourceException("commentId: $commentId 에 해당하는 코멘트가 존재하지 않습니다.")
+    }
+
+    fun getProductCommentsPage(productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO> {
         return productCommentRepository.findAllByCondition(productCommentSearchVO)
     }
 

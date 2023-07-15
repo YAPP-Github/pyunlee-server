@@ -29,8 +29,8 @@ class ProductCommentController(
     @GetMapping("/comments")
     @Operation(summary = "해당 상품에 작성된 평가 코멘트를 최대 10개 가져옵니다.")
     fun getRecentProductComments(@ParameterObject productCommentSearchDTO: ProductCommentSearchDTO): OffsetPageDTO<ProductCommentDetailDTO> {
-        val requestVO = productCommentSearchDTO.toVO()
-        val result = productCommentProcessor.getCommentDetails(memberId, requestVO)
+        val requestVO = productCommentSearchDTO.toVO(memberId = memberId)
+        val result = productCommentProcessor.getCommentDetails(requestVO)
         return OffsetPageDTO(result.lastId, result.content.map { ProductCommentDetailDTO.from(it) })
     }
 
@@ -38,8 +38,8 @@ class ProductCommentController(
     @Operation(summary = "해당 상품에 작성된 평가 코멘트를 조건만큼 가져옵니다.")
     fun getProductComments(@PathVariable productId: Long,
                            @ParameterObject productCommentSearchDTO: ProductCommentSearchDTO): OffsetPageDTO<ProductCommentDetailDTO> {
-        val requestVO = productCommentSearchDTO.toVO(productId)
-        val result = productCommentProcessor.getCommentDetails(memberId, requestVO)
+        val requestVO = productCommentSearchDTO.toVO(productId = productId, memberId = memberId)
+        val result = productCommentProcessor.getCommentDetails(requestVO)
         return OffsetPageDTO(result.lastId, result.content.map { ProductCommentDetailDTO.from(it) })
     }
 

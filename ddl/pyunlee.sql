@@ -128,3 +128,33 @@ create index product_comments_idx01 on product_comments (createdAt);
 create index product_comments_idx02 on product_comments (updatedAt);
 create index product_comments_idx03 on product_comments (productId);
 create index product_comments_idx04 on product_comments (memberId);
+
+CREATE TABLE product_comment_likes
+(
+    productCommentLikeId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productCommentLikeId',
+    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
+    memberId BIGINT(20) UNSIGNED COMMENT '회원ID',
+    likeMemberId BIGINT(20) UNSIGNED COMMENT '좋아요한 회원ID',
+    valid TINYINT(1) NOT NULL COMMENT 'valid',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+) CHARSET = utf8 COMMENT='상품 리뷰 코멘트 mapping';
+
+create index product_comment_likes_idx01 on product_comment_likes (createdAt);
+create index product_comment_likes_idx02 on product_comment_likes (updatedAt);
+create index product_comment_likes_idx03 on product_comment_likes (productId, memberId);
+create index product_comment_likes_idx04 on product_comment_likes (likeMemberId);
+
+CREATE TABLE product_comment_like_summaries
+(
+    productCommentLikeSummaryId BIGINT(20) UNSIGNED AUTO_INCREMENT PRIMARY KEY COMMENT 'productCommentLikeSummaryId',
+    productId BIGINT(20) UNSIGNED COMMENT '상품ID',
+    memberId BIGINT(20) UNSIGNED COMMENT '회원ID',
+    likeCount BIGINT(20) UNSIGNED COMMENT '좋아요 개수',
+    createdAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '등록일시',
+    updatedAt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '수정일시'
+) CHARSET = utf8 COMMENT='회원 상품 코멘트의 좋아요 정보 요약';
+
+create index product_comment_like_summaries_idx01 on product_comment_like_summaries (createdAt);
+create index product_comment_like_summaries_idx02 on product_comment_like_summaries (updatedAt);
+create index product_comment_like_summaries_idx03 on product_comment_like_summaries (productId);
