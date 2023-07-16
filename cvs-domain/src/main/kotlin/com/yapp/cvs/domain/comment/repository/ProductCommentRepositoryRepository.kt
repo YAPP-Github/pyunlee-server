@@ -5,13 +5,15 @@ import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface ProductCommentRepository : JpaRepository<ProductComment, Long>, ProductCommentCustom {
+interface ProductCommentRepositoryRepository : JpaRepository<ProductComment, Long>, ProductCommentRepositoryCustom {
     fun findByProductCommentIdAndValidTrue(commentId: Long): ProductComment?
     fun existsByProductIdAndMemberIdAndValidTrue(productId: Long, memberId: Long): Boolean
 }
 
-interface ProductCommentCustom {
+interface ProductCommentRepositoryCustom {
     fun findLatestById(commentId: Long): ProductComment?
     fun findLatestByProductIdAndMemberId(productId: Long, memberId: Long): ProductComment?
     fun findAllByCondition(productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentDetailVO>
+
+    fun findRecentCommentList(size: Int): List<ProductComment>
 }
