@@ -1,6 +1,6 @@
 package com.yapp.cvs.api.common.dto
 
-import com.yapp.cvs.api.comment.dto.ProductCommentDTO
+import com.yapp.cvs.api.comment.dto.ProductCommentDetailDTO
 import com.yapp.cvs.api.product.dto.ProductDTO
 import com.yapp.cvs.domain.home.vo.HomeInfoVO
 
@@ -8,7 +8,7 @@ class HomeInfoDTO(
     val newProductList: List<ProductDTO>,
     val popularProductList: List<ProductDTO>,
     val promotionProductMap: Map<String, List<ProductDTO>>,
-    val recentProductCommentList: List<ProductCommentDTO>
+    val recentProductCommentList: List<ProductCommentDetailDTO>
 ) {
     companion object {
         fun from(homeInfoVO: HomeInfoVO): HomeInfoDTO {
@@ -18,7 +18,7 @@ class HomeInfoDTO(
                 promotionProductMap = homeInfoVO.promotionProductVOMap.entries.associate{promotions ->
                     promotions.key.name to promotions.value.map { ProductDTO.from(it) }
                 },
-                recentProductCommentList = homeInfoVO.recentProductCommentVOList.map { ProductCommentDTO.from(it) }
+                recentProductCommentList = homeInfoVO.recentProductCommentVOList.map { ProductCommentDetailDTO.from(it) }
             )
         }
     }
