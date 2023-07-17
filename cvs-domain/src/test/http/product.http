@@ -17,4 +17,4 @@ Content-Type: application/json
 ###
 POST localhost:8080/api/v1/product/908/rate/like
 ###
-GET localhost:8080/temp
+GET localhost:8080/api/v1/home

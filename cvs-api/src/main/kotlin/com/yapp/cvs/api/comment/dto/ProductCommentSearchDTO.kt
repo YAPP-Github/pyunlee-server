@@ -5,17 +5,15 @@ import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 
 
 data class ProductCommentSearchDTO(
-        val pageSize: Long = 10,
-        val offsetProductCommentId: Long? = null,
-        val orderBy: ProductCommentOrderType = ProductCommentOrderType.RECENT
+    val pageSize: Long = 10,
+    val offsetProductCommentId: Long? = null,
+    val orderBy: ProductCommentOrderType = ProductCommentOrderType.RECENT
 ) {
-    fun toVO(productId: Long ?= null, memberId: Long ?= null): ProductCommentSearchVO {
+    fun toVO(): ProductCommentSearchVO {
         return ProductCommentSearchVO(
-                pageSize = pageSize,
-                offsetProductCommentId = offsetProductCommentId,
-                orderBy = orderBy,
-                productId = productId,
-                memberId = memberId
+            pageSize = pageSize,
+            offsetProductCommentId = offsetProductCommentId,
+            orderBy = orderBy
         )
     }
 }
