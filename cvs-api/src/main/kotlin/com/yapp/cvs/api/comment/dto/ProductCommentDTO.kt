@@ -9,8 +9,11 @@ data class ProductCommentDTO(
     val memberNickName: String,
     val content: String,
     val likeCount: Long,
+    val isOwner: Boolean,
+    val liked: Boolean,
     val createdAt: LocalDateTime,
-    val productId: Long
+    val productId: Long,
+    val productLikeType: String
 ) {
     companion object {
         fun from(productCommentVO: ProductCommentVO): ProductCommentDTO {
@@ -20,8 +23,11 @@ data class ProductCommentDTO(
                 memberNickName = productCommentVO.memberNickName,
                 content = productCommentVO.content,
                 likeCount = productCommentVO.likeCount,
+                isOwner = productCommentVO.isOwner,
+                liked = productCommentVO.liked,
                 createdAt = productCommentVO.createdAt,
-                productId = productCommentVO.productId
+                productId = productCommentVO.productId,
+                productLikeType = productCommentVO.productLikeType.name
             )
         }
     }

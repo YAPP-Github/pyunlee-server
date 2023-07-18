@@ -1,8 +1,8 @@
 package com.yapp.cvs.domain.comment.application
 
 import com.yapp.cvs.domain.comment.entity.ProductComment
+import com.yapp.cvs.domain.comment.repository.ProductCommentRatingHistoryRepository
 import com.yapp.cvs.domain.comment.repository.ProductCommentRepositoryRepository
-import com.yapp.cvs.domain.comment.view.ProductCommentDetailView
 import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentVO
@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 class ProductCommentService(
     val productCommentRepository: ProductCommentRepositoryRepository,
     val memberRepository: MemberRepository,
+    val productCommentRatingHistoryRepository: ProductCommentRatingHistoryRepository
 ) {
     fun findProductComment(commentId: Long): ProductComment {
         return productCommentRepository.findByProductCommentIdAndValidTrue(commentId)
@@ -25,7 +26,11 @@ class ProductCommentService(
     fun getProductCommentList(productId: Long, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentVO> {
         val productCommentViewList = productCommentRepository.findByProductIdAndSearchCondition(productId, productCommentSearchVO)
         return productCommentViewList.map {
-            ProductCommentVO.of(it, memberRepository.findById(it.productComment.memberId).get())
+            ProductCommentVO.of(
+                it,
+                memberRepository.findById(it.productComment.memberId).get(),
+                productCommentRatingHistoryRepository.findLatestMemberRatingOnProductComment(it.productComment.memberId, it.productComment.productCommentId!!)
+            )
         }
     }
 

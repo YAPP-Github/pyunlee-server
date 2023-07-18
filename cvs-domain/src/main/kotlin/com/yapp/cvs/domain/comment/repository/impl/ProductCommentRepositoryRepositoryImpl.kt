@@ -1,6 +1,5 @@
 package com.yapp.cvs.domain.comment.repository.impl
 
-import com.querydsl.core.types.ConstructorExpression
 import com.querydsl.core.types.OrderSpecifier
 import com.querydsl.core.types.Projections
 import com.yapp.cvs.domain.comment.entity.ProductComment
@@ -10,14 +9,11 @@ import com.yapp.cvs.domain.comment.entity.QProductCommentRatingSummary.productCo
 import com.yapp.cvs.domain.comment.repository.ProductCommentRepositoryCustom
 import com.yapp.cvs.domain.comment.view.ProductCommentDetailView
 import com.yapp.cvs.domain.comment.view.ProductCommentView
-import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
-import com.yapp.cvs.domain.comment.vo.ProductCommentVO
 import com.yapp.cvs.domain.like.entity.QMemberProductLikeMapping.memberProductLikeMapping
 import com.yapp.cvs.domain.product.entity.QProduct.product
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
-import kotlin.reflect.jvm.internal.impl.metadata.ProtoBuf.Type.Argument.Projection
 
 @Repository
 class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductComment::class.java), ProductCommentRepositoryCustom {
@@ -46,12 +42,15 @@ class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductC
         return from(productComment)
             .leftJoin(productCommentRatingSummary)
             .on(productComment.productCommentId.eq(productCommentRatingSummary.productCommentId))
+            .leftJoin(memberProductLikeMapping)
+            .on(productComment.memberId.eq(memberProductLikeMapping.memberId).and(productComment.productId.eq(memberProductLikeMapping.memberId)))
             .where(predicate)
             .orderBy(getOrderBy(productCommentSearchVO.orderBy), productComment.productCommentId.desc())
             .limit(productCommentSearchVO.pageSize)
             .select(Projections.constructor(ProductCommentView::class.java,
                 productComment,
-                productCommentRatingSummary.likeCount)
+                productCommentRatingSummary.likeCount,
+                memberProductLikeMapping.likeType)
             ).fetch()
     }
 
