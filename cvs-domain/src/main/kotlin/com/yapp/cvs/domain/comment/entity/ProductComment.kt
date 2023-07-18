@@ -19,15 +19,15 @@ import javax.persistence.Table
 @Entity
 @Table(name = "product_comments")
 class ProductComment(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        val productCommentId: Long? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val productCommentId: Long? = null,
 
-        val productId: Long,
+    val productId: Long,
 
-        val memberId: Long,
+    val memberId: Long,
 
-        var content: String,
+    var content: String,
 
-        var valid: Boolean = true,
-): BaseEntity()
+    var valid: Boolean = true,
+) : BaseEntity()

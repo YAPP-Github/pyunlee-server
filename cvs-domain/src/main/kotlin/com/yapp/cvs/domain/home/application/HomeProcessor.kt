@@ -27,7 +27,7 @@ class HomeProcessor(
             popularProductVOList = productService.searchProductList(homeOffsetSearchVO(), popularProductSearchVO()).map { ProductVO.from(it) },
             promotionProductVOMap = RetailerType.values().associateWith { retailerType ->
                 productService.searchProductList(homeOffsetSearchVO(), promotionProductSearchVO(retailerType)).map { ProductVO.from(it) } },
-            recentProductCommentVOList = productCommentService.findRecentCommentList(10).map { it }
+            recentProductCommentVOList = productCommentService.findRecentCommentList(10)
         )
     }
 

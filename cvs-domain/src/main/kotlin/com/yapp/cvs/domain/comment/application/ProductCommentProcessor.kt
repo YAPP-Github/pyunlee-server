@@ -1,7 +1,6 @@
 package com.yapp.cvs.domain.comment.application
 
 import com.yapp.cvs.domain.base.vo.OffsetPageVO
-import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentRequestVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentVO
@@ -13,26 +12,21 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ProductCommentProcessor(
-        private val productCommentService: ProductCommentService,
+    private val productCommentService: ProductCommentService
 ) {
-    fun getComment(commentId: Long): ProductCommentVO {
-        return ProductCommentVO.from(productCommentService.findProductComment(commentId))
-    }
 
-    fun getCommentDetails(productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentDetailVO> {
-        val result = productCommentService.getProductCommentsPage(productCommentSearchVO)
+    fun getCommentDetailList(productId: Long, memberId: Long, productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentVO> {
+        val result = productCommentService.getProductCommentList(productId, productCommentSearchVO)
         return OffsetPageVO(result.lastOrNull()?.productCommentId, result)
     }
 
     @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productCommentRequestVO"])
-    fun createComment(productCommentRequestVO: ProductCommentRequestVO, content: String): ProductCommentVO {
-        val commentHistory = productCommentService.write(productCommentRequestVO.memberProductMappingKey, content)
-        return ProductCommentVO.from(commentHistory)
+    fun createComment(productCommentRequestVO: ProductCommentRequestVO, content: String) {
+        productCommentService.write(productCommentRequestVO.memberProductMappingKey, content)
     }
 
     @DistributedLock(DistributedLockType.MEMBER_PRODUCT, ["productCommentRequestVO"])
-    fun updateComment(productCommentRequestVO: ProductCommentRequestVO, content: String): ProductCommentVO {
-        val commentHistory = productCommentService.update(productCommentRequestVO.memberProductMappingKey, content)
-        return ProductCommentVO.from(commentHistory)
+    fun updateComment(productCommentRequestVO: ProductCommentRequestVO, content: String) {
+        productCommentService.update(productCommentRequestVO.memberProductMappingKey, content)
     }
 }
