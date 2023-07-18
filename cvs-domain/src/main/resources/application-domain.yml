@@ -28,14 +28,6 @@ spring:
       config: |
         singleServerConfig:
           address: redis://${REDIS_HOST:127.0.0.1}:6379
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 206868531140-2avrv6bqd1migg21ou9u4gjqek43i9qv.apps.googleusercontent.com
-            client-secret: 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
-            scope: email
 
 logging:
   level:
@@ -55,7 +47,8 @@ cloud:
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
-
+jwt:
+  secret-key: pyunlee_secret_new_jeans_zzang_zzang
 ---
 spring:
   config:

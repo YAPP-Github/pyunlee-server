@@ -1,14 +1,4 @@
 spring:
   profiles:
-    group:
-      develop: oauth
     include:
       - domain
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: 206868531140-2avrv6bqd1migg21ou9u4gjqek43i9qv.apps.googleusercontent.com
-            client-secret: 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
-            scope: email

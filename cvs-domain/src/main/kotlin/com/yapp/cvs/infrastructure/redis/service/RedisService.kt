@@ -19,4 +19,7 @@ interface RedisService {
     fun setAtomicLong(key: RedisKey, value: Long)
     fun increment(key: RedisKey): Long
     fun decrement(key: RedisKey): Long
+
+    fun <K, V> putMap(mapKey: RedisKey, key: K, value: V)
+    fun <K, V> getMap(mapKey: RedisKey, key: K): V?
 }

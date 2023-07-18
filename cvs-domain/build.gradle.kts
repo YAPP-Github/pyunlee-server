@@ -9,6 +9,9 @@ dependencies {
     implementation("org.redisson:redisson-spring-boot-starter:3.22.0")
     kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
     api("com.h2database:h2")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.2")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.2")
 }
 
 tasks.getByName<BootJar>("bootJar") {

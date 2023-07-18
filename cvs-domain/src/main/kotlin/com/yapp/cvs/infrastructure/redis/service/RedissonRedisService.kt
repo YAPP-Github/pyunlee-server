@@ -73,4 +73,12 @@ class RedissonRedisService(
     override fun decrement(key: RedisKey): Long {
         return redissonClient.getAtomicLong(key.value).decrementAndGet()
     }
+
+    override fun <K, V> putMap(mapKey: RedisKey, key: K, value: V) {
+        redissonClient.getMap<K, V>(mapKey.value).fastPut(key, value)
+    }
+
+    override fun <K, V> getMap(mapKey: RedisKey, key: K): V? {
+        return redissonClient.getMap<K, V>(mapKey.value)[key]
+    }
 }

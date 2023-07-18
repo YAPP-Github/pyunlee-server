@@ -3,6 +3,7 @@ package com.yapp.cvs.domain.member.entity
 import com.yapp.cvs.domain.base.BaseEntity
 import com.yapp.cvs.domain.enums.MemberStatus
 import com.yapp.cvs.domain.enums.OAuthLoginType
+import com.yapp.cvs.domain.enums.OAuthMember
 import javax.persistence.*
 
 @Entity
@@ -17,17 +18,16 @@ class Member(
     @Enumerated(EnumType.STRING)
     val loginType: OAuthLoginType,
 
-    val nickName: String,
+    var nickName: String,
 
     @Enumerated(EnumType.STRING)
     val memberStatus: MemberStatus,
 ) : BaseEntity() {
-
     companion object {
-        fun google(attributes: Map<String, Any>, nickName: String): Member{
+        fun create(oAuthMember: OAuthMember, nickName: String): Member{
             return Member(
-                email = attributes["email"].toString(),
-                loginType = OAuthLoginType.GOOGLE,
+                email = oAuthMember.email,
+                loginType = oAuthMember.loginType,
                 nickName = nickName,
                 memberStatus = MemberStatus.ACTIVATED
             )
