@@ -1,13 +1,12 @@
 package com.yapp.cvs.domain.enums
 
-import com.yapp.cvs.domain.member.entity.Member
 
 enum class OAuthLoginType(
     val registrationId: String,
-): MemberGenerator {
+): MemberParser {
     GOOGLE("google") {
-        override fun generateMember(attr: Map<String, Any>, nickName: String): Member {
-            return Member.google(attr, nickName)
+        override fun parseMember(attr: Map<String, Any>, nickName: String): OAuthMember {
+            return OAuthMember.google(attr)
         }
     },
     ;
@@ -19,6 +18,20 @@ enum class OAuthLoginType(
     }
 }
 
-interface MemberGenerator {
-    fun generateMember(attr: Map<String, Any>, nickName: String): Member
+data class OAuthMember(
+    val email: String,
+    val loginType: OAuthLoginType,
+){
+  companion object {
+      fun google(attributes: Map<String, Any?>): OAuthMember{
+          return OAuthMember(
+              email = attributes["email"].toString(),
+              loginType = OAuthLoginType.GOOGLE
+          )
+      }
+  }
+}
+
+interface MemberParser {
+    fun parseMember(attr: Map<String, Any>, nickName: String): OAuthMember
 }
