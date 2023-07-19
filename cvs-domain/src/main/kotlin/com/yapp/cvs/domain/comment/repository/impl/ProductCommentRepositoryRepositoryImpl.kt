@@ -43,7 +43,7 @@ class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductC
             .leftJoin(productCommentRatingSummary)
             .on(productComment.productCommentId.eq(productCommentRatingSummary.productCommentId))
             .leftJoin(memberProductLikeMapping)
-            .on(productComment.memberId.eq(memberProductLikeMapping.memberId).and(productComment.productId.eq(memberProductLikeMapping.memberId)))
+            .on(productComment.memberId.eq(memberProductLikeMapping.memberId).and(productComment.productId.eq(memberProductLikeMapping.productId)))
             .where(predicate)
             .orderBy(getOrderBy(productCommentSearchVO.orderBy), productComment.productCommentId.desc())
             .limit(productCommentSearchVO.pageSize)
