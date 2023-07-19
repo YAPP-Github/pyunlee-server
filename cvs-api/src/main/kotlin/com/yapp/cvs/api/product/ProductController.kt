@@ -4,6 +4,7 @@ import com.yapp.cvs.api.common.dto.OffsetPageDTO
 import com.yapp.cvs.api.product.dto.ProductDTO
 import com.yapp.cvs.api.product.dto.ProductDetailDTO
 import com.yapp.cvs.api.product.dto.ProductSearchDTO
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.application.ProductProcessor
 import org.springdoc.api.annotations.ParameterObject
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,8 +18,11 @@ class ProductController(
     private val productProcessor: ProductProcessor
 ) {
     @GetMapping("/{productId}/detail")
-    fun getProductDetail(@PathVariable productId: Long): ProductDetailDTO {
-        return ProductDetailDTO.from(productProcessor.getProductDetail(productId, 1L))
+    fun getProductDetail(
+        member: Member,
+        @PathVariable productId: Long
+    ): ProductDetailDTO {
+        return ProductDetailDTO.from(productProcessor.getProductDetail(productId, member.memberId!!))
     }
 
     @GetMapping("/search")

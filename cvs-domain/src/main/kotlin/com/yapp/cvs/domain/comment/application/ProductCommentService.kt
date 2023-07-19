@@ -7,6 +7,7 @@ import com.yapp.cvs.domain.comment.vo.ProductCommentDetailVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentVO
 import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.member.repository.MemberRepository
 import com.yapp.cvs.exception.BadRequestException
 import com.yapp.cvs.exception.NotFoundSourceException
@@ -23,12 +24,12 @@ class ProductCommentService(
             ?: throw NotFoundSourceException("commentId: $commentId 에 해당하는 코멘트가 존재하지 않습니다.")
     }
 
-    fun getProductCommentList(productId: Long, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentVO> {
+    fun getProductCommentList(productId: Long, member: Member, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentVO> {
         val productCommentViewList = productCommentRepository.findByProductIdAndSearchCondition(productId, productCommentSearchVO)
         return productCommentViewList.map {
             ProductCommentVO.of(
                 it,
-                memberRepository.findById(it.productComment.memberId).get(),
+                member,
                 productCommentRatingHistoryRepository.findLatestMemberRatingOnProductComment(it.productComment.memberId, it.productComment.productCommentId!!)
             )
         }

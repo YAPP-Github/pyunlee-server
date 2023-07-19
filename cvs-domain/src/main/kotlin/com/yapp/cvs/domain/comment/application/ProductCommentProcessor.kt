@@ -5,6 +5,7 @@ import com.yapp.cvs.domain.comment.vo.ProductCommentRequestVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.comment.vo.ProductCommentVO
 import com.yapp.cvs.domain.enums.DistributedLockType
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -15,8 +16,8 @@ class ProductCommentProcessor(
     private val productCommentService: ProductCommentService
 ) {
 
-    fun getCommentDetailList(productId: Long, memberId: Long, productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentVO> {
-        val result = productCommentService.getProductCommentList(productId, productCommentSearchVO)
+    fun getCommentDetailList(productId: Long, member: Member, productCommentSearchVO: ProductCommentSearchVO): OffsetPageVO<ProductCommentVO> {
+        val result = productCommentService.getProductCommentList(productId, member, productCommentSearchVO)
         return OffsetPageVO(result.lastOrNull()?.productCommentId, result)
     }
 
