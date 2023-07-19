@@ -4,6 +4,7 @@ import com.yapp.cvs.domain.base.vo.OffsetPageVO
 import com.yapp.cvs.domain.base.vo.OffsetSearchVO
 import com.yapp.cvs.domain.base.vo.PageSearchVO
 import com.yapp.cvs.domain.base.vo.PageVO
+import com.yapp.cvs.domain.comment.application.ProductCommentService
 import com.yapp.cvs.domain.like.application.MemberProductLikeMappingService
 import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
 import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
@@ -19,7 +20,8 @@ import javax.transaction.Transactional
 @Transactional
 class ProductProcessor(
     private val productService: ProductService,
-    private val memberProductLikeMappingService: MemberProductLikeMappingService
+    private val memberProductLikeMappingService: MemberProductLikeMappingService,
+    private val productCommentService: ProductCommentService
 ) {
     fun getProductDetail(productId: Long, memberId: Long): ProductDetailVO {
         val product = productService.findProduct(productId)
@@ -28,9 +30,11 @@ class ProductProcessor(
             MemberProductMappingKey(productId, memberId)
         )
 
+        val commentCount = productCommentService.countTotalCommentByProduct(productId)
+
         productService.increaseProductViewCount(productId)
 
-        return ProductDetailVO.from(product, memberProductLikeMapping)
+        return ProductDetailVO.from(product, memberProductLikeMapping, commentCount)
     }
 
     fun searchProductPageList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): OffsetPageVO<ProductVO> {

@@ -15,10 +15,11 @@ data class ProductDetailVO(
     val productRatingType: ProductLikeType,
     val imageUrl: String?,
     val productPromotionVOList: List<ProductPromotionVO>,
-    val productScoreVO: ProductScoreVO?
+    val productScoreVO: ProductScoreVO?,
+    val commentCount: Long
 ) {
     companion object {
-        fun from(product: Product, memberProductMapping: MemberProductLikeMapping?): ProductDetailVO {
+        fun from(product: Product, memberProductMapping: MemberProductLikeMapping?, commentCount: Long): ProductDetailVO {
             return ProductDetailVO(
                 productId = product.productId!!,
                 brandName = product.brandName,
@@ -29,7 +30,8 @@ data class ProductDetailVO(
                 productRatingType = memberProductMapping?.likeType ?: ProductLikeType.NONE,
                 imageUrl = product.imageUrl,
                 productPromotionVOList = product.productPromotionList.map { ProductPromotionVO.from(it) },
-                productScoreVO = product.productLikeSummaryList.firstOrNull()?.let { ProductScoreVO.from(it) }
+                productScoreVO = product.productLikeSummaryList.firstOrNull()?.let { ProductScoreVO.from(it) },
+                commentCount = commentCount
             )
         }
     }

@@ -34,15 +34,17 @@ class MemberProcessor(
     fun login(accessRequestVO: MemberAccessRequestVO): String {
         val oauthMember = oAuthServiceFactory.getOauthService(accessRequestVO.loginType)
             .authorize(accessRequestVO.idToken)
+
         val member = memberService.findMemberByOAuthMember(oauthMember)
             ?: throw BadRequestException("이미 가입된 회원입니다")
 
-        return generateMemberAccessToken(member)
+        return redisService.getMap(RedisKey.createKey(RedisKeyType.MEMBER_ACCESS_TOKEN), member.memberId!!)
+            ?: generateMemberAccessToken(member)
     }
 
     private fun generateMemberAccessToken(member: Member): String {
         val token = jwtService.generate(member)
-        redisService.putMap(RedisKey.createKey(RedisKeyType.MEMBER_ACCESS_TOKEN), token, member.memberId!!)
+        redisService.putMap(RedisKey.createKey(RedisKeyType.MEMBER_ACCESS_TOKEN), member.memberId!!, token)
         return token
     }
 }

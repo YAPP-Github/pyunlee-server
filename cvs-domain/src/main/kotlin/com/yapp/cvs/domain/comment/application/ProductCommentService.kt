@@ -83,4 +83,8 @@ class ProductCommentService(
             ProductCommentDetailVO.of(it, memberRepository.findById(it.productComment.memberId).get())
         }
     }
+
+    fun countTotalCommentByProduct(productId: Long): Long {
+        return productCommentRepository.countByProductIdAndValid(productId, true)
+    }
 }
