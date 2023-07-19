@@ -1,25 +1,23 @@
-package com.yapp.cvs.api.like
+package com.yapp.cvs.api.product
 
-import com.yapp.cvs.api.like.dto.ProductLikeHistoryDTO
-import com.yapp.cvs.api.like.dto.ProductLikeSummaryDTO
+import com.yapp.cvs.api.product.dto.ProductLikeHistoryDTO
+import com.yapp.cvs.api.product.dto.ProductLikeSummaryDTO
 import com.yapp.cvs.api.product.dto.ProductScoreDTO
-import com.yapp.cvs.domain.like.application.ProductLikeProcessor
-import com.yapp.cvs.domain.like.entity.ProductLikeHistory
+import com.yapp.cvs.domain.like.application.ProductRatingProcessor
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
-import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
 import com.yapp.cvs.domain.member.entity.Member
-import com.yapp.cvs.domain.product.vo.ProductScoreVO
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/product")
-class ProductLikeHistoryController(
-        val productLikeProcessor: ProductLikeProcessor
+class ProductRatingController(
+        val productRatingProcessor: ProductRatingProcessor
 ) {
     @GetMapping("/{productId}/rate/history")
     @Operation(summary = "하나의 상품에 대한 내 최근 평가 내역을 가져옵니다.")
@@ -27,13 +25,13 @@ class ProductLikeHistoryController(
         member: Member,
         @PathVariable productId: Long
     ): ProductLikeHistoryDTO {
-        return ProductLikeHistoryDTO.from(productLikeProcessor.findLatestRate(productId, member.memberId!!))
+        return ProductLikeHistoryDTO.from(productRatingProcessor.findLatestRate(productId, member.memberId!!))
     }
 
     @GetMapping("/{productId}/rate")
     @Operation(summary = "하나의 상품의 평가 정보를 가져옵니다")
     fun getProductLikeSummary(@PathVariable productId: Long): ProductLikeSummaryDTO {
-        return ProductLikeSummaryDTO.from(productLikeProcessor.findProductLikeSummary(productId))
+        return ProductLikeSummaryDTO.from(productRatingProcessor.findProductLikeSummary(productId))
     }
 
     @PostMapping("/{productId}/rate/like")
@@ -43,7 +41,7 @@ class ProductLikeHistoryController(
         @PathVariable productId: Long
     ): ProductScoreDTO {
         return ProductScoreDTO.from(
-            productLikeProcessor.likeProduct(ProductLikeRequestVO(productId = productId, member.memberId!!))
+            productRatingProcessor.likeProduct(ProductLikeRequestVO(productId = productId, member.memberId!!))
         )
     }
 
@@ -54,7 +52,7 @@ class ProductLikeHistoryController(
         @PathVariable productId: Long
     ): ProductScoreDTO {
         return ProductScoreDTO.from(
-            productLikeProcessor.dislikeProduct(ProductLikeRequestVO(productId = productId, member.memberId!!))
+            productRatingProcessor.dislikeProduct(ProductLikeRequestVO(productId = productId, member.memberId!!))
         )
     }
 
@@ -65,7 +63,7 @@ class ProductLikeHistoryController(
         @PathVariable productId: Long
     ): ProductScoreDTO {
         return ProductScoreDTO.from(
-            productLikeProcessor.cancelEvaluation(ProductLikeRequestVO(productId = productId, member.memberId!!))
+            productRatingProcessor.cancelEvaluation(ProductLikeRequestVO(productId = productId, member.memberId!!))
         )
     }
 }

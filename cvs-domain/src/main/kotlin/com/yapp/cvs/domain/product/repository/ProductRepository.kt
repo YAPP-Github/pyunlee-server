@@ -16,4 +16,6 @@ interface ProductRepositoryCustom {
     fun findByProductId(productId: Long): Product?
     fun findProductList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): List<Product>
     fun findProductPage(pageable: Pageable, productSearchVO: ProductSearchVO): Page<Product>
+
+    fun findUnratedProductList(memberId: Long, offsetProductId: Long?, pageSize: Int): List<Product>
 }

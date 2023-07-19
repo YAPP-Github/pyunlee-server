@@ -8,6 +8,7 @@ import com.yapp.cvs.domain.comment.application.ProductCommentService
 import com.yapp.cvs.domain.like.application.MemberProductLikeMappingService
 import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
 import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.vo.ProductDetailVO
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import com.yapp.cvs.domain.product.vo.ProductUpdateVO
@@ -60,5 +61,13 @@ class ProductProcessor(
 
         product.update(productUpdateVO)
         productService.saveProduct(product)
+    }
+
+    fun getUnratedProductList(member: Member, offsetProductId: Long?, pageSize: Int): OffsetPageVO<ProductVO> {
+        val productList = productService.findUnratedProductList(member, offsetProductId, pageSize)
+        return OffsetPageVO(
+            productList.lastOrNull()?.productId,
+            productList.map { ProductVO.from(it) }
+        )
     }
 }

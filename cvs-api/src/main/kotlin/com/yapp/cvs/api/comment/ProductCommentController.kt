@@ -7,7 +7,7 @@ import com.yapp.cvs.api.common.dto.OffsetPageDTO
 import com.yapp.cvs.domain.comment.application.ProductCommentProcessor
 import com.yapp.cvs.domain.comment.application.ProductCommentRatingProcessor
 import com.yapp.cvs.domain.comment.vo.ProductCommentRequestVO
-import com.yapp.cvs.domain.like.application.ProductLikeProcessor
+import com.yapp.cvs.domain.like.application.ProductRatingProcessor
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.member.entity.Member
 import io.swagger.v3.oas.annotations.Operation
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/product")
 class ProductCommentController(
     private val productCommentProcessor: ProductCommentProcessor,
-    private val productLikeProcessor: ProductLikeProcessor,
+    private val productRatingProcessor: ProductRatingProcessor,
     private val productCommentRatingProcessor: ProductCommentRatingProcessor
 ) {
     @GetMapping("/{productId}/comment")
@@ -60,7 +60,7 @@ class ProductCommentController(
         member: Member,
         @PathVariable productId: Long
     ) {
-        productLikeProcessor.cancelEvaluation(ProductLikeRequestVO(productId = productId, memberId = member.memberId!!))
+        productRatingProcessor.cancelEvaluation(ProductLikeRequestVO(productId = productId, memberId = member.memberId!!))
     }
 
     @PostMapping("/comment/{commentId}/like")
