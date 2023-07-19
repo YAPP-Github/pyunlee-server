@@ -1,9 +1,9 @@
 package com.yapp.cvs.domain.product.repository.impl
 
 import com.querydsl.core.types.OrderSpecifier
-import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.BooleanExpression
 import com.yapp.cvs.domain.base.vo.OffsetSearchVO
+import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.extension.ifNotEmpty
 import com.yapp.cvs.domain.extension.ifNotNull
 import com.yapp.cvs.domain.extension.ifTrue
@@ -13,6 +13,7 @@ import com.yapp.cvs.domain.product.entity.QPbProductMapping.pbProductMapping
 import com.yapp.cvs.domain.product.entity.QProduct.product
 import com.yapp.cvs.domain.product.entity.QProductPromotion.productPromotion
 import com.yapp.cvs.domain.like.entity.QProductLikeSummary.productLikeSummary
+import com.yapp.cvs.domain.like.entity.QMemberProductLikeMapping.memberProductLikeMapping
 import com.yapp.cvs.domain.product.repository.ProductRepositoryCustom
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import org.springframework.data.domain.Page
@@ -58,7 +59,7 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
     override fun findProductPage(pageable: Pageable, productSearchVO: ProductSearchVO): Page<Product> {
         val predicate = productSearchWhere(productSearchVO)
 
-        val result =  from(product)
+        val result = from(product)
             .leftJoin(product.pbProductMappingList, pbProductMapping)
             .fetchJoin()
             .leftJoin(product.productPromotionList, productPromotion)
@@ -71,6 +72,21 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .fetchResults()
 
         return  PageImpl(result.results, pageable, result.total)
+    }
+
+    override fun findUnratedProductList(memberId: Long, offsetProductId: Long?, pageSize: Int): List<Product> {
+        return from(product)
+            .leftJoin(product.pbProductMappingList, pbProductMapping)
+            .fetchJoin()
+            .leftJoin(memberProductLikeMapping)
+            .on(product.productId.eq(memberProductLikeMapping.productId)
+                .and(memberProductLikeMapping.memberId.eq(memberId)))
+            .where((memberProductLikeMapping.isNull.or(memberProductLikeMapping.likeType.eq(ProductLikeType.NONE)))
+                .and(offsetProductId.ifNotNull { product.productId.lt(offsetProductId) }))
+            .orderBy(product.productId.desc())
+            .limit(pageSize.toLong())
+            .select(product)
+            .fetch()
     }
 
     private fun productSearchWhere(productSearchVO: ProductSearchVO): BooleanExpression {

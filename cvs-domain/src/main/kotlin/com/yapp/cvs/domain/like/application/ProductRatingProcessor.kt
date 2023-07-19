@@ -1,5 +1,6 @@
 package com.yapp.cvs.domain.like.application
 
+import com.yapp.cvs.domain.base.vo.OffsetPageVO
 import com.yapp.cvs.domain.comment.application.ProductCommentService
 import com.yapp.cvs.domain.enums.DistributedLockType
 import com.yapp.cvs.domain.enums.ProductLikeType
@@ -9,7 +10,9 @@ import com.yapp.cvs.domain.like.entity.ProductLikeHistory
 import com.yapp.cvs.domain.like.vo.ProductLikeHistoryVO
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.vo.ProductScoreVO
+import com.yapp.cvs.domain.product.vo.ProductVO
 import com.yapp.cvs.exception.BadRequestException
 import com.yapp.cvs.exception.NotFoundSourceException
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
@@ -18,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
-class ProductLikeProcessor(
+class ProductRatingProcessor(
     private val productLikeHistoryService: ProductLikeHistoryService,
     private val memberProductLikeMappingService: MemberProductLikeMappingService,
     private val productLikeSummaryService: ProductLikeSummaryService,

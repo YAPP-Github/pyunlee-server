@@ -3,6 +3,7 @@ package com.yapp.cvs.domain.product.application
 import com.yapp.cvs.domain.base.vo.OffsetSearchVO
 import com.yapp.cvs.domain.base.vo.PageSearchVO
 import com.yapp.cvs.domain.base.vo.PageVO
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.entity.Product
 import com.yapp.cvs.domain.product.repository.ProductRepository
 import com.yapp.cvs.domain.product.vo.ProductPbVO
@@ -47,5 +48,9 @@ class ProductService(
             PageRequest.of(pageSearchVO.pageNum, pageSearchVO.pageSize),
             productSearchVO
         )
+    }
+
+    fun findUnratedProductList(member: Member, offsetProductId: Long?, pageSize: Int): List<Product> {
+        return productRepository.findUnratedProductList(member.memberId!!, offsetProductId, pageSize)
     }
 }

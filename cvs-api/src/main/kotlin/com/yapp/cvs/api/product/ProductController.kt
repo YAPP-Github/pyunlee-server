@@ -7,10 +7,7 @@ import com.yapp.cvs.api.product.dto.ProductSearchDTO
 import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.application.ProductProcessor
 import org.springdoc.api.annotations.ParameterObject
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -28,6 +25,16 @@ class ProductController(
     @GetMapping("/search")
     fun searchProductList(@ParameterObject productSearchDTO: ProductSearchDTO): OffsetPageDTO<ProductDTO> {
         val result = productProcessor.searchProductPageList(productSearchDTO.toOffsetVO(), productSearchDTO.toVO())
+        return OffsetPageDTO(result.lastId, result.content.map { ProductDTO.from(it) })
+    }
+
+    @GetMapping("/unrated")
+    fun getUnratedProductList(
+        member: Member,
+        @RequestParam offsetProductId: Long? = null,
+        @RequestParam(defaultValue = "10") pageSize: Int,
+    ): OffsetPageDTO<ProductDTO>  {
+        val result = productProcessor.getUnratedProductList(member, offsetProductId, pageSize)
         return OffsetPageDTO(result.lastId, result.content.map { ProductDTO.from(it) })
     }
 }

@@ -1,7 +1,5 @@
-package com.yapp.cvs.api.like.dto
+package com.yapp.cvs.api.product.dto
 
-import com.yapp.cvs.domain.enums.ProductLikeType
-import com.yapp.cvs.domain.like.entity.ProductLikeHistory
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
 
 data class ProductLikeSummaryDTO(
