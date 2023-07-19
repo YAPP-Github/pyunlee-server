@@ -1,5 +1,6 @@
 package com.yapp.cvs.infrastructure.redis.lock
 
+import com.yapp.cvs.domain.extension.ifNotNull
 import com.yapp.cvs.exception.InvalidLockException
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -8,6 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
+import kotlin.reflect.full.declaredMemberProperties
 
 @Aspect
 @Component
@@ -25,13 +27,27 @@ class DistributedLockAop(
     private fun createDynamicKey(joinPoint: ProceedingJoinPoint, keys: Array<String>): String {
         val methodSignature = joinPoint.signature as MethodSignature
         val methodParameterNames = methodSignature.parameterNames
-        val methodArgs = joinPoint.args
+        val methodArguments = joinPoint.args
 
-        // TODO: args 객체에서 꺼내서 만들수 있게, 지금은 toString임
-        val dynamicKey = keys.joinToString(separator = ":") { key ->
+        return keys.joinToString(separator = ":") { key ->
             val indexOfKey = methodParameterNames.indexOf(key)
-            methodArgs.getOrNull(indexOfKey)?.toString() ?: throw InvalidLockException("Invalid Lock Key")
+            val field = methodArguments.getOrNull(indexOfKey) ?: throw InvalidLockException("Invalid Lock Key")
+            getPropertyAsString(field)
         }
-        return dynamicKey
+    }
+
+    fun getPropertyAsString(field: Any): String {
+        return if (isPrimitiveType(field)) {
+            field.toString()
+        } else {
+            field::class.declaredMemberProperties
+                    .filter { isPrimitiveType(it.getter.call(field)) }
+                    .joinToString(":") { it.getter.call(field).toString() }
+                    .ifEmpty {  throw InvalidLockException("No valid properties found for the given keys") }
+        }
+    }
+
+    private fun isPrimitiveType(property: Any?): Boolean {
+        return property.ifNotNull { it::class.javaPrimitiveType != null } ?: false
     }
 }

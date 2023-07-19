@@ -6,5 +6,5 @@ import com.yapp.cvs.domain.enums.DistributedLockType
 @Target(AnnotationTarget.FUNCTION)
 annotation class DistributedLock(
     val type: DistributedLockType,
-    val keys: Array<String>,
+    val keys: Array<String>
 )
