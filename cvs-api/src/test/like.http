@@ -21,4 +21,4 @@ Content-Type: application/json
 
 ###
 GET localhost:8080/api/v1/product/unrated?offsetProductId=6401
-X_ACCESS_TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
+##X_ACCESS_TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA

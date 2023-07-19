@@ -29,16 +29,21 @@ class MemberAuthenticationFilter (
     }
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-        return arrayOf(
+         arrayOf(
             "/hello",
             "/api/v1/member/signup",
             "/api/v1/member/login",
-            "/swagger-resources/**",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
+            "/swagger-resources/",
+            "/swagger-ui/",
+            "/v3/api-docs/",
             "/v3/api-docs",
-            "/api-docs/**")
-            .contains(request.requestURI)
+            "/api-docs/")
+            .forEach {
+                if(request.requestURI.contains(it)) {
+                    return true
+                }
+            }
+        return false
     }
 
     companion object {
