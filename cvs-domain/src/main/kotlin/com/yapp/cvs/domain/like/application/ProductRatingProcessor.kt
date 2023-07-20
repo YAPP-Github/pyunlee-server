@@ -101,7 +101,7 @@ class ProductRatingProcessor(
             productLikeSummaryService.cancelDislikeProductLikeSummary(productLikeRequestVO.productId)
             ProductScoreVO.cancelDislike(productLikeSummary)
         } else {
-            throw BadRequestException("잘못된 요청")
+            ProductScoreVO.from(productLikeSummary)
         }
     }
 }
