@@ -36,7 +36,7 @@ class MemberProcessor(
             .authorize(accessRequestVO.idToken)
 
         val member = memberService.findMemberByOAuthMember(oauthMember)
-            ?: throw BadRequestException("이미 가입된 회원입니다")
+            ?: throw BadRequestException("가입되지 않은 회원입니다.")
 
         return redisService.getMap(RedisKey.createKey(RedisKeyType.MEMBER_ACCESS_TOKEN), member.memberId!!)
             ?: generateMemberAccessToken(member)

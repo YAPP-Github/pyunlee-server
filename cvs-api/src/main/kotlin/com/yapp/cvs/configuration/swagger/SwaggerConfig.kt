@@ -40,13 +40,11 @@ class SwaggerConfig {
     private fun authSetting(): Components {
         return Components()
             .addSecuritySchemes(
-                "access-token",
+                "X_ACCESS_TOKEN",
                 SecurityScheme()
-                    .type(SecurityScheme.Type.HTTP)
-                    .scheme("bearer")
-                    .bearerFormat("JWT")
+                    .type(SecurityScheme.Type.APIKEY)
                     .`in`(SecurityScheme.In.HEADER)
-                    .name("Authorization")
+                    .name("X_ACCESS_TOKEN")
             )
     }
 }

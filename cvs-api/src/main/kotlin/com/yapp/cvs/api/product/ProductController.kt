@@ -6,11 +6,15 @@ import com.yapp.cvs.api.product.dto.ProductDetailDTO
 import com.yapp.cvs.api.product.dto.ProductSearchDTO
 import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.application.ProductProcessor
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springdoc.api.annotations.ParameterObject
 import org.springframework.web.bind.annotation.*
 
+@Tag(name = "상품")
 @RestController
 @RequestMapping("/api/v1/product")
+@SecurityRequirement(name = "X_ACCESS_TOKEN")
 class ProductController(
     private val productProcessor: ProductProcessor
 ) {
