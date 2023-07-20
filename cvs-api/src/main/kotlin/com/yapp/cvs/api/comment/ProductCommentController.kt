@@ -11,11 +11,15 @@ import com.yapp.cvs.domain.like.application.ProductRatingProcessor
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.member.entity.Member
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springdoc.api.annotations.ParameterObject
 import org.springframework.web.bind.annotation.*
 
+@Tag(name = "상품 평가 (코멘트)")
 @RestController
 @RequestMapping("/api/v1/product")
+@SecurityRequirement(name = "X_ACCESS_TOKEN")
 class ProductCommentController(
     private val productCommentProcessor: ProductCommentProcessor,
     private val productRatingProcessor: ProductRatingProcessor,
