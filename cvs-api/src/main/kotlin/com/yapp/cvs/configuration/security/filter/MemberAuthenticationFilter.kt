@@ -21,7 +21,7 @@ class MemberAuthenticationFilter (
         filterChain: FilterChain
     ) {
         val token = request.getHeader(X_ACCESS_TOKEN)
-            ?: throw BadRequestException("X_ACCESS_TOKEN이 없습니다")
+            ?: throw BadRequestException("X-ACCESS-TOKEN이 없습니다")
 
         jwtService.parse(token)
 
@@ -48,6 +48,6 @@ class MemberAuthenticationFilter (
 
     companion object {
         val log: Logger = LoggerFactory.getLogger(MemberAuthenticationFilter::class.java)
-        const val X_ACCESS_TOKEN = "X_ACCESS_TOKEN"
+        const val X_ACCESS_TOKEN = "X-ACCESS-TOKEN"
     }
 }

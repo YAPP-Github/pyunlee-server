@@ -7,6 +7,7 @@ import com.yapp.cvs.domain.like.application.ProductRatingProcessor
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.member.entity.Member
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "평가 (좋아요)")
 @RestController
 @RequestMapping("/api/v1/product")
-@SecurityRequirement(name = "X_ACCESS_TOKEN")
+@SecurityRequirement(name = "X-ACCESS-TOKEN")
 class ProductRatingController(
         val productRatingProcessor: ProductRatingProcessor
 ) {
     @GetMapping("/{productId}/rate/history")
     @Operation(summary = "하나의 상품에 대한 내 최근 평가 내역을 가져옵니다.")
     fun getProductLike(
-        member: Member,
+        @Parameter(hidden = true) member: Member,
         @PathVariable productId: Long
     ): ProductLikeHistoryDTO {
         return ProductLikeHistoryDTO.from(productRatingProcessor.findLatestRate(productId, member.memberId!!))
@@ -41,7 +42,7 @@ class ProductRatingController(
     @PostMapping("/{productId}/rate/like")
     @Operation(summary = "\"또 먹을거에요\" 평가를 남깁니다.")
     fun postProductLike(
-        member: Member,
+        @Parameter(hidden = true) member: Member,
         @PathVariable productId: Long
     ): ProductScoreDTO {
         return ProductScoreDTO.from(
@@ -52,7 +53,7 @@ class ProductRatingController(
     @PostMapping("/{productId}/rate/dislike")
     @Operation(summary = "\"또 안 사먹을래요\" 평가를 남깁니다.")
     fun postProductDislike(
-        member: Member,
+        @Parameter(hidden = true) member: Member,
         @PathVariable productId: Long
     ): ProductScoreDTO {
         return ProductScoreDTO.from(
@@ -63,7 +64,7 @@ class ProductRatingController(
     @PostMapping("/{productId}/rate/cancel")
     @Operation(summary = "평가를 취소합니다.")
     fun postProductLikeCancel(
-        member: Member,
+        @Parameter(hidden = true) member: Member,
         @PathVariable productId: Long
     ): ProductScoreDTO {
         return ProductScoreDTO.from(
