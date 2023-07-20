@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "회원")
 @RestController
 @RequestMapping("/api/v1/member")
-@SecurityRequirement(name = "X_ACCESS_TOKEN")
+@SecurityRequirement(name = "X-ACCESS-TOKEN")
 class MemberController(
     private val memberProcessor: MemberProcessor
 ) {

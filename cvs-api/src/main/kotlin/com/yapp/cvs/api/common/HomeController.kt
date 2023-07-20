@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "홈")
 @RestController
 @RequestMapping("/api/v1")
-@SecurityRequirement(name = "X_ACCESS_TOKEN")
+@SecurityRequirement(name = "X-ACCESS-TOKEN")
 class HomeController(
     private val homeProcessor: HomeProcessor
 ) {

@@ -6,6 +6,7 @@ import com.yapp.cvs.api.product.dto.ProductDetailDTO
 import com.yapp.cvs.api.product.dto.ProductSearchDTO
 import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.application.ProductProcessor
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springdoc.api.annotations.ParameterObject
@@ -14,13 +15,13 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "상품")
 @RestController
 @RequestMapping("/api/v1/product")
-@SecurityRequirement(name = "X_ACCESS_TOKEN")
+@SecurityRequirement(name = "X-ACCESS-TOKEN")
 class ProductController(
     private val productProcessor: ProductProcessor
 ) {
     @GetMapping("/{productId}/detail")
     fun getProductDetail(
-        member: Member,
+        @Parameter(hidden = true) member: Member,
         @PathVariable productId: Long
     ): ProductDetailDTO {
         return ProductDetailDTO.from(productProcessor.getProductDetail(productId, member.memberId!!))
@@ -34,7 +35,7 @@ class ProductController(
 
     @GetMapping("/unrated")
     fun getUnratedProductList(
-        member: Member,
+        @Parameter(hidden = true) member: Member,
         @RequestParam offsetProductId: Long? = null,
         @RequestParam(defaultValue = "10") pageSize: Int,
     ): OffsetPageDTO<ProductDTO>  {
