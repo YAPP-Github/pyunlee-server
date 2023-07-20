@@ -1,37 +1,35 @@
 package com.yapp.cvs.domain.enums
 
+import com.yapp.cvs.exception.BadRequestException
+
 
 enum class OAuthLoginType(
-    val registrationId: String,
 ): MemberParser {
-    GOOGLE("google") {
-        override fun parseMember(attr: Map<String, Any>, nickName: String): OAuthMember {
-            return OAuthMember.google(attr)
+    GOOGLE {
+        override fun parseMember(attr: Map<String, Any?>): OAuthMember {
+            return OAuthMember(
+                email = attr["email"]?.toString() ?: throw BadRequestException("ID_TOKEN을 인증 할 수 없습니다."),
+                loginType = GOOGLE
+            )
         }
     },
-    ;
-
-    companion object {
-        fun getByRegistrationId(registrationId: String): OAuthLoginType {
-            return values().first { it.registrationId == registrationId }
+    KAKAO {
+        override fun parseMember(attr: Map<String, Any?>): OAuthMember {
+            return OAuthMember(
+                email = attr["email"]?.toString() ?: throw BadRequestException("ID_TOKEN을 인증 할 수 없습니다."),
+                loginType = KAKAO
+            )
         }
     }
+    ;
 }
 
 data class OAuthMember(
     val email: String,
     val loginType: OAuthLoginType,
 ){
-  companion object {
-      fun google(attributes: Map<String, Any?>): OAuthMember{
-          return OAuthMember(
-              email = attributes["email"].toString(),
-              loginType = OAuthLoginType.GOOGLE
-          )
-      }
-  }
 }
 
 interface MemberParser {
-    fun parseMember(attr: Map<String, Any>, nickName: String): OAuthMember
+    fun parseMember(attr: Map<String, Any?>): OAuthMember
 }
