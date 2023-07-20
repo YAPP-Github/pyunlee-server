@@ -1,6 +1,6 @@
 package com.yapp.cvs.configuration.security.resolver
 
-import com.yapp.cvs.configuration.security.filter.MemberAuthenticationFilter.Companion.X_ACCESS_TOKEN
+import com.yapp.cvs.configuration.security.filter.MemberAuthenticationFilter.Companion.X_AUTH_TOKEN
 import com.yapp.cvs.domain.member.application.JwtService
 import com.yapp.cvs.domain.member.application.MemberService
 import com.yapp.cvs.domain.member.entity.Member
@@ -23,7 +23,7 @@ class MemberArgumentResolver(
     override fun resolveArgument(parameter: MethodParameter, mavContainer: ModelAndViewContainer?, webRequest: NativeWebRequest, binderFactory: WebDataBinderFactory?): Any? {
         val httpRequest: HttpServletRequest = webRequest.nativeRequest as HttpServletRequest
 
-        val token = httpRequest.getHeader(X_ACCESS_TOKEN)
+        val token = httpRequest.getHeader(X_AUTH_TOKEN)
             ?: throw BadTokenException("토큰 정보가 없습니다")
 
         val memberId = jwtService.parse(token)

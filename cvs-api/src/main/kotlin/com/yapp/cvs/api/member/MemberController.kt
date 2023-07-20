@@ -2,6 +2,8 @@ package com.yapp.cvs.api.member
 
 import com.yapp.cvs.api.member.dto.MemberAccessDTO
 import com.yapp.cvs.api.member.dto.MemberAccessRequestDTO
+import com.yapp.cvs.configuration.swagger.SwaggerConfig
+import com.yapp.cvs.configuration.swagger.SwaggerConfig.Companion.SWAGGER_AUTH_KEY
 import com.yapp.cvs.domain.member.application.MemberProcessor
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -13,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "회원")
 @RestController
 @RequestMapping("/api/v1/member")
-@SecurityRequirement(name = "X-ACCESS-TOKEN")
+@SecurityRequirement(name = SWAGGER_AUTH_KEY)
 class MemberController(
     private val memberProcessor: MemberProcessor
 ) {

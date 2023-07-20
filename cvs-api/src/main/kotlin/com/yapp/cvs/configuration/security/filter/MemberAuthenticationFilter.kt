@@ -1,7 +1,6 @@
 package com.yapp.cvs.configuration.security.filter
 
 import com.yapp.cvs.domain.member.application.JwtService
-import com.yapp.cvs.domain.member.application.MemberService
 import com.yapp.cvs.exception.BadRequestException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -20,8 +19,8 @@ class MemberAuthenticationFilter (
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val token = request.getHeader(X_ACCESS_TOKEN)
-            ?: throw BadRequestException("X-ACCESS-TOKEN이 없습니다")
+        val token = request.getHeader(X_AUTH_TOKEN)
+            ?: throw BadRequestException("X-Auth-Token이 없습니다")
 
         jwtService.parse(token)
 
@@ -48,6 +47,6 @@ class MemberAuthenticationFilter (
 
     companion object {
         val log: Logger = LoggerFactory.getLogger(MemberAuthenticationFilter::class.java)
-        const val X_ACCESS_TOKEN = "X-ACCESS-TOKEN"
+        const val X_AUTH_TOKEN = "X-Auth-Token"
     }
 }

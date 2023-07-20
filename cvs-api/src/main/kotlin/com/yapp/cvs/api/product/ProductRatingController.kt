@@ -3,6 +3,8 @@ package com.yapp.cvs.api.product
 import com.yapp.cvs.api.product.dto.ProductLikeHistoryDTO
 import com.yapp.cvs.api.product.dto.ProductLikeSummaryDTO
 import com.yapp.cvs.api.product.dto.ProductScoreDTO
+import com.yapp.cvs.configuration.swagger.SwaggerConfig
+import com.yapp.cvs.configuration.swagger.SwaggerConfig.Companion.SWAGGER_AUTH_KEY
 import com.yapp.cvs.domain.like.application.ProductRatingProcessor
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.member.entity.Member
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "평가 (좋아요)")
 @RestController
 @RequestMapping("/api/v1/product")
-@SecurityRequirement(name = "X-ACCESS-TOKEN")
+@SecurityRequirement(name = SWAGGER_AUTH_KEY)
 class ProductRatingController(
         val productRatingProcessor: ProductRatingProcessor
 ) {

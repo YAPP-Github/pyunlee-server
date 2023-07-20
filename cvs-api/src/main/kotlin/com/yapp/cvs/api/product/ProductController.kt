@@ -4,6 +4,8 @@ import com.yapp.cvs.api.common.dto.OffsetPageDTO
 import com.yapp.cvs.api.product.dto.ProductDTO
 import com.yapp.cvs.api.product.dto.ProductDetailDTO
 import com.yapp.cvs.api.product.dto.ProductSearchDTO
+import com.yapp.cvs.configuration.swagger.SwaggerConfig
+import com.yapp.cvs.configuration.swagger.SwaggerConfig.Companion.SWAGGER_AUTH_KEY
 import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.application.ProductProcessor
 import io.swagger.v3.oas.annotations.Parameter
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "상품")
 @RestController
 @RequestMapping("/api/v1/product")
-@SecurityRequirement(name = "X-ACCESS-TOKEN")
+@SecurityRequirement(name = SWAGGER_AUTH_KEY)
 class ProductController(
     private val productProcessor: ProductProcessor
 ) {
