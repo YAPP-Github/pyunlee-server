@@ -4,6 +4,8 @@ import com.yapp.cvs.api.comment.dto.ProductCommentContentDTO
 import com.yapp.cvs.api.comment.dto.ProductCommentDTO
 import com.yapp.cvs.api.comment.dto.ProductCommentSearchDTO
 import com.yapp.cvs.api.common.dto.OffsetPageDTO
+import com.yapp.cvs.configuration.swagger.SwaggerConfig
+import com.yapp.cvs.configuration.swagger.SwaggerConfig.Companion.SWAGGER_AUTH_KEY
 import com.yapp.cvs.domain.comment.application.ProductCommentProcessor
 import com.yapp.cvs.domain.comment.application.ProductCommentRatingProcessor
 import com.yapp.cvs.domain.comment.vo.ProductCommentRequestVO
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "상품 평가 (코멘트)")
 @RestController
 @RequestMapping("/api/v1/product")
-@SecurityRequirement(name = "X-ACCESS-TOKEN")
+@SecurityRequirement(name = SWAGGER_AUTH_KEY)
 class ProductCommentController(
     private val productCommentProcessor: ProductCommentProcessor,
     private val productRatingProcessor: ProductRatingProcessor,

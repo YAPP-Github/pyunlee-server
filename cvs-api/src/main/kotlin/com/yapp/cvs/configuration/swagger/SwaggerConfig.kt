@@ -1,6 +1,7 @@
 package com.yapp.cvs.configuration.swagger
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.yapp.cvs.configuration.security.filter.MemberAuthenticationFilter.Companion.X_AUTH_TOKEN
 import io.swagger.v3.core.jackson.ModelResolver
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
@@ -40,11 +41,15 @@ class SwaggerConfig {
     private fun authSetting(): Components {
         return Components()
             .addSecuritySchemes(
-                "X-ACCESS-TOKEN",
+                SWAGGER_AUTH_KEY,
                 SecurityScheme()
                     .type(SecurityScheme.Type.APIKEY)
                     .`in`(SecurityScheme.In.HEADER)
-                    .name("X-ACCESS-TOKEN")
+                    .name(X_AUTH_TOKEN)
             )
+    }
+
+    companion object {
+        const val SWAGGER_AUTH_KEY = "Authorization"
     }
 }
