@@ -11,4 +11,5 @@ interface MemberProductLikeMappingRepository
 interface MemberProductLikeMappingCustom {
     fun findAllByProductId(productId: Long): List<MemberProductLikeMapping>
     fun findAllByMemberId(memberId: Long): List<MemberProductLikeMapping>
+    fun countByMemberId(memberId: Long): Long
 }
