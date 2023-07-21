@@ -1,6 +1,5 @@
 package com.yapp.cvs.domain.like.application
 
-import com.yapp.cvs.domain.base.vo.OffsetPageVO
 import com.yapp.cvs.domain.comment.application.ProductCommentService
 import com.yapp.cvs.domain.enums.DistributedLockType
 import com.yapp.cvs.domain.enums.ProductLikeType
@@ -10,12 +9,11 @@ import com.yapp.cvs.domain.like.entity.ProductLikeHistory
 import com.yapp.cvs.domain.like.vo.ProductLikeHistoryVO
 import com.yapp.cvs.domain.like.vo.ProductLikeRequestVO
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
-import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.vo.ProductScoreVO
-import com.yapp.cvs.domain.product.vo.ProductVO
 import com.yapp.cvs.exception.BadRequestException
 import com.yapp.cvs.exception.NotFoundSourceException
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,6 +23,7 @@ class ProductRatingProcessor(
     private val productLikeHistoryService: ProductLikeHistoryService,
     private val memberProductLikeMappingService: MemberProductLikeMappingService,
     private val productLikeSummaryService: ProductLikeSummaryService,
+    private val productRatingSummaryAsyncService: ProductRatingSummaryAsyncService,
     private val productCommentService: ProductCommentService
 ) {
     fun findLatestRate(productId: Long, memberId: Long): ProductLikeHistoryVO {
@@ -53,7 +52,7 @@ class ProductRatingProcessor(
         memberProductLikeMappingService.saveMemberProductLikeMapping(memberProductLikeMapping)
         productCommentService.activate(productLikeRequestVO.memberProductMappingKey)
 
-        productLikeSummaryService.likeProductLikeSummary(productLikeRequestVO.productId, lastRatingType)
+        productRatingSummaryAsyncService.likeProductRatingSummary(productLikeRequestVO.productId, lastRatingType)
 
         return ProductScoreVO.like(productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId))
     }
@@ -74,7 +73,7 @@ class ProductRatingProcessor(
         memberProductLikeMappingService.saveMemberProductLikeMapping(memberProductLikeMapping)
         productCommentService.activate(productLikeRequestVO.memberProductMappingKey)
 
-        productLikeSummaryService.dislikeProductLikeSummary(productLikeRequestVO.productId, lastRatingType)
+        productRatingSummaryAsyncService.dislikeProductRatingSummary(productLikeRequestVO.productId, lastRatingType)
 
         return ProductScoreVO.dislike(productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId))
     }
@@ -94,14 +93,16 @@ class ProductRatingProcessor(
 
         val productLikeSummary = productLikeSummaryService.findProductLikeSummary(productLikeRequestVO.productId)
 
-        return if (lastLikeType.isLike()) {
-            productLikeSummaryService.cancelLikeProductRating(productLikeRequestVO.productId)
-            ProductScoreVO.cancelLike(productLikeSummary)
-        } else if(lastLikeType.isDislike()) {
-            productLikeSummaryService.cancelDislikeProductLikeSummary(productLikeRequestVO.productId)
-            ProductScoreVO.cancelDislike(productLikeSummary)
-        } else {
-            ProductScoreVO.from(productLikeSummary)
+        productRatingSummaryAsyncService.cancelProductRatingSummary(productLikeRequestVO.productId, lastLikeType)
+        return ProductScoreVO.from(productLikeSummary)
+    }
+
+    @Async(value = "productLikeSummaryTaskExecutor")
+    fun cancelAllRatingByMember(memberId: Long) {
+        val allRatingProductMappingList = memberProductLikeMappingService.findAllByMember(memberId)
+        allRatingProductMappingList.forEach {
+            productLikeHistoryService.cancel(it.getMemberProductMappingKey())
+            productLikeSummaryService.cancelProductRatingSummary(it.productId, it.likeType)
         }
     }
 }

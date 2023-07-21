@@ -6,7 +6,6 @@ import com.yapp.cvs.domain.like.entity.ProductLikeSummary
 import com.yapp.cvs.domain.like.repository.ProductLikeSummaryRepository
 import com.yapp.cvs.domain.like.vo.ProductLikeSummaryVO
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 
@@ -22,9 +21,8 @@ class ProductLikeSummaryService(
         return productLikeSummaryRepository.findByProductId(productId)
     }
 
-    @Async(value = "productLikeSummaryTaskExecutor")
     @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun likeProductLikeSummary(productId: Long, lastRatingType: ProductLikeType?){
+    fun likeProductRatingSummary(productId: Long, lastRatingType: ProductLikeType?){
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
 
         if(lastRatingType != null && lastRatingType.isDislike()) {
@@ -35,9 +33,8 @@ class ProductLikeSummaryService(
         productLikeSummaryRepository.save(productLikeSummary)
     }
 
-    @Async(value = "productLikeSummaryTaskExecutor")
     @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun dislikeProductLikeSummary(productId: Long, lastRatingType: ProductLikeType?){
+    fun dislikeProductRatingSummary(productId: Long, lastRatingType: ProductLikeType?){
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
 
         if(lastRatingType != null && lastRatingType.isLike()) {
@@ -47,17 +44,23 @@ class ProductLikeSummaryService(
         productLikeSummary.dislike()
         productLikeSummaryRepository.save(productLikeSummary)
     }
-    @Async(value = "productLikeSummaryTaskExecutor")
+
     @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun cancelLikeProductRating(productId: Long) {
+    fun cancelProductRatingSummary(productId: Long, lastRatingType: ProductLikeType){
+        if (lastRatingType.isLike()) {
+            cancelLikeProductRating(productId)
+        } else if(lastRatingType.isDislike()) {
+            cancelDislikeProductRating(productId)
+        }
+    }
+
+    private fun cancelLikeProductRating(productId: Long) {
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
         productLikeSummary.cancelLike()
         productLikeSummaryRepository.save(productLikeSummary)
     }
 
-    @Async(value = "productLikeSummaryTaskExecutor")
-    @DistributedLock(type = DistributedLockType.PRODUCT_LIKE, keys = ["productId"])
-    fun cancelDislikeProductLikeSummary(productId: Long) {
+    private fun cancelDislikeProductRating(productId: Long) {
         val productLikeSummary = productLikeSummaryRepository.findByProductId(productId)
         productLikeSummary.cancelDislike()
         productLikeSummaryRepository.save(productLikeSummary)

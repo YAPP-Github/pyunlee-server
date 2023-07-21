@@ -21,8 +21,12 @@ class Member(
     var nickName: String,
 
     @Enumerated(EnumType.STRING)
-    val memberStatus: MemberStatus,
+    var memberStatus: MemberStatus,
 ) : BaseEntity() {
+    fun deactivate() {
+        memberStatus = MemberStatus.DEACTIVATED
+    }
+
     companion object {
         fun create(oAuthMember: OAuthMember, nickName: String): Member{
             return Member(
