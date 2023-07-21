@@ -92,4 +92,8 @@ class ProductCommentService(
     fun countTotalCommentByProduct(productId: Long): Long {
         return productCommentRepository.countByProductIdAndValid(productId, true)
     }
+
+    fun countTotalCommentByMember(memberId: Long): Long {
+        return productCommentRepository.countByMemberIdAndValid(memberId, true)
+    }
 }

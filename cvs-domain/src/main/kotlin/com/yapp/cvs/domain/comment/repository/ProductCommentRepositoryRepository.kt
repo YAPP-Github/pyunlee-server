@@ -10,6 +10,7 @@ interface ProductCommentRepositoryRepository : JpaRepository<ProductComment, Lon
     fun findByProductCommentIdAndValidTrue(commentId: Long): ProductComment?
     fun existsByProductIdAndMemberIdAndValidTrue(productId: Long, memberId: Long): Boolean
     fun countByProductIdAndValid(productId: Long, valid: Boolean): Long
+    fun countByMemberIdAndValid(memberId: Long, valid: Boolean): Long
     fun findAllByMemberId(memberId: Long): List<ProductComment>
 }
 
