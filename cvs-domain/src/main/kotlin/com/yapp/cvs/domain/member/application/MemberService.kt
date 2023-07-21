@@ -5,6 +5,7 @@ import com.yapp.cvs.domain.enums.NickNameRule
 import com.yapp.cvs.domain.enums.OAuthMember
 import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.member.repository.MemberRepository
+import com.yapp.cvs.domain.member.vo.MemberUpdateVO
 import com.yapp.cvs.exception.NotFoundSourceException
 import org.springframework.stereotype.Service
 
@@ -23,6 +24,12 @@ class MemberService(
 
     fun signUp(oAuthMember: OAuthMember): Member {
         return memberRepository.save(Member.create(oAuthMember, generateNotDuplicatedNickName()))
+    }
+
+    fun update(memberId: Long, memberUpdateVO: MemberUpdateVO) {
+        val member = memberRepository.findById(memberId)
+                .orElseThrow { throw NotFoundSourceException("사용자 정보가 없습니다") }
+        memberRepository.save(member.apply { nickName = memberUpdateVO.nickname })
     }
 
     fun generateNotDuplicatedNickName(): String {

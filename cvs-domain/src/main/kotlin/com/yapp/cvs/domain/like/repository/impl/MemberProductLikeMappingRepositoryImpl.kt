@@ -31,4 +31,12 @@ class MemberProductLikeMappingRepositoryImpl
                         memberProductLikeMapping.likeType.eq(ProductLikeType.NONE).not()
                 ).fetch()
     }
+
+    override fun countByMemberId(memberId: Long): Long {
+        return from(memberProductLikeMapping)
+                .where(
+                        memberProductLikeMapping.memberId.eq(memberId),
+                        memberProductLikeMapping.likeType.eq(ProductLikeType.NONE).not()
+                ).fetchCount()
+    }
 }

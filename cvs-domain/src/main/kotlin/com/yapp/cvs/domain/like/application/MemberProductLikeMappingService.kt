@@ -16,4 +16,8 @@ class MemberProductLikeMappingService(
     fun findByMemberProductLike(memberProductMappingKey: MemberProductMappingKey): MemberProductLikeMapping? {
         return memberProductLikeMappingRepository.findByProductIdAndMemberId(memberProductMappingKey.productId, memberProductMappingKey.memberId)
     }
+
+    fun countByMemberId(memberId: Long): Long {
+        return memberProductLikeMappingRepository.countByMemberId(memberId)
+    }
 }
