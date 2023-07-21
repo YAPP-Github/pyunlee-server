@@ -25,6 +25,9 @@ class MemberProductLikeMapping(
     @Enumerated(EnumType.STRING)
     var likeType: ProductLikeType
 ): BaseEntity(), Serializable {
+    fun getMemberProductMappingKey(): MemberProductMappingKey {
+        return MemberProductMappingKey(productId, memberId)
+    }
 
     companion object {
         fun like(memberProductMappingKey: MemberProductMappingKey): MemberProductLikeMapping{

@@ -1,9 +1,9 @@
 package com.yapp.cvs.domain.comment.application
 
-import com.yapp.cvs.domain.comment.entity.ProductCommentRatingHistory
 import com.yapp.cvs.domain.enums.DistributedLockType
 import com.yapp.cvs.exception.BadRequestException
 import com.yapp.cvs.infrastructure.redis.lock.DistributedLock
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,25 +24,24 @@ class ProductCommentRatingProcessor(
             throw BadRequestException("이미 좋아요 한 코멘트 입니다")
         }
 
-        val productCommentRatingSummary = productCommentRatingSummaryService.findByProductCommentIdOrDefault(productComment.productCommentId!!)
-
-        productCommentRatingSummary.like()
-        productCommentRatingSummaryService.save(productCommentRatingSummary)
-        productCommentRatingHistoryService.save(ProductCommentRatingHistory.like(memberId, productComment.productCommentId!!))
+        productCommentRatingHistoryService.like(memberId, productComment.productCommentId!!)
+        productCommentRatingSummaryService.like(productComment.productCommentId!!)
     }
 
     @DistributedLock(DistributedLockType.COMMENT_LIKE, ["memberId", "productCommentId"])
     fun cancelLikeComment(memberId: Long, productCommentId: Long) {
         val productComment = productCommentService.findProductComment(productCommentId)
-
-        val latestRating = productCommentRatingHistoryService.findProductCommentRatingHistoryOrNull(memberId, productComment.productCommentId!!)
-            ?.apply { valid = false }
-            ?.let { productCommentRatingHistoryService.save(it) }
-
-        val productCommentRatingSummary = productCommentRatingSummaryService.findByProductCommentId(productComment.productCommentId!!)
-
-        productCommentRatingSummary.cancelLike()
-        productCommentRatingSummaryService.save(productCommentRatingSummary)
+        productCommentRatingHistoryService.cancel(memberId, productComment.productCommentId!!)
+        productCommentRatingSummaryService.cancel(productComment.productCommentId!!)
     }
 
+    @Async(value = "productCommentLikeSummaryTaskExecutor")
+    fun cancelAllRatingByMember(memberId: Long) {
+        val productCommentRatingHistoryList = productCommentRatingHistoryService.findAllProductCommentRatingHistoryByMember(memberId)
+        productCommentRatingHistoryList.forEach {
+            it.valid = false
+            productCommentRatingHistoryService.save(it)
+            productCommentRatingSummaryService.cancel(it.productCommentId)
+        }
+    }
 }
