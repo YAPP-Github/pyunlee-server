@@ -1,5 +1,6 @@
 package com.yapp.cvs.api.product.dto
 
+import com.yapp.cvs.api.comment.dto.ProductCommentDTO
 import com.yapp.cvs.domain.product.vo.ProductDetailVO
 
 data class ProductDetailDTO(
@@ -13,7 +14,8 @@ data class ProductDetailDTO(
     val imageUrl: String?,
     val promotionList: List<ProductPromotionDTO>,
     val score: ProductScoreDTO?,
-    val commentCount: Long
+    val commentCount: Long,
+    val ownComment: ProductCommentDTO?
 ) {
     companion object {
         fun from(productDetailVO: ProductDetailVO): ProductDetailDTO {
@@ -28,7 +30,8 @@ data class ProductDetailDTO(
                 imageUrl = productDetailVO.imageUrl,
                 promotionList = productDetailVO.productPromotionVOList.map { ProductPromotionDTO.from(it) },
                 score = productDetailVO.productScoreVO?.let { ProductScoreDTO.from(it) },
-                commentCount = productDetailVO.commentCount
+                commentCount = productDetailVO.commentCount,
+                ownComment = productDetailVO.ownCommentVO?.let { ProductCommentDTO.from(it) }
             )
         }
     }

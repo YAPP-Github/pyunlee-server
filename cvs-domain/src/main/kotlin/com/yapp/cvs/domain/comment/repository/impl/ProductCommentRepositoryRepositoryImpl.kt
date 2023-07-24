@@ -72,6 +72,23 @@ class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductC
             ).fetch()
     }
 
+    override fun findByProductIdAndMemberId(productId: Long, memberId: Long): ProductCommentView? {
+        return from(productComment)
+            .leftJoin(productCommentRatingSummary)
+            .on(productComment.productCommentId.eq(productCommentRatingSummary.productCommentId))
+            .leftJoin(memberProductLikeMapping)
+            .on(productComment.memberId.eq(memberProductLikeMapping.memberId).and(productComment.productId.eq(memberProductLikeMapping.productId)))
+            .where(productComment.productId.eq(productId)
+                .and(productComment.memberId.eq(memberId))
+                .and(productComment.valid.isTrue)
+            )
+            .select(Projections.constructor(ProductCommentView::class.java,
+                productComment,
+                productCommentRatingSummary.likeCount,
+                memberProductLikeMapping.likeType)
+            ).fetchFirst()
+    }
+
     private fun getOrderBy(productCommentOrderType: ProductCommentOrderType): OrderSpecifier<*>? {
         return if (productCommentOrderType == ProductCommentOrderType.LIKE) {
             productCommentRatingSummary.likeCount.desc()

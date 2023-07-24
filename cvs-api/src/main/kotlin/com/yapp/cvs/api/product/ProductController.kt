@@ -26,7 +26,7 @@ class ProductController(
         @Parameter(hidden = true) member: Member,
         @PathVariable productId: Long
     ): ProductDetailDTO {
-        return ProductDetailDTO.from(productProcessor.getProductDetail(productId, member.memberId!!))
+        return ProductDetailDTO.from(productProcessor.getProductDetail(productId, member))
     }
 
     @GetMapping("/search")

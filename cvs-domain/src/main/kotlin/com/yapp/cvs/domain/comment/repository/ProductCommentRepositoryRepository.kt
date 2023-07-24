@@ -19,4 +19,5 @@ interface ProductCommentRepositoryCustom {
     fun findLatestByProductIdAndMemberId(productId: Long, memberId: Long): ProductComment?
     fun findByProductIdAndSearchCondition(productId: Long, productCommentSearchVO: ProductCommentSearchVO): List<ProductCommentView>
     fun findRecentCommentList(size: Int): List<ProductCommentDetailView>
+    fun findByProductIdAndMemberId(productId: Long, memberId: Long): ProductCommentView?
 }
