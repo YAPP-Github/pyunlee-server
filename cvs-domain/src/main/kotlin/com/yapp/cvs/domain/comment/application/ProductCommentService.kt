@@ -24,6 +24,15 @@ class ProductCommentService(
             ?: throw NotFoundSourceException("commentId: $commentId 에 해당하는 코멘트가 존재하지 않습니다.")
     }
 
+    fun findProductCommentByMember(productId: Long, member: Member): ProductCommentVO? {
+        val productCommentView =  productCommentRepository.findByProductIdAndMemberId(productId, member.memberId!!)
+
+        return productCommentView?.let {
+            ProductCommentVO.of(it, member,
+                productCommentRatingHistoryRepository.findLatestMemberRatingOnProductComment(it.productComment.memberId, it.productComment.productCommentId!!))
+        }
+    }
+
     fun findAllByMember(memberId: Long): List<ProductComment> {
         return productCommentRepository.findAllByMemberId(memberId)
     }

@@ -1,5 +1,6 @@
 package com.yapp.cvs.domain.product.vo
 
+import com.yapp.cvs.domain.comment.vo.ProductCommentVO
 import com.yapp.cvs.domain.enums.ProductCategoryType
 import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
@@ -16,10 +17,11 @@ data class ProductDetailVO(
     val imageUrl: String?,
     val productPromotionVOList: List<ProductPromotionVO>,
     val productScoreVO: ProductScoreVO?,
-    val commentCount: Long
+    val commentCount: Long,
+    val ownCommentVO: ProductCommentVO?
 ) {
     companion object {
-        fun from(product: Product, memberProductMapping: MemberProductLikeMapping?, commentCount: Long): ProductDetailVO {
+        fun from(product: Product, memberProductMapping: MemberProductLikeMapping?, commentCount: Long, ownCommentVO: ProductCommentVO?): ProductDetailVO {
             return ProductDetailVO(
                 productId = product.productId!!,
                 brandName = product.brandName,
@@ -31,7 +33,8 @@ data class ProductDetailVO(
                 imageUrl = product.imageUrl,
                 productPromotionVOList = product.productPromotionList.map { ProductPromotionVO.from(it) },
                 productScoreVO = product.productLikeSummaryList.firstOrNull()?.let { ProductScoreVO.from(it) },
-                commentCount = commentCount
+                commentCount = commentCount,
+                ownCommentVO = ownCommentVO
             )
         }
     }

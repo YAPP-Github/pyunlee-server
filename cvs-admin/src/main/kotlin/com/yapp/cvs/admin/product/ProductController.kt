@@ -2,6 +2,7 @@ package com.yapp.cvs.admin.product
 
 import com.yapp.cvs.admin.product.dto.ProductSearchFormDTO
 import com.yapp.cvs.admin.product.dto.ProductUpdateRequestDTO
+import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.application.ProductProcessor
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -26,10 +27,11 @@ class ProductController(
 
     @GetMapping("/{productId}")
     fun getProductDetail(
+        member: Member,
         @PathVariable productId: Long,
         model: Model
     ): String{
-        val vo = productProcessor.getProductDetail(productId, 1L)
+        val vo = productProcessor.getProductDetail(productId, member)
         model.addAttribute("contents", vo)
         return "product/detail"
     }

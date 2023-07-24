@@ -6,7 +6,6 @@ import com.yapp.cvs.domain.base.vo.PageSearchVO
 import com.yapp.cvs.domain.base.vo.PageVO
 import com.yapp.cvs.domain.comment.application.ProductCommentService
 import com.yapp.cvs.domain.like.application.MemberProductLikeMappingService
-import com.yapp.cvs.domain.like.entity.MemberProductLikeMapping
 import com.yapp.cvs.domain.like.entity.MemberProductMappingKey
 import com.yapp.cvs.domain.member.entity.Member
 import com.yapp.cvs.domain.product.vo.ProductDetailVO
@@ -14,7 +13,6 @@ import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import com.yapp.cvs.domain.product.vo.ProductUpdateVO
 import com.yapp.cvs.domain.product.vo.ProductVO
 import org.springframework.stereotype.Service
-import java.security.PrivateKey
 import javax.transaction.Transactional
 
 @Service
@@ -24,18 +22,18 @@ class ProductProcessor(
     private val memberProductLikeMappingService: MemberProductLikeMappingService,
     private val productCommentService: ProductCommentService
 ) {
-    fun getProductDetail(productId: Long, memberId: Long): ProductDetailVO {
+    fun getProductDetail(productId: Long, member: Member): ProductDetailVO {
         val product = productService.findProduct(productId)
 
         val memberProductLikeMapping = memberProductLikeMappingService.findByMemberProductLike(
-            MemberProductMappingKey(productId, memberId)
+            MemberProductMappingKey(productId, member.memberId!!)
         )
 
         val commentCount = productCommentService.countTotalCommentByProduct(productId)
-
+        val ownComment = productCommentService.findProductCommentByMember(productId, member)
         productService.increaseProductViewCount(productId)
 
-        return ProductDetailVO.from(product, memberProductLikeMapping, commentCount)
+        return ProductDetailVO.from(product, memberProductLikeMapping, commentCount, ownComment)
     }
 
     fun searchProductPageList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): OffsetPageVO<ProductVO> {
