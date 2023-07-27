@@ -11,6 +11,7 @@ import com.yapp.cvs.domain.comment.view.ProductCommentDetailView
 import com.yapp.cvs.domain.comment.view.ProductCommentView
 import com.yapp.cvs.domain.comment.vo.ProductCommentSearchVO
 import com.yapp.cvs.domain.like.entity.QMemberProductLikeMapping.memberProductLikeMapping
+import com.yapp.cvs.domain.member.entity.QMember.member
 import com.yapp.cvs.domain.product.entity.QProduct.product
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository
@@ -44,11 +45,14 @@ class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductC
             .on(productComment.productCommentId.eq(productCommentRatingSummary.productCommentId))
             .leftJoin(memberProductLikeMapping)
             .on(productComment.memberId.eq(memberProductLikeMapping.memberId).and(productComment.productId.eq(memberProductLikeMapping.productId)))
+            .innerJoin(member)
+            .on(productComment.memberId.eq(member.memberId))
             .where(predicate)
             .orderBy(getOrderBy(productCommentSearchVO.orderBy), productComment.productCommentId.desc())
             .limit(productCommentSearchVO.pageSize)
             .select(Projections.constructor(ProductCommentView::class.java,
                 productComment,
+                member,
                 productCommentRatingSummary.likeCount,
                 memberProductLikeMapping.likeType)
             ).fetch()

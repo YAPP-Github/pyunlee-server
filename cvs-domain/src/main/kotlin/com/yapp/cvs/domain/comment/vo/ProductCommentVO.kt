@@ -22,11 +22,11 @@ data class ProductCommentVO(
         fun of(productCommentView: ProductCommentView, member: Member, productCommentRatingHistory: ProductCommentRatingHistory?): ProductCommentVO {
             return ProductCommentVO(
                 productCommentId = productCommentView.productComment.productCommentId!!,
-                memberId = member.memberId!!,
-                memberNickName = member.nickName,
+                memberId = productCommentView.member.memberId!!,
+                memberNickName = productCommentView.member.nickName,
                 content = productCommentView.productComment.content,
                 likeCount = productCommentView.likeCount ?: 0,
-                isOwner = productCommentView.productComment.memberId == member.memberId,
+                isOwner = productCommentView.member.memberId == member.memberId,
                 liked = productCommentRatingHistory != null,
                 createdAt = productCommentView.productComment.createdAt,
                 productId = productCommentView.productComment.productId,
