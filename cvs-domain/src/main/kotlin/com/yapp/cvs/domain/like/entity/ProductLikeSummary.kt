@@ -25,7 +25,7 @@ class ProductLikeSummary(
 
     fun getLikeRatio(): Int {
         if (totalCount == 0L) return 0
-        return ((likeCount / totalCount) * 100).toInt()
+        return (likeCount * 100 / totalCount).toInt()
     }
 
     fun getDislikeRatio(): Int {
