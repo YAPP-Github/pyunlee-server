@@ -19,14 +19,14 @@ data class ProductCommentVO(
     val productLikeType: ProductLikeType
 ) {
     companion object {
-        fun of(productCommentView: ProductCommentView, member: Member, productCommentRatingHistory: ProductCommentRatingHistory?): ProductCommentVO {
+        fun of(productCommentView: ProductCommentView, member: Member, writerMember: Member, productCommentRatingHistory: ProductCommentRatingHistory?): ProductCommentVO {
             return ProductCommentVO(
                 productCommentId = productCommentView.productComment.productCommentId!!,
-                memberId = productCommentView.member.memberId!!,
-                memberNickName = productCommentView.member.nickName,
+                memberId = writerMember.memberId!!,
+                memberNickName = writerMember.nickName,
                 content = productCommentView.productComment.content,
                 likeCount = productCommentView.likeCount ?: 0,
-                isOwner = productCommentView.member.memberId == member.memberId,
+                isOwner = writerMember.memberId == member.memberId,
                 liked = productCommentRatingHistory != null,
                 createdAt = productCommentView.productComment.createdAt,
                 productId = productCommentView.productComment.productId,
