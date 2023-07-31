@@ -45,8 +45,6 @@ class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductC
             .on(productComment.productCommentId.eq(productCommentRatingSummary.productCommentId))
             .leftJoin(memberProductLikeMapping)
             .on(productComment.memberId.eq(memberProductLikeMapping.memberId).and(productComment.productId.eq(memberProductLikeMapping.productId)))
-            .innerJoin(member)
-            .on(productComment.memberId.eq(member.memberId))
             .where(predicate)
             .orderBy(getOrderBy(productCommentSearchVO.orderBy), productComment.productCommentId.desc())
             .limit(productCommentSearchVO.pageSize)

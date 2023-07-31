@@ -28,7 +28,10 @@ class ProductCommentService(
         val productCommentView =  productCommentRepository.findByProductIdAndMemberId(productId, member.memberId!!)
 
         return productCommentView?.let {
-            ProductCommentVO.of(it, member,
+            ProductCommentVO.of(
+                it,
+                member,
+                memberRepository.findById(it.productComment.memberId).get(),
                 productCommentRatingHistoryRepository.findLatestMemberRatingOnProductComment(it.productComment.memberId, it.productComment.productCommentId!!))
         }
     }
@@ -43,6 +46,7 @@ class ProductCommentService(
             ProductCommentVO.of(
                 it,
                 member,
+                memberRepository.findById(it.productComment.memberId).get(),
                 productCommentRatingHistoryRepository.findLatestMemberRatingOnProductComment(it.productComment.memberId, it.productComment.productCommentId!!)
             )
         }
