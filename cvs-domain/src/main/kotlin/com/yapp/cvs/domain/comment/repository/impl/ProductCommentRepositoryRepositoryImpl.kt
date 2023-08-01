@@ -50,7 +50,6 @@ class ProductCommentRepositoryRepositoryImpl: QuerydslRepositorySupport(ProductC
             .limit(productCommentSearchVO.pageSize)
             .select(Projections.constructor(ProductCommentView::class.java,
                 productComment,
-                member,
                 productCommentRatingSummary.likeCount,
                 memberProductLikeMapping.likeType)
             ).fetch()
