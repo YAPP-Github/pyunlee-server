@@ -34,11 +34,11 @@ open class SevenElevenProductCollectTasklet(
         val productRawDataVOList = mutableListOf<ProductRawDataVO>()
         var preSize: Int
         var pageSize = sevenElevenProductCollectInfo.pageSize
-
+        var pageNum = 1
         log.info("${sevenElevenProductCollectInfo.name} 정보 조회 시작")
         do {
             preSize = productRawDataVOList.size
-            val productElementList = collectProductElementList(sevenElevenProductCollectInfo, pageSize)
+            val productElementList = collectProductElementList(sevenElevenProductCollectInfo, pageNum, pageSize)
 
             productElementList.forEach { productRawElement ->
                 try {
@@ -72,6 +72,7 @@ open class SevenElevenProductCollectTasklet(
                 }
             }
             pageSize += sevenElevenProductCollectInfo.pageSize
+            pageNum += 1
         } while (preSize < productRawDataVOList.size)
 
         return productRawDataVOList
@@ -79,12 +80,14 @@ open class SevenElevenProductCollectTasklet(
 
     private fun collectProductElementList(
         sevenElevenProductCollectInfo: SevenElevenProductCollectInfo,
-        pageSize: Int
+        pageNum: Int,
+        pageSize: Int,
     ): Elements {
         val body = JsoupHandler.doFormPost(
             sevenElevenProductCollectInfo.url,
             mapOf(
                 ("pTab" to sevenElevenProductCollectInfo.pTab),
+                ("intCurrPage" to pageNum.toString()),
                 ("intPageSize" to pageSize.toString()),
             ),
         ).body()

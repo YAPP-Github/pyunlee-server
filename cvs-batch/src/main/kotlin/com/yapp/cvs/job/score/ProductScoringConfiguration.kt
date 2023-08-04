@@ -1,8 +1,9 @@
-package com.yapp.cvs.job.crawl.seveneleven
+package com.yapp.cvs.job.score
 
-import com.yapp.cvs.domain.collect.application.ProductDataProcessor
+import com.yapp.cvs.domain.product.repository.ProductRepository
+import com.yapp.cvs.domain.product.repository.ProductScoreRepository
 import com.yapp.cvs.job.config.BatchConfig
-import com.yapp.cvs.job.crawl.seveneleven.SevenElevenDataCollectConfiguration.Companion.J0B_NAME
+import com.yapp.cvs.job.score.ProductScoringConfiguration.Companion.J0B_NAME
 import com.yapp.cvs.support.RunUniqueIdIncrementer
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -18,39 +19,30 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConditionalOnProperty(value = [BatchConfig.SPRING_BATCH_JOB_NAMES], havingValue = J0B_NAME)
-class SevenElevenDataCollectConfiguration(
+class ProductScoringConfiguration(
     private val jobBuilderFactory: JobBuilderFactory,
     private val stepBuilderFactory: StepBuilderFactory,
-    private val productDataProcessor: ProductDataProcessor,
+    private val productRepository: ProductRepository,
+    private val productScoreRepository: ProductScoreRepository
 ) {
     companion object {
-        const val J0B_NAME = "seven-eleven-collect-job"
+        const val J0B_NAME = "product-scoring-job"
     }
 
+
     @Bean
-    fun sevenElevenDataCollectJob(): Job {
+    fun productScoringJob(): Job {
         return jobBuilderFactory[J0B_NAME]
-            .start(sevenElevenPromotionCollectStep())
-            //.next(sevenElevenPromotionCollectStep())
+            .start(productScoringStep())
             .incrementer(RunUniqueIdIncrementer())
             .build()
     }
 
     @Bean
     @JobScope
-    fun sevenElevenProductCollectStep(): Step {
+    fun productScoringStep(): Step {
         return stepBuilderFactory["collect"]
-            .tasklet(sevenElevenProductCollectTasklet())
-            .allowStartIfComplete(true)
-            .transactionManager(ResourcelessTransactionManager())
-            .build()
-    }
-
-    @Bean
-    @JobScope
-    fun sevenElevenPromotionCollectStep(): Step {
-        return stepBuilderFactory["collect"]
-            .tasklet(sevenElevenPromotionCollectTasklet())
+            .tasklet(productScoringTasklet())
             .allowStartIfComplete(true)
             .transactionManager(ResourcelessTransactionManager())
             .build()
@@ -58,9 +50,5 @@ class SevenElevenDataCollectConfiguration(
 
     @Bean
     @StepScope
-    fun sevenElevenProductCollectTasklet(): Tasklet = SevenElevenProductCollectTasklet(productDataProcessor)
-
-    @Bean
-    @StepScope
-    fun sevenElevenPromotionCollectTasklet(): Tasklet = SevenElevenPromotionTasklet(productDataProcessor)
+    fun productScoringTasklet(): Tasklet = ProductScoringTasklet(productRepository, productScoreRepository)
 }

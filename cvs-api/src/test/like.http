@@ -1,15 +1,18 @@
 POST localhost:8080/api/v1/product/719/rate/like
 
 ###
-GET localhost:8080/api/v1/product/719/detail
+GET https://pyunlee.store/api/v1/product/6400/detail
+X-Auth-Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
 
 ###
 GET localhost:8080/api/v1/product/719/comment
+X-Auth-Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
 
 ###
 GET localhost:8080/api/v1/home
-X_ACCESS_TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
-
+##X-Auth-Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
+###
+GET localhost:8080/hello
 ###
 POST localhost:8080/api/v1/member/login
 Content-Type: application/json
@@ -22,6 +25,12 @@ Content-Type: application/json
 ###
 GET localhost:8080/api/v1/product/unrated?offsetProductId=6401
 ##X_AUTH_TOKEN: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
+
+###
+GET localhost:8080/api/v1/member/token?memberId=11
+###
+POST localhost:8080/api/v1/member/delete
+X-Auth-Token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjg5NzcwNDk1LCJleHAiOjE3MjEzOTI4OTV9.xKIWAW5GWjmETFHwTppWK2bvXKWHAsgwxBpKKsXbxmA
 
 ###
 GET localhost:8080/api/v1/member/token?memberId=11

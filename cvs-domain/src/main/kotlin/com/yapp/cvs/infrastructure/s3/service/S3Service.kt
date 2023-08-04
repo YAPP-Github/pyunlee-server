@@ -29,14 +29,14 @@ class S3Service(
     }
     fun copyAndUpload(fileUrl: String, fileName: String): String {
         val extension = fileUrl.split("/").last()
-            .let { it.substring(it.indexOf('.')) }
+            .split(".").last()
 
         val url = URL(fileUrl)
         val inputStream: InputStream = BufferedInputStream(url.openStream())
 
         amazonS3Client.putObject(PutObjectRequest(bucket, fileName + extension, inputStream, null)
             .withCannedAcl(CannedAccessControlList.PublicRead))
-        return amazonS3Client.getUrl(bucket, fileName).toString()
+        return amazonS3Client.getUrl(bucket, fileName).toString() + extension
     }
 
     companion object {
