@@ -40,11 +40,19 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
     }
 
     override fun findProductList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): List<Product> {
-        val predicate = productSearchWhere(productSearchVO)
-            .and(offsetSearchVO.offsetId.ifNotNull {
+        var predicate = productSearchWhere(productSearchVO)
+
+        if (productSearchVO.orderBy == ProductOrderType.RECENT){
+            predicate = predicate.and(offsetSearchVO.offsetId.ifNotNull {
                 product.productId.lt(offsetSearchVO.offsetId)
                     .and(productScore.score.loe(getLastProductScore(offsetSearchVO.offsetId)))
             })
+        }else {
+            predicate = predicate.and(offsetSearchVO.offsetId.ifNotNull {
+                productScore.productScoreId.lt(offsetSearchVO.offsetId)
+                    .and(productScore.score.loe(getLastProductScore(offsetSearchVO.offsetId)))
+            })
+        }
 
         return from(product)
             .leftJoin(product.productLikeSummaryList, productLikeSummary)
@@ -56,7 +64,7 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .innerJoin(productScore)
             .on(product.productId.eq(productScore.productId))
             .where(predicate)
-            .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
+            .orderBy(getOrderBy(productSearchVO.orderBy))
             .limit(offsetSearchVO.pageSize.toLong())
             .select(product)
             .fetch()
@@ -86,18 +94,15 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
         return from(product)
             .leftJoin(product.pbProductMappingList, pbProductMapping)
             .fetchJoin()
-            .leftJoin(productScore)
+            .innerJoin(productScore)
             .on(product.productId.eq(productScore.productId))
             .leftJoin(memberProductLikeMapping)
             .on(product.productId.eq(memberProductLikeMapping.productId)
                 .and(memberProductLikeMapping.memberId.eq(memberId)))
             .where((memberProductLikeMapping.isNull.or(memberProductLikeMapping.likeType.eq(ProductLikeType.NONE)))
-                .and(offsetProductId.ifNotNull {
-                    product.productId.lt(offsetProductId)
-                        .and(productScore.score.loe(getLastProductScore(offsetProductId)))
-                })
+                .and(offsetProductId.ifNotNull { productScore.productScoreId.lt(offsetProductId)})
                 .and(product.valid.eq(true)))
-            .orderBy(productScore.score.desc(), product.productId.desc())
+            .orderBy(productScore.score.desc(), productScore.productScoreId.desc())
             .limit(pageSize.toLong())
             .select(product)
             .fetch()
@@ -119,11 +124,11 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
                 })
     }
 
-    private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>?{
+    private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>{
         if (productOrderType == ProductOrderType.RECENT){
             return product.productId.desc()
         }else {
-            return productScore.score.desc()
+            return productScore.productScoreId.desc()
         }
     }
 
