@@ -121,7 +121,7 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
 
     private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>?{
         if (productOrderType == ProductOrderType.RECENT){
-            return product.updatedAt.desc()
+            return product.productId.desc()
         }else {
             return productScore.score.desc()
         }
