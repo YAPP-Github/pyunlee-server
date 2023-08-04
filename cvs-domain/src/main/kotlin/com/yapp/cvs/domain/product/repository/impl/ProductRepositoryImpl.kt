@@ -7,13 +7,14 @@ import com.yapp.cvs.domain.enums.ProductLikeType
 import com.yapp.cvs.domain.extension.ifNotEmpty
 import com.yapp.cvs.domain.extension.ifNotNull
 import com.yapp.cvs.domain.extension.ifTrue
+import com.yapp.cvs.domain.like.entity.QMemberProductLikeMapping.memberProductLikeMapping
+import com.yapp.cvs.domain.like.entity.QProductLikeSummary.productLikeSummary
 import com.yapp.cvs.domain.product.entity.Product
 import com.yapp.cvs.domain.product.entity.ProductOrderType
 import com.yapp.cvs.domain.product.entity.QPbProductMapping.pbProductMapping
 import com.yapp.cvs.domain.product.entity.QProduct.product
 import com.yapp.cvs.domain.product.entity.QProductPromotion.productPromotion
-import com.yapp.cvs.domain.like.entity.QProductLikeSummary.productLikeSummary
-import com.yapp.cvs.domain.like.entity.QMemberProductLikeMapping.memberProductLikeMapping
+import com.yapp.cvs.domain.product.entity.QProductScore.productScore
 import com.yapp.cvs.domain.product.repository.ProductRepositoryCustom
 import com.yapp.cvs.domain.product.vo.ProductSearchVO
 import org.springframework.data.domain.Page
@@ -49,6 +50,8 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .fetchJoin()
             .leftJoin(product.productPromotionList, productPromotion)
             .fetchJoin()
+            .leftJoin(productScore)
+            .on(product.productId.eq(productScore.productId))
             .where(predicate)
             .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
             .limit(offsetSearchVO.pageSize.toLong())
@@ -64,6 +67,8 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .fetchJoin()
             .leftJoin(product.productPromotionList, productPromotion)
             .fetchJoin()
+            .leftJoin(productScore)
+            .on(product.productId.eq(productScore.productId))
             .where(predicate)
             .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
             .limit(pageable.pageSize.toLong())
@@ -78,12 +83,15 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
         return from(product)
             .leftJoin(product.pbProductMappingList, pbProductMapping)
             .fetchJoin()
+            .leftJoin(productScore)
+            .on(product.productId.eq(productScore.productId))
             .leftJoin(memberProductLikeMapping)
             .on(product.productId.eq(memberProductLikeMapping.productId)
                 .and(memberProductLikeMapping.memberId.eq(memberId)))
             .where((memberProductLikeMapping.isNull.or(memberProductLikeMapping.likeType.eq(ProductLikeType.NONE)))
-                .and(offsetProductId.ifNotNull { product.productId.lt(offsetProductId) }))
-            .orderBy(product.productId.desc())
+                .and(offsetProductId.ifNotNull { product.productId.lt(offsetProductId) })
+                .and(product.valid.eq(true)))
+            .orderBy(productScore.score.desc(), product.productId.desc())
             .limit(pageSize.toLong())
             .select(product)
             .fetch()
@@ -104,12 +112,11 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
                     .and(productPromotion.validAt.gt(productSearchVO.appliedDateTime))
                 })
     }
-    private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>{
-        if(productOrderType == ProductOrderType.RECENT){
+    private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>?{
+        if (productOrderType == ProductOrderType.RECENT){
             return product.productId.desc()
         }else {
-            //TODO: 평가 기능 후 정렬기능 추가
-            return product.createdAt.desc()
+            return productScore.score.desc()
         }
     }
 }

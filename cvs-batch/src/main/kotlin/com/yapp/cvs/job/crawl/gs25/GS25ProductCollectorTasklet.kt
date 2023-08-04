@@ -46,7 +46,7 @@ open class GS25ProductCollectorTasklet(
                         categoryType = category.productCategoryType ?: ProductCategoryRule.parse(title),
                         barcode = ProductDataParser.parseProductCode(imgURL) ?: "",
                         imageUrl = imgURL,
-                        retailerType = RetailerType.CU,
+                        retailerType = RetailerType.GS,
                         isPbProduct = category.isPbProduct
                     )
                 )
