@@ -45,7 +45,6 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
         if (productSearchVO.orderBy == ProductOrderType.RECENT){
             predicate = predicate.and(offsetSearchVO.offsetId.ifNotNull {
                 product.productId.lt(offsetSearchVO.offsetId)
-                    .and(productScore.score.loe(getLastProductScore(offsetSearchVO.offsetId)))
             })
         }else {
             predicate = predicate.and(offsetSearchVO.offsetId.ifNotNull {
@@ -136,7 +135,7 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
         if (offsetProductId == null) return 0L
 
         return from(product)
-            .where(product.productId.eq(offsetProductId))
+            .where(productScore.productScoreId.eq(offsetProductId))
             .innerJoin(productScore)
             .on(product.productId.eq(productScore.productId))
             .select(productScore.score)
