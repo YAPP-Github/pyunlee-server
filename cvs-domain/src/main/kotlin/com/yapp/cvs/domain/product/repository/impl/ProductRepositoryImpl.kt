@@ -41,7 +41,10 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
 
     override fun findProductList(offsetSearchVO: OffsetSearchVO, productSearchVO: ProductSearchVO): List<Product> {
         val predicate = productSearchWhere(productSearchVO)
-            .and(offsetSearchVO.offsetId.ifNotNull { product.productId.lt(offsetSearchVO.offsetId) })
+            .and(offsetSearchVO.offsetId.ifNotNull {
+                product.productId.lt(offsetSearchVO.offsetId)
+                    .and(productScore.score.loe(getLastProductScore(offsetSearchVO.offsetId)))
+            })
 
         return from(product)
             .leftJoin(product.productLikeSummaryList, productLikeSummary)
@@ -50,7 +53,7 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .fetchJoin()
             .leftJoin(product.productPromotionList, productPromotion)
             .fetchJoin()
-            .leftJoin(productScore)
+            .innerJoin(productScore)
             .on(product.productId.eq(productScore.productId))
             .where(predicate)
             .orderBy(getOrderBy(productSearchVO.orderBy), product.productId.desc())
@@ -89,7 +92,10 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
             .on(product.productId.eq(memberProductLikeMapping.productId)
                 .and(memberProductLikeMapping.memberId.eq(memberId)))
             .where((memberProductLikeMapping.isNull.or(memberProductLikeMapping.likeType.eq(ProductLikeType.NONE)))
-                .and(offsetProductId.ifNotNull { product.productId.lt(offsetProductId) })
+                .and(offsetProductId.ifNotNull {
+                    product.productId.lt(offsetProductId)
+                        .and(productScore.score.loe(getLastProductScore(offsetProductId)))
+                })
                 .and(product.valid.eq(true)))
             .orderBy(productScore.score.desc(), product.productId.desc())
             .limit(pageSize.toLong())
@@ -112,11 +118,23 @@ class ProductRepositoryImpl : QuerydslRepositorySupport(Product::class.java), Pr
                     .and(productPromotion.validAt.gt(productSearchVO.appliedDateTime))
                 })
     }
+
     private fun getOrderBy(productOrderType: ProductOrderType): OrderSpecifier<*>?{
         if (productOrderType == ProductOrderType.RECENT){
             return product.productId.desc()
         }else {
             return productScore.score.desc()
         }
+    }
+
+    private fun getLastProductScore(offsetProductId: Long?): Long {
+        if (offsetProductId == null) return 0L
+
+        return from(product)
+            .where(product.productId.eq(offsetProductId))
+            .innerJoin(productScore)
+            .on(product.productId.eq(productScore.productId))
+            .select(productScore.score)
+            .fetchOne()
     }
 }
